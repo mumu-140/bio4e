@@ -1,0 +1,751 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ch17 Translational Bioinformatics — Bioinformatics 4e Wiki</title>
+<style>.global-nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;gap:0;height:38px;padding:0 18px;background:rgba(33,24,18,.92);backdrop-filter:blur(12px);font-size:12.5px;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC",sans-serif}
+.global-nav a,.global-nav span{color:rgba(255,247,234,.7);text-decoration:none;padding:8px 12px;white-space:nowrap;transition:color .12s}
+.global-nav a:hover{color:#fff7ea}
+.global-nav [aria-current="page"]{color:#fff7ea;font-weight:700;border-bottom:2px solid #e8a87c;padding-bottom:6px}
+.global-nav .nav-sep{flex:1;min-width:8px}
+.global-nav .nav-search{display:flex;align-items:center;gap:0}
+.global-nav .nav-search input{width:180px;height:26px;border:1px solid rgba(255,255,255,.18);border-radius:999px;background:rgba(255,255,255,.1);color:#fff7ea;font:inherit;font-size:12px;padding:0 10px;outline:none;transition:border-color .15s,width .2s}
+.global-nav .nav-search input:focus{border-color:rgba(255,255,255,.45);width:260px}
+.global-nav .nav-search input::placeholder{color:rgba(255,247,234,.4)}
+.search-results{display:none;position:fixed;top:38px;right:18px;width:420px;max-height:70vh;overflow-y:auto;background:#fffdf8;border:1px solid #d8c9b7;border-radius:14px;box-shadow:0 18px 60px rgba(0,0,0,.25);z-index:101;padding:8px 0;font-size:13px}
+.search-results.open{display:block}
+.search-results .sr-item{display:block;padding:10px 16px;cursor:pointer;border-bottom:1px solid rgba(216,201,183,.4);color:#211812;text-decoration:none;transition:background .1s}
+.search-results .sr-item:last-child{border-bottom:none}
+.search-results .sr-item:hover{background:rgba(147,70,51,.06)}
+.search-results .sr-ch{font-size:10px;font-weight:800;color:#934633;letter-spacing:.1em;text-transform:uppercase}
+.search-results .sr-title{font-weight:700;margin:2px 0}
+.search-results .sr-snippet{font-size:12px;color:#6c5f54;line-height:1.5}
+.search-results .sr-snippet mark{background:#fde68a;color:inherit;border-radius:2px;padding:0 1px}
+.search-results .sr-empty{padding:20px 16px;color:#6c5f54;text-align:center}
+.search-results .sr-goto{display:block;padding:10px 16px;text-align:center;font-size:12px;font-weight:700;color:#245f63;border-top:1px solid #d8c9b7;cursor:pointer;text-decoration:none}
+.search-results .sr-goto:hover{background:rgba(36,95,99,.06)}
+
+:root{--paper:#fbf5ea;--ink:#211812;--muted:#6c5f54;--accent:#934633;--accent2:#245f63;--line:#d8c9b7;--mono-bg:#102026;--mono-ink:#e9fff5;--shadow:0 18px 46px rgba(72,45,24,.1);--fs:16px;--fs-min:11px;--fs-max:21px}
+*{box-sizing:border-box;margin:0}
+body{color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC","Noto Serif SC","Songti SC",serif;background:var(--paper);line-height:1.7;font-size:var(--fs)}
+a{color:var(--accent2);text-decoration:none}a:hover{text-decoration:underline}
+.wiki-shell{display:grid;grid-template-columns:260px minmax(0,1fr);min-height:100vh}
+.wiki-toc{position:sticky;top:0;height:100vh;overflow-y:auto;padding:28px 20px;border-right:1px solid var(--line);background:rgba(255,253,248,.92);font-size:13px}
+.wiki-toc .brand{font-weight:900;color:var(--accent);letter-spacing:.18em;text-transform:uppercase;font-size:11px;margin-bottom:14px}
+.wiki-toc .brand a{color:inherit}
+.wiki-toc h2{font-size:18px;line-height:1.25;margin:0 0 16px;font-family:"Songti SC","Noto Serif SC",serif}
+.wiki-toc ol{list-style:none;padding:0;margin:0}
+.wiki-toc li{margin:3px 0}
+.wiki-toc li a{display:block;padding:4px 8px;border-radius:6px;color:var(--ink);font-size:12.5px;line-height:1.35;transition:background .12s}
+.wiki-toc li a:hover,.wiki-toc li a.active{background:rgba(147,70,51,.1);text-decoration:none}
+.wiki-toc-footer{margin-top:20px;padding-top:14px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:6px}
+.wiki-toc-footer a{font-size:12px;padding:4px 0}
+.wiki-toc .actions{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.wiki-toc .actions button{font:inherit;font-size:11px;padding:4px 10px;border-radius:999px;border:1px solid var(--line);background:var(--paper);cursor:pointer;color:var(--muted)}
+.wiki-toc .actions button:hover{background:var(--ink);color:var(--paper)}
+.wiki-content{padding:32px 40px 80px;max-width:none}
+.breadcrumb{font-size:12px;color:var(--muted);margin-bottom:20px}
+.breadcrumb a{color:var(--accent2)}
+.wiki-chapter-header{margin-bottom:36px;padding-bottom:24px;border-bottom:1px solid var(--line)}
+.wiki-chapter-header .kicker{color:var(--accent);font-weight:900;letter-spacing:.24em;text-transform:uppercase;font-size:12px}
+.wiki-chapter-header h1{font-size:38px;line-height:1.15;margin:8px 0 6px;font-family:"Songti SC","Noto Serif SC",serif}
+.wiki-chapter-header .meta{font-size:13px;color:var(--muted)}
+.toolbar{display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap}
+.toolbar .font-ctrl{display:inline-flex;align-items:center;gap:4px;font-size:12px;color:var(--muted)}
+.toolbar .font-ctrl button{width:28px;height:28px;border-radius:50%;border:1px solid var(--line);background:var(--paper);cursor:pointer;font-size:14px;font-weight:700;color:var(--ink);display:grid;place-items:center;transition:background .12s}
+.toolbar .font-ctrl button:hover{background:var(--ink);color:var(--paper)}
+.toolbar .font-ctrl .fs-label{min-width:36px;text-align:center;font-variant-numeric:tabular-nums}
+.toolbar .export-btn{font:inherit;font-size:12px;padding:5px 14px;border-radius:999px;border:1px solid var(--line);background:var(--paper);cursor:pointer;color:var(--ink);font-weight:600;transition:background .12s}
+.toolbar .export-btn:hover{background:var(--ink);color:var(--paper)}
+.export-panel{display:none;position:fixed;top:0;left:0;width:100%;height:100%;z-index:999;background:rgba(0,0,0,.4)}
+.export-panel.open{display:flex;align-items:center;justify-content:center}
+.export-dialog{background:var(--paper);border-radius:22px;padding:32px;max-width:480px;width:90%;box-shadow:0 32px 80px rgba(0,0,0,.3);max-height:90vh;overflow-y:auto}
+.export-dialog h3{font-size:20px;margin:0 0 20px;font-family:"Songti SC","Noto Serif SC",serif}
+.export-dialog label{display:block;font-size:13px;font-weight:700;margin:14px 0 6px;color:var(--muted)}
+.export-dialog select,.export-dialog .radio-group{width:100%;font:inherit;font-size:14px;padding:8px 12px;border-radius:10px;border:1px solid var(--line);background:#fff;color:var(--ink)}
+.export-dialog .radio-group{display:flex;flex-wrap:wrap;gap:8px;padding:6px 0;border:none}
+.export-dialog .radio-group label{display:inline-flex;align-items:center;gap:4px;font-weight:400;margin:0;cursor:pointer}
+.export-dialog .dialog-actions{display:flex;gap:10px;margin-top:24px;justify-content:flex-end}
+.export-dialog .dialog-actions button{font:inherit;font-size:14px;padding:8px 20px;border-radius:999px;border:1px solid var(--line);cursor:pointer;font-weight:700}
+.export-dialog .dialog-actions .cancel{background:var(--paper);color:var(--ink)}
+.export-dialog .dialog-actions .confirm{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.export-dialog .dialog-actions .confirm:hover{opacity:.85}
+.wiki-section{background:rgba(255,253,248,.82);border:1px solid var(--line);border-radius:18px;margin:24px 0;overflow:hidden;box-shadow:var(--shadow)}
+.wiki-section-head{display:grid;grid-template-columns:48px 1fr auto;gap:14px;align-items:center;padding:20px 28px;cursor:pointer;user-select:none;transition:background .15s}
+.wiki-section-head:hover{background:rgba(255,248,237,.95)}
+.wiki-section-head .num{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:var(--ink);color:var(--paper);font-weight:900;font-size:13px;flex-shrink:0}
+.wiki-section-head h2{font-size:20px;line-height:1.28;margin:0}
+.wiki-section-head .badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.wiki-section-head .badges span{font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:1px 7px}
+.wiki-section-head .arrow{font-size:11px;color:var(--muted);transition:transform .2s;flex-shrink:0}
+.wiki-section.open .arrow{transform:rotate(90deg)}
+.wiki-section-body{padding:0 28px 28px}
+.wiki-section-body.collapsed{display:none}
+.sec-export-btn{float:right;font:inherit;font-size:11px;padding:3px 10px;border-radius:999px;border:1px solid var(--line);background:var(--paper);cursor:pointer;color:var(--muted);margin-bottom:8px}
+.sec-export-btn:hover{background:var(--ink);color:var(--paper)}
+.bilingual{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:16px;clear:both}
+.bilingual-col{padding:24px 32px;min-width:0}
+.bilingual-source{background:rgba(0,0,0,.025);border-right:1px solid var(--line)}
+.bilingual-translation{background:#fff}
+.col-label{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:baseline}
+.col-label .note{font-weight:400;font-size:10px;letter-spacing:0;text-transform:none;opacity:.7}
+.bilingual-col h1,.bilingual-col h2{font-size:1.15em;margin:20px 0 8px;font-family:"Songti SC","Noto Serif SC",serif}
+.bilingual-col h3{font-size:1em;margin:16px 0 6px}
+.bilingual-col p{margin:0 0 10px;line-height:1.75}
+.bilingual-col ul,.bilingual-col ol{padding-left:20px;margin:0 0 10px}
+.bilingual-col li{margin:3px 0}
+.bilingual-col blockquote{border-left:3px solid var(--line);margin:0 0 10px;padding:6px 14px;color:var(--muted);font-size:.9em}
+.bilingual-col pre{background:var(--mono-bg);color:var(--mono-ink);border-radius:8px;padding:12px 16px;overflow-x:auto;font-size:.8em;line-height:1.5;margin:0 0 10px}
+.bilingual-col code{font-family:"SF Mono","Fira Code",monospace;font-size:.85em;background:rgba(0,0,0,.06);padding:1px 4px;border-radius:3px}
+.bilingual-col pre code{background:none;padding:0}
+.bilingual-col table{border-collapse:collapse;width:100%;margin:0 0 10px;font-size:.85em}
+.bilingual-col th,.bilingual-col td{border:1px solid var(--line);padding:5px 8px;text-align:left}
+.bilingual-col th{background:rgba(0,0,0,.04);font-weight:700}
+.bilingual-col img{max-width:100%;height:auto;border-radius:6px}
+.bilingual-col figure{margin:10px 0}
+.bilingual-col figcaption{font-size:12px;color:var(--muted);margin-top:4px}
+.terminology{margin:12px 0}
+.terminology summary{font-size:13px;font-weight:700;cursor:pointer;color:var(--accent);padding:6px 0}
+.terminology table{border-collapse:collapse;width:100%;margin:8px 0;font-size:13px}
+.terminology th,.terminology td{border:1px solid var(--line);padding:4px 10px;text-align:left}
+.terminology th{background:rgba(0,0,0,.04);font-weight:700}
+.image-gallery{margin:12px 0}
+.image-gallery .gallery-label{font-size:12px;color:var(--muted);margin-bottom:6px}
+.image-gallery .gallery-strip{display:flex;gap:8px;overflow-x:auto;padding:4px 0}
+.image-gallery .gallery-strip a{flex-shrink:0;text-decoration:none;text-align:center}
+.image-gallery .gallery-strip img{height:80px;border-radius:6px;border:1px solid var(--line)}
+.image-gallery .gallery-strip span{display:block;font-size:10px;color:var(--muted);margin-top:2px;max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chapter-nav{display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:center;margin-top:48px;padding-top:24px;border-top:1px solid var(--line);font-size:14px}
+.chapter-nav .prev{text-align:left}.chapter-nav .center{text-align:center}.chapter-nav .next{text-align:right}
+@media(max-width:900px){
+.wiki-shell{grid-template-columns:1fr}
+.wiki-toc{display:none}
+.wiki-content{padding:20px 16px 60px}
+.bilingual{grid-template-columns:1fr}
+.bilingual-source{border-right:none;border-bottom:1px solid var(--line)}
+.wiki-chapter-header h1{font-size:28px}
+}
+</style>
+</head>
+<body>
+<nav class="global-nav"><a href="../../index.html">总书架</a><a href="../book.html">连续阅读</a><span aria-current="page">双语 Wiki</span><a href="../../bioinformatics_glossary.html">术语表</a><div class="nav-sep"></div><div class="nav-search"><input id="nav-q" type="search" placeholder="搜索标题、译文、术语…" autocomplete="off"></div></nav><div id="search-results" class="search-results"></div>
+<div class="wiki-shell">
+<nav class="wiki-toc">
+<div class="brand"><a href="index.html">Wiki Index</a></div>
+<h2>Ch17<br>Translational Bioinformatics</h2>
+<ol class="wiki-toc-list"><li><a href="#sec-146">Introduction</a></li><li><a href="#sec-147">Databases Describing the Genetics of Human Health</a></li><li><a href="#sec-148">Prediction and Characterization of Impactful Genetic Variants from Sequence</a></li><li><a href="#sec-149">Computing with Patient Phenotype Using Data in Electronic Health Records</a></li><li><a href="#sec-150">Informatics and Precision Medicine</a></li><li><a href="#sec-151">Ethical, Legal, and Social Implications of Translational Medicine</a></li><li><a href="#sec-152">Summary + Internet Resources + References</a></li></ol>
+<div class="actions"><button onclick="expandAll()">全部展开</button><button onclick="collapseAll()">全部折叠</button></div>
+<div class="wiki-toc-footer"><a href="ch16.html">&larr; Ch16 Metagenomics and Microbial Community Analysis</a><a href="ch18.html">Ch18 Statistical Methods for Biologists &rarr;</a></div>
+</nav>
+<main class="wiki-content">
+<nav class="breadcrumb"><a href="index.html">Wiki</a> &rsaquo; Ch17 Translational Bioinformatics</nav>
+<div class="toolbar">
+<div class="font-ctrl"><button onclick="fsDown()" title="缩小字体">−</button><span id="fs-label">16px</span><button onclick="fsUp()" title="放大字体">+</button></div>
+<button class="export-btn" onclick="openExport('chapter')">导出本章</button>
+</div>
+<section class="wiki-chapter-header">
+<div class="kicker">Chapter 17</div>
+<h1>Translational Bioinformatics</h1>
+<div class="meta">7 小节</div>
+</section>
+<article class="wiki-section" id="sec-146">
+<header class="wiki-section-head" onclick="toggleWikiSection(this)">
+<div class="num">146</div>
+<div><h2>Introduction</h2><div class="badges"><span>PDF page 557-558；印刷页码 待核对</span></div></div>
+<div class="arrow">▶</div>
+</header>
+<div class="wiki-section-body collapsed">
+<button class="sec-export-btn" onclick="event.stopPropagation();openExport('sec-146')">导出本节</button>
+<div class="bilingual">
+<div class="bilingual-col bilingual-source">
+<div class="col-label">English Source<span class="note">PDF extracted</span></div>
+<div class="col-content"><p style="color:var(--muted);font-style:italic">源文暂缺。</p></div>
+</div>
+<div class="bilingual-col bilingual-translation">
+<div class="col-label">中文译文</div>
+<div class="col-content"><h2>Ch17 Translational Bioinformatics / Introduction</h2>
+<h3>Introduction</h3>
+<p>转化生物信息学（translational bioinformatics）是一门新兴学科，它利用信息学和计算方法，在基础科学与临床及临床科学之间架起桥梁。随着基因组学和其他高通量技术的发展，我们正在见证一场围绕信息学方法展开的变革，而这些方法会直接影响人类健康。如今，我们已经能够以高度可重复的精度，低成本、快速地对人体组织和生物流体进行分子谱分析，因此这一令人振奋的领域正在迅速成长，并以更快的速度演进。本章概述转化信息学的基础内容，以及当前活跃研究领域。该领域的发展由我们收集海量异质数据的能力所驱动；这些数据共同描述患者、患者所处环境，以及患者表型的各种实验模型，包括利用模式生物推断得到的患者表型模型。转化信息学研究者开发或利用计算工具，以加深我们对基因型与表型之间关系的理解，并进一步利用这些知识改善患者健康结局。</p>
+<p>与转化生物信息学相关的技术和数据包括高通量分子数据（如基因组、转录组、蛋白质组和代谢组）、电子健康记录（electronic health record, EHR）数据、行为数据（例如由智能手机传感器获得的数据）、社交媒体数据，以及环境暴露数据（例如空气或水质测量数据）。目前，人们正在积极开发计算工具，用于整合其中两种或更多类型的数据，并利用这些数据描述和理解患者表型。基于表型模型，可以进一步预测干预措施的结果，例如治疗反应或疾病进展。例如，研究人员正在开发用于癌症检测的血液检测方法、基于移动智能手机活动评估临床抑郁风险的检测方法，以及通过尿液实现肾脏疾病早期检测的方法。然而，仍有大量工作有待完成，因为针对人类基因组开发、用于识别疾病风险变异的方法，其准确性仍不及临床医生自身的判断。同样，新的数据整合方法也正在被开发出来，这些方法纳入新的数据类型，并通过使用标准数据模型使数据整合更加容易。大规模患者研究参与者群体（队列，cohorts）正在被招募，用于理解人群层面的疾病风险和治疗结局，从而创造出更多数据分析机会；这些项目包括 Million Veterans Program、National Institute of Health’s (NIH) All of Us initiative，以及 UK Biobank。</p>
+<p>在基因和蛋白质研究中，理解并开展基于患者表型的计算分析正变得越来越重要，这也是转化信息学领域的主要关注点之一。随着我们开始在基因和蛋白质水平上理解某一特定疾病的分子病因，我们也开始认识到，该疾病实际临床表现的差异可能具有分子基础。对患者个体表型进行量化以定制治疗方案，是一个重要活跃研究领域的基础，这一领域被称为“精准医学”（precision medicine）。精准医学还通过将患者越来越精确地分类到不同组别或亚型中，帮助我们更好地理解疾病的分子病因，从而降低临床观察结果中的异质性。</p>
+<p>Bioinformatics, Fourth Edition. Edited by Andreas D. Baxevanis, Gary D. Bader, and David S. Wishart.</p>
+<p>© 2020 John Wiley &amp; Sons, Inc. Published 2020 by John Wiley &amp; Sons, Inc.</p>
+<p>Companion Website: <a href="https://www.wiley.com/go/baxevanis/Bioinformatics_4e" target="_blank" rel="noopener noreferrer">www.wiley.com/go/baxevanis/Bioinformatics_4e</a></p>
+<p>因此，转化信息学具有很高的应用前景。它是少数能够直接应用于患者照护场景的生物信息学领域之一。用于识别致病变异的方法可以被临床遗传学家使用，以判断患者是否可能易患某种遗传性疾病，并据此提出建议。用于药物再利用或药物相互作用分析的工具可以被临床医生用于为患者识别个体化治疗方案。亚型和疾病分期的生化标志物可以用于癌症治疗决策。用于预测疾病风险的方法可以直接整合到患者病历和医疗服务提供者的临床信息学系统中。然而，这些应用并非没有风险。收集用于描述患者的大规模异质数据集，可能会影响患者隐私。同样，如果不准确或开发不充分的方法被过度自信地应用，也可能对患者造成伤害。因此，理解任何转化信息学研究或方法的风险、收益及其适当应用方式，是非常重要的。</p></div>
+</div>
+</div>
+
+
+</div>
+</article><article class="wiki-section" id="sec-147">
+<header class="wiki-section-head" onclick="toggleWikiSection(this)">
+<div class="num">147</div>
+<div><h2>Databases Describing the Genetics of Human Health</h2><div class="badges"><span>PDF page 558-560；印刷页码 待核对</span></div></div>
+<div class="arrow">▶</div>
+</header>
+<div class="wiki-section-body collapsed">
+<button class="sec-export-btn" onclick="event.stopPropagation();openExport('sec-147')">导出本节</button>
+<div class="bilingual">
+<div class="bilingual-col bilingual-source">
+<div class="col-label">English Source<span class="note">PDF extracted</span></div>
+<div class="col-content"><p style="color:var(--muted);font-style:italic">源文暂缺。</p></div>
+</div>
+<div class="bilingual-col bilingual-translation">
+<div class="col-label">中文译文</div>
+<div class="col-content"><h2>Ch17 Translational Bioinformatics / Databases Describing the Genetics of Human Health</h2>
+<h3>描述人类健康遗传学的数据库</h3>
+<p>转化生物信息学领域的核心挑战之一，是理解基因型（genotype）与表型（phenotype）之间的关系。因此，该领域早期相当多的工作重点集中在人类基因组的收集与解读上。在临床环境中进行基因组测序正变得越来越普遍，并且与以往相比，正在应用于更多类型的患者群体。这促成了大型遗传变异数据库的出现；这些数据库中的遗传变异已经被标注为与人类疾病和表型相关。</p>
+<p>这些数据库基于科学研究中的发现：研究者识别出某些遗传变异在具有特定疾病或表型的患者中出现的频率，高于随机情况下的预期；这类研究称为关联研究（association studies）。由于关联研究基于统计观察，因此它们不一定能够识别疾病的根本遗传原因，尤其是在研究参与者数量相对较少的情况下。早期与特定疾病相关的遗传变异数据库，是通过人工审查和整理描述已鉴定致病变异的论文建立的；但此后我们了解到，其中一些变异被错误地关联到了疾病上，实际上并不具有致病性。为克服这一问题，较新的遗传变异资源不仅纳入同行评议出版物中的证据，还提供其他关于致病性（pathogenicity）和因果关系（causation）的证据线索，包括遗传检测机构的报告。American College of Medical Genetics（ACMG）近期制定了遗传变异临床解读指南，其中包括对计算方法的使用（Richards et al. 2015）。</p>
+<p>很大程度上由于历史原因，致病性遗传变异并不集中存放在单一的中央数据库中。为了用可能的致病变异对基因组进行完整注释，仍然必须使用多个资源。目前已有一些努力试图建立整合式接口，以便集中访问多个数据库，例如 MyVariant.info（Xin et al. 2016）；但这些资源通常无法提供商业性或“类商业性”遗传疾病数据库中那些独特且广泛的数据类型，因为这类数据库需要许可证才能使用。对于导致遗传性疾病的变异，商业数据库 Human Gene Mutation Database（HGMD）（Stenson et al. 2017）以及可免费使用的 ClinVar 数据库（Landrum et al. 2016）提供了关于致病变异的人工审查信息，并被广泛用于注释已测序的人类基因组。（Figure 17.1 给出了 ClinVar 中一个 CFTR 基因变异条目的截图；CFTR 是导致囊性纤维化的基因。）与治疗反应差异相关的变异由 Pharmacogenetics KnowledgeBase（PharmGKB）（Thorn et al. 2010）和 DrugBank（Wishart et al. 2018）进行人工审查整理；关于如何使用这些变异的临床指南则由 Clinical Pharmacogenetics Implementation Consortium（CPIC）提供（Relling and Klein 2011）。药物遗传学（pharmacogenetics）的例子包括 codeine 和 warfarin：codeine 由 CYP2D6 产物代谢，warfarin 由 VKORC1 和 CYP2C9 产物代谢；在这两种情况下，这些基因中的变异都与患者对相应药物的不同反应相关。肿瘤中发现的体细胞变异（somatic variants）被收集在 COSMIC 数据库中（Forbes et al. 2017）。其他值得关注的数据库还包括由公众人工审查维护的 wiki 资源 SNPedia（Cariaso and Lennon 2012），这是一个经过整理的人类单核苷酸多态性（single nucleotide polymorphisms）资源。</p>
+<p>&lt;!-- PDF page 559 --&gt;</p>
+<h4>Figure 17.1</h4>
+<p>ClinVar 中囊性纤维化基因（CFTR）一个良性变异的条目。该变异包含来自多个检测中心的证据报告，表明该单核苷酸变异不具有致病性。</p>
+<p>&lt;!-- PDF page 560 --&gt;</p>
+<p>有趣的是，SNPedia 的开发者还开发了一个全基因组分析工具 Promethease，该工具使用 SNPedia 对已测序的全基因组或外显子组（exomes）进行注释。另一个广泛用于注释已测序人类基因组的工具是 ANNOVAR。ANNOVAR 以 Variant Call Format 文件（简称 VCF，一种用于已注释遗传变异的标准文本文件格式）作为输入（Wang et al. 2010），将变异映射到基因，识别变异类别（例如插入、缺失和单核苷酸变异），并提供其他有用注释，例如突变影响预测。</p>
+<h3>从序列预测和表征具有影响的遗传变异</h3>
+<p>传统上，遗传变异与人类疾病之间的关联，是利用病例–对照研究（case–control studies）中推断出的遗传标记的统计差异来确定的（Collins et al. 1999）。近年来，许多互补性算法已经发表；这些算法利用我们对生物学的理解，来预测和理解导致疾病的遗传变异。（综述见 Cooper and Shendure [2011]。）变异可以包括单核苷酸变异、短插入和缺失（称为“indels”，通常短于几千个碱基），以及更大的插入和缺失；后者会造成结构变异（structural variations），其规模可能非常大，并可能包含完整基因。</p>
+<p>在人类群体中发现的遗传变异，可以根据它们是否与人类疾病和状况相关而分为不同类别（Box 17.1）。这些类别包括致病变异（pathogenic variants），即导致疾病的变异。意义未明变异（variants of unknown significance, VUS）可能导致疾病。多态性（polymorphisms）存在于人群中，但不会导致疾病或特定状况。生物信息学研究者早已认识到，致病性遗传变异往往发生在受到进化压力的位点上（Mooney and Klein 2002）。随着人们发现具有功能和进化重要性的位点更可能在人类遗传疾病中发生突变，同时已知致病变异数据库也不断增长，研究者开发出了同时利用这两类信息的计算方法，用于预测新的、具有影响的遗传变异。</p>
+<p>通常，这些方法属于监督式方法（supervised approaches）：也就是说，它们使用一个包含已知具有影响的变异（有作用）和中性变异（无作用）的数据库，来判断一个此前从未见过的变异更可能属于具有影响的集合，还是属于中性集合。这些方法需要一个已注释变异数据库（训练集，training set）、用于分类且具有统计学用途的蛋白质组学和基因组学特征，以及一种使用训练集和特征对变异进行分类预测的分类方法。</p>
+<h4>Box 17.1 遗传性癌症的基因检测</h4>
+<p>癌症风险可能显著增加，发病年龄也可能显著提前，这取决于个体从父母那里遗传了特定基因中的哪些遗传变异。这些癌症包括特定类型的乳腺癌、卵巢癌、结直肠癌和前列腺癌。早期识别继承了这些“遗传性癌症”（hereditary cancers）风险的患者非常重要，因为可以进行预防性筛查或预防性操作（例如乳房切除术），以尽量降低癌症造成的影响。</p>
+<p>为了检测 BRCA1、BRCA2、TP53 和 PTEN 等风险基因中的特定变异，可以进行遗传检测。Color Genomics、Invitae、Myriad Genetics 以及其他公司提供的检测，既可由医疗服务提供者订购，也可由患者本人订购。这些检测结果能够提供风险评估，并可以识别致病变异以及意义未明变异。</p>
+<h3>在蛋白质水平表征遗传变异</h3>
+<p>致病变异往往以非随机方式出现在蛋白质结构中，并且往往埋藏在蛋白质内部，从而破坏蛋白质结构（Wang and Moult 2003）。这些变异也倾向于损伤蛋白质中的功能位点，例如结合位点（Lugo-Martinez）。</p></div>
+</div>
+</div>
+
+
+</div>
+</article><article class="wiki-section" id="sec-148">
+<header class="wiki-section-head" onclick="toggleWikiSection(this)">
+<div class="num">148</div>
+<div><h2>Prediction and Characterization of Impactful Genetic Variants from Sequence</h2><div class="badges"><span>PDF page 560-562；印刷页码 待核对</span></div></div>
+<div class="arrow">▶</div>
+</header>
+<div class="wiki-section-body collapsed">
+<button class="sec-export-btn" onclick="event.stopPropagation();openExport('sec-148')">导出本节</button>
+<div class="bilingual">
+<div class="bilingual-col bilingual-source">
+<div class="col-label">English Source<span class="note">PDF extracted</span></div>
+<div class="col-content"><p style="color:var(--muted);font-style:italic">源文暂缺。</p></div>
+</div>
+<div class="bilingual-col bilingual-translation">
+<div class="col-label">中文译文</div>
+<div class="col-content"><h2>Ch17 Translational Bioinformatics / Prediction and Characterization of Impactful Genetic Variants from Sequence</h2>
+<h3>从序列预测和表征具有影响力的遗传变异</h3>
+<p>基于这些观察结果，研究者已经发展出两类致病性预测方法。这些方法的差异在于构建模型时所使用的训练集不同。第一类方法使用的是已经通过实验验证的突变，通常是在体外实验或模式生物中进行检测。此类方法的例子包括 SIFT（Ng and Henikoff 2003）、SNAP（Bromberg et al. 2008）等。第二类方法使用的是人类疾病突变数据。此类方法的例子包括 MutPred（Li et al. 2009）、PolyPhen-2（Adzhubei et al. 2013）等。尽管这两类方法相似，但由于它们使用不同的训练集，可能会导致生成的预测结果存在差异。第一类方法预测的是对蛋白质功能的影响，而第二类方法预测的是在人类中的致病性。对于非同义单核苷酸变异，这些方法的准确率范围为 65% 至 85%，具体取决于所使用的软件方法，甚至也取决于变异所在的基因（Ioannidis et al. 2016）。为了使人类蛋白质组中氨基酸替换的分析更加容易，研究者开发了 dbNSFP 注释数据库；该数据库包含来自许多不同预测算法的注释，记录了所有可能错义改变的预测影响（Liu et al. 2016）。dbNSFP 包含人类蛋白质组中所有可能的氨基酸突变，因此，当研究人员发现新的突变时，可以直接在该数据库中查找，而不必使用许多工具分别计算影响预测——这是一项耗时且困难的任务！</p>
+<h3>在基因组或转录组水平表征遗传变异</h3>
+<p>并不令人意外的是，那些并不直接影响特定目标基因所编码蛋白质序列的遗传变异，也可能导致疾病。变异可以影响信使 RNA（messenger RNA, mRNA）的剪接和加工（Wang et al. 2008; Mort et al. 2014）、转录或翻译调控（Ritchie et al. 2014）、转录本非翻译区中的功能位点，以及具有表观遗传学重要性的位点。其机制与变异影响蛋白质序列和结构的方式相似：破坏非编码位点的变异同样可能导致疾病。尽管已经有许多工作致力于识别这些变异，但与那些更容易表征、会影响蛋白质序列的变异相比，这类变异的发现仍然相对滞后。随着全基因组测序的出现，识别具有重要意义的非编码变异已经极大地促进了新的致病变异的发现（Boycott et al. 2013）。</p>
+<h3>使用信息学方法优先排序致病基因</h3>
+<p>除了可用于优先排序潜在致病变异的方法之外，也存在类似的监督式方法，用于优先排序可能导致某些疾病或与某些疾病相关的基因。例如，如果假设已经有 15 个基因被高度确定地认为会导致家族性 Parkinson disease，那么识别第 16 个致病基因的可能性有多大？回答这个问题并不容易，因为人类基因组中大约有 20 000 个蛋白质编码基因，必须非常仔细地筛选，才能识别出真正的致病基因。该假设依赖于这样一个前提：已知训练集中的每个基因都共享某些分子特征，例如参与共同的代谢通路；这些特征可以被捕获为“features”（特征，即机器学习中使用的变量）。随后，可以使用监督式或半监督式方法，利用这些特征将其他基因推断为致病基因。这个过程可以通过生物信息学方法完成，其使用的方法和特征类似于预测某个基因或蛋白质的 Gene Ontology 术语或其他注释时所使用的方法和特征；本质上，它是将疾病关联视为一种注释。（方法列表另见第 7 章以及 Radivojac et al. [2013]。）这些特征可能包括基因产物功能、通路、组织表达、共享结构域、文献共现关系，以及许多其他类型的信息。使用这种“guilt by association”（关联推断）思路的方法包括 ENDEAVOUR（Tranchevent et al. 2016）、PhenoPred（Radivojac et al. 2008）和 GeneMANIA（Warde-Farley et al. 2010）；这些方法都曾被用于这一目的，并且可作为遗传学方法的补充，用于通过统计关联将新的基因与性状联系起来。</p>
+<h3>将模式生物数据转译到人类</h3>
+<p>目前，有许多人类患者具有难以诊断、甚至完全无法诊断的临床表型。理解这些“无法诊断的疾病”是临床基因组测序的一个活跃应用领域，其目标是发现新的致病变异及其潜在病因。类似地，许多遗传病已经在模式生物中通过 RNA interference 筛选或对人类疾病基因直系同源基因进行遗传敲除而得到表征；人们认为，这些模型可能为此前在人类中尚未诊断出的疾病提供线索。Monarch Initiative（Mungall et al. 2017）等项目正在使用生物信息学方法，促进将这些动物模型表型转译到人类疾病状态中，反之亦然。Monarch 是一个广泛的知识库，它整合来自文献的异质性数据，以帮助研究遗传病的潜在病因，理解那些尚不能明确诊断的患者表型，并通过开放科学方法更好地理解疾病机制。（关于开放数据如何帮助推动科学发展的社区挑战，另见“Informatics and Precision Medicine”中的讨论。）</p>
+<h3>使用电子健康记录中的数据计算患者表型</h3>
+<h4>电子健康记录简介</h4>
+<p>如上所述，对患者表型进行描述，对于理解疾病的分子病因正变得越来越重要。为此，研究者越来越多地转向患者病历，从中获得有关其表型的信息（Pathak et al. 2013）。在过去 20 年中，包括患者病历在内的医疗记录数据正在被数字化为 EHRs（electronic health records，电子健康记录）；不同卫生系统在采用这些 EHRs 的速度以及实施成功程度方面存在差异（Jha et al. 2009）。这些复杂系统管理住院和门诊体验的各个方面：安排患者就诊、管理账单、提交医嘱、追踪实验室检测结果、通过患者门户促进结果返还，以及几乎所有围绕临床护理展开的其他事务。并不令人意外的是，商业供应商提供的 EHR 系统规模庞大且复杂。与本书中描述的大多数其他数据集不同，健康记录数据并不是为了研究目的而收集的；研究用途通常只是二级用途，在数据收集时并不一定被纳入考虑。因此，健康记录数据可能难以访问和使用（Vuokko et al. 2015）。通常，EHR 中的数据可以是结构化的（coded，编码数据），也可以是非结构化的，例如纯文本或图像。结构化数据使用特定术语体系、数据字典或数值，因此可以较容易地进行分析。目前，EHR 系统中多达 80% 的数据是非结构化数据；因此，对于生物信息学研究者而言，如何利用这些患者记录中迄今难以访问的表型信息，构成了一项研究挑战。</p>
+<p>存储在 EHR 系统中的数据可以遵循由数据采集地点独有的数据模型，即使这些地点使用的是同一个通用供应商系统也是如此。为了从源系统中提取数据，或将其与其他系统的数据进行整合，必须对数据执行 extraction、transform、loading（提取、转换和加载）过程，使其能够被装载到可供分析的临床数据存储库中。提取步骤从源系统下载数据。转换步骤可能需要改变数据模型，或将特定字段映射到新的术语体系或数据类型。在转换步骤中进行数据抽象可能成本很高，并且可能涉及大量人工审查。在整个过程中，必须评估数据质量；如果可能，还必须校正数据，以维持最高标准。最后，加载过程将转换后的数据整合到数据存储库或数据仓库中，用于容纳整合后的数据集。这些存储库通常是关系数据库，并且可以使用广泛应用的 Structured Query Language（SQL，结构化查询语言）方便地进行查询。</p></div>
+</div>
+</div>
+
+
+</div>
+</article><article class="wiki-section" id="sec-149">
+<header class="wiki-section-head" onclick="toggleWikiSection(this)">
+<div class="num">149</div>
+<div><h2>Computing with Patient Phenotype Using Data in Electronic Health Records</h2><div class="badges"><span>PDF page 562-564；印刷页码 待核对</span></div></div>
+<div class="arrow">▶</div>
+</header>
+<div class="wiki-section-body collapsed">
+<button class="sec-export-btn" onclick="event.stopPropagation();openExport('sec-149')">导出本节</button>
+<div class="bilingual">
+<div class="bilingual-col bilingual-source">
+<div class="col-label">English Source<span class="note">PDF extracted</span></div>
+<div class="col-content"><p style="color:var(--muted);font-style:italic">源文暂缺。</p></div>
+</div>
+<div class="bilingual-col bilingual-translation">
+<div class="col-label">中文译文</div>
+<div class="col-content"><h2>Ch17 Translational Bioinformatics / Computing with Patient Phenotype Using Data in Electronic Health Records</h2>
+<h2>利用电子健康记录中的数据进行患者表型计算</h2>
+<p><strong>表 17.1  转化研究中常用的生物医学本体与术语示例。</strong></p>
+<div class="table-wrap"><table><thead><tr><th>Ontology</th><th>Description</th></tr></thead><tbody><tr><td>Gene Ontology (GO)</td><td>广泛用于注释基因和蛋白质的三类术语，用于描述 molecular functions、biological processes 和 cellular components。</td></tr><tr><td>Human Phenotype Ontology (HPO)</td><td>描述人类表型与疾病的概念。</td></tr><tr><td>International Classification of Diseases (ICD)</td><td>在 electronic health record 系统中广泛使用的诊断代码。</td></tr><tr><td>Medical Subject Headings (MeSH)</td><td>主要由图书馆员和 curator 使用，用于注释和分类生物医学文献的术语。</td></tr><tr><td>National Drug File (NDF)</td><td>Veterans Affairs Medical Centers 中药物使用相关的标准化名称、剂量和强度、包装规格、National Drug Code 以及其他元数据。</td></tr><tr><td>Phenotypic Quality Ontology (PATO)</td><td>用于注释模式生物表型的术语体系。</td></tr><tr><td>RxNORM</td><td>与许多其他术语体系相连接的规范化药物名称。</td></tr><tr><td>Systematized Nomenclature of Medicine – Clinical Terms (SNOMEDCT)</td><td>广泛使用的临床本体。</td></tr></tbody></table></div>
+<h3>使用生物医学本体的结构化临床数据</h3>
+<p>生物医学本体的发展，对于使我们能够有效挖掘和分析患者数据至关重要。本体是一种结构化词汇表，通过术语之间的语义关系来描述某一领域；在线也有一些资源可以访问标准化本体，例如 National Center for Biomedical Ontology (NCBO) 所提供的本体（Musen et al. 2012），或 Open Biomedical Ontologies Consortium (OBO)（Smith et al. 2007）。本体提供了可用于描述患者健康状态的标准术语或代码。</p>
+<p>例如，International Classification of Diseases (ICD) 很可能是世界上使用最广泛的本体，并被用作健康记录系统中标准的诊断、问题和计费代码分类体系（Anonymous 1996）。虽然 ICD 只提供诊断代码，但 Human Phenotype Ontology (HPO) 提供了对人类表型概念的访问（Kohler et al. 2017）。例如，在 EHR 中，一个患者可能被诊断为 influenza（标识符 ICD:J09 下的 ICD 术语），但该患者还可能具有 vomiting 的表型（HPO 标识符 HP:0002013），而这一点也许并未录入健康记录。</p>
+<p>表 17.1 给出了转化信息学中用于编码的一些术语示例。很多时候，供应商系统会使用未标准化的数据词典，因此要使其对研究有用，就需要后续映射到标准本体。</p>
+<h3>通用数据模型</h3>
+<p>随着门诊、医院和卫生系统从其患者那里积累越来越多的临床数据，这些数据与其他数据集之间的互操作性变得十分重要。可互操作的数据在操作层面上有助于跨不同临床站点交换数据。它们也有助于基于不同来源数据的研究，例如 comparative effectiveness research、发现疾病或病症的新风险、epidemiological data science 等。数据互操作性通过 common data models 来实现，这些模型允许数据集成与比较。Common data models 定义了用于描述临床数据的标准表和标准本体。这些数据模型会描述患者信息与人口统计学特征、患者 encounter（或 visit），包括生命体征和计费诊断代码、开具的处方、实验室或其他已下达的检查程序，以及临床叙述性笔记。</p>
+<p>Common data models 可以包含完整标识数据，也可以包含去标识数据。在后者情况下，患者标识符已被移除，并施加了其他修改，以模糊数据并防止重新识别患者（关于保护患者隐私的讨论，见 Ethical, Legal, and Social Implications of Translational Medicine）。用于研究时，数据通常（但并非总是）会被去标识化。</p>
+<p>最常用的数据模型包括 Observational Health Data Sciences and Informatics (OHDSI) 的 Observational Medical Outcomes Partnership (OMOP) 数据模型（Gini et al. 2016）、Patient-Centered Outcomes Research Institute 数据模型（Fleurence et al. 2014），以及基于 Fast Healthcare Interoperability Resources，或 FHIR 的 schema（Mandel et al. 2016）；FHIR 将在下文更详细讨论。截至本文撰写时，已有超过 6.5 亿份患者病历采用 OMOP 格式。OMOP 可用于识别符合特定条件的患者群体，例如年龄、性别、既往诊断、已开具药物以及其他临床标准。OHDSI 项目提供了若干可用于访问 OMOP 数据模型数据的软件包，包括 Atlas 数据浏览器和 Achilles 可视化数据质量查看器。</p>
+<h3>电子健康记录数据中很大一部分是纯文本</h3>
+<p>除结构化（或编码）数据外，病历还包含大量文本数据。这些文本数据可以是描述一次患者 encounter 的笔记、患者家族史、已知药物过敏、其既往病史、病理报告，以及许多其他具有临床相关性的信息。基于临床笔记开展研究分析会因多种原因而困难。首先，临床笔记可能包含可识别信息——也就是说，它们可能含有研究者在法律或伦理上不能访问的患者标识信息，如姓名和年龄信息。其次，临床笔记作为文本，即便使用复杂的 natural language processing (NLP) 算法，也很难分析。第三，临床笔记的研究意义并不确定，其效用也可能不明确。尽管如此，从转化研究角度看，笔记仍然非常重要，因为患者的大量表型描述都嵌在其中。例如，诸如 “diarrhea”、“vomiting” 或 “fever” 这样的术语，可能只会出现在笔记文本中。</p>
+<p>MetaMap 及其他工具（Chiaramello et al. 2016）能够识别通常未在健康记录中编码的本体概念。其中一种本体就是 HPO，它包含描述表型的概念，既有 vomiting 或 diarrhea 这样的一般术语，也有非常具体的术语，如 “Abnormal serum insulin-like growth factor 1 level”。</p></div>
+</div>
+</div>
+
+
+</div>
+</article><article class="wiki-section" id="sec-150">
+<header class="wiki-section-head" onclick="toggleWikiSection(this)">
+<div class="num">150</div>
+<div><h2>Informatics and Precision Medicine</h2><div class="badges"><span>PDF page 564-569；印刷页码 待核对</span></div></div>
+<div class="arrow">▶</div>
+</header>
+<div class="wiki-section-body collapsed">
+<button class="sec-export-btn" onclick="event.stopPropagation();openExport('sec-150')">导出本节</button>
+<div class="bilingual">
+<div class="bilingual-col bilingual-source">
+<div class="col-label">English Source<span class="note">PDF extracted</span></div>
+<div class="col-content"><p style="color:var(--muted);font-style:italic">源文暂缺。</p></div>
+</div>
+<div class="bilingual-col bilingual-translation">
+<div class="col-label">中文译文</div>
+<div class="col-content"><h2>Ch17 Translational Bioinformatics / Informatics and Precision Medicine</h2>
+<h2>信息学与精准医学</h2>
+<h3>描述患者表型</h3>
+<p>讽刺的是，EHR（electronic health record，电子健康记录）数据并不一定是为了准确描述患者表型而收集的，这意味着它们在推动人类疾病研究方面是被低估、甚至被完全错过的一类机会（Jensen et al. 2012）。其原因很复杂。首先，健康记录常被用于计费、管理和跟踪医嘱，以及记录患者就诊过程中发生的事件。然而，表型数据的收集可能跨越多次就诊，而持续存在的问题未必会在某一次具体就诊中被提及；例如，一位患有 lupus（系统性红斑狼疮）的患者可能因季节性感冒在门诊接受治疗，但该次就诊记录中并不会提到 lupus。其次，即使记录中存在某种表型信息，也可能很难判断其状态。例如，某种癌症的诊断计费代码只能说明与癌症有关，但不能明确该患者是接受过癌症检测、曾患癌症且已缓解、仍有活动性癌症，还是正在被诊断为癌症。此外，tobacco use（吸烟）、alcohol use（饮酒）及其他行为等暴露因素，可能根本不会被编码进记录中。方框 17.2 给出了一个例子，说明如何将表型良好的患者与遗传学整合起来，从而发现新的关联。</p>
+<h3>方框 17.2 关联临床表型与变异：PheWAS 方法</h3>
+<p>biobanks（生物样本库）作为精准医学项目的一部分，在学术医疗中心中日益流行。这些资源通常包含一群已同意参与研究或已去标识化的患者（即已授权将其数据和样本用于一般性研究），以及血液和临床健康记录数据。如果其中许多患者已经完成 genotyping（基因分型）或 sequencing（测序），就可以在该人群中发现 traits（由健康记录定义的性状，即表型）与 variants（变异）之间的关联。Vanderbilt University 通过建立 BioVU（一个 DNA 生物样本库）实现了这一点。在 BioVU 中，对数千名患者进行基因分型被用作将 variants 与其病历中的 ICD 诊断代码建立关联的第一步。由此，七种表型得到了先前 genome-wide association studies（GWAS，全基因组关联研究）的重复验证（Denny et al. 2010）：atrial fibrillation（房颤）、Crohn disease（克罗恩病）、carotid artery stenosis（颈动脉狭窄）、coronary artery disease（冠状动脉疾病）、multiple sclerosis（多发性硬化）、systemic lupus erythematosus（系统性红斑狼疮）以及 rheumatoid arthritis（类风湿性关节炎）。此后，又开展了许多其他研究，用以发现有潜力改善健康结局的新关系。</p>
+<h3>药物再利用</h3>
+<p>信息学方法使我们能够基于共享机制，提出对既往已批准药物的新用途设想（Dudley et al. 2011）。例如，thalidomide（沙利度胺）曾被批准为镇静药，并用于治疗 leprosy（麻风病）（Laffitte and Revuz 2004）；之后它被重新定位并于 2012 年获批用于治疗 multiple myeloma（多发性骨髓瘤）。如果两种疾病共享某种共同机制（例如由特定 kinase（激酶）引起的异常 phosphorylation（磷酸化）），那么针对一种疾病的治疗也可能适用于另一种疾病。这一方法已被应用于疾病及其疾病模型的 genomic（基因组）、proteomic（蛋白质组）及其他 high-throughput（高通量）分子数据集，进而得到共享通路及其他机制的数据库，可用于寻找现有药物的潜在新用途。类似地，另一种方法是将 small molecules（小分子）或药物作为 perturbagens（扰动因子），通过干预细胞间过程，测量其在特定细胞系或生物体中给药后诱导的分子变化；这些变化可能包括 transcriptome（转录组）基因表达的改变。此类高通量筛选可以提供关于疾病与潜在治疗之间相似机制的线索。Broad Institute 托管的 Drug Repurposing Hub 就是这样一个资源，可用于获取大量药物筛选数据，这些数据量化了药物对分子的影响，并可与患者特异性或其他 transcriptomic（转录组）数据集进行比较（Corsello et al. 2017）。据本文写作时统计，Drug Repurposing Hub 中有 6125 种经实验验证、可供分析的化合物。</p>
+<h3>从 -omics 数据开发临床标志物</h3>
+<p>genomic、proteomic 和 metabolomic（代谢组）技术推动了 molecular marker（分子标志物）技术的发展，这些技术能够识别未诊断的疾病状态或患者的治疗路径。这些标志物可以包括 genetic variants（遗传变异）、表达的 transcripts（转录本）、proteins（蛋白质）或蛋白片段、metabolites（代谢物），甚至是来自 human microbiota（人体微生物群，见第 16 章）的特定微生物。例如，Clinical Proteomic Tumor Analysis Consortium（CPTAC，临床蛋白质组肿瘤分析联盟）（Edwards et al. 2015）是一个由 NIH 资助的联盟，正在开发技术和数据，以便快速且低成本地发现癌症中的 proteomic biomarkers（蛋白质组生物标志物），用于早期检测、诊断和治疗。疾病标志物可以从任何通过生化方法测得的特征中开发出来，并可与诊断或治疗结局相关联。方框 17.3 给出了一个例子，重点讨论 biological aging（生物学衰老）标志物的描述。</p>
+<h3>方框 17.3 衰老标志物</h3>
+<p>研究者们毕生致力于理解人类和模式生物衰老的基本机制。寻找人类衰老标志物至今仍被视为生物学和医学中的重大挑战。高通量研究已利用 transcriptomes（转录组）、proteomes（蛋白质组）、genetics（遗传学）、epigenetics（表观遗传学）和 metabolomics 来寻找衰老风险因素。</p>
+<p>标志物 1：telomeres（端粒）。telomeric repeats（端粒重复序列）构成染色体末端，其长度会随着细胞分裂而缩短。telomerase protein（端粒酶蛋白）可延长这些重复序列，而重复序列的缩短或完全丢失与 apoptosis（细胞凋亡）或 senescence（细胞衰老）相关。端粒缩短与衰老有关，而端粒缩短的增强（例如由功能失调的 mutant telomerase（突变端粒酶）导致）与衰老表型相关（Aubert and Lansdorp 2008）。</p>
+<p>标志物 2：DNA methylation（DNA 甲基化）。近年来，高通量测量 epigenetic DNA methylation 位点（5-methylcytosine，5-甲基胞嘧啶）已被发现可作为衰老标志物。在衰老 fibroblasts（成纤维细胞）中，DNA 甲基化水平会随年龄增长而下降，而永生化细胞则维持稳定的甲基化水平（Wilson and Jones 1983）。这一发现后来又得到了对 55 至 92 岁老年受试者衰老队列研究的支持（Bollati et al. 2009）。</p>
+<h3>异质数据源的整合</h3>
+<p>近年来，人们越来越关注将多个数据集整合在一起，以改善对患者表型的描述（Murdoch and Detsky 2013）。这些数据包括 behavioral datasets（行为数据集），例如主动或被动 mobile health（mHealth，移动健康）数据集、社交媒体数据、遗传数据、环境暴露数据、通过问卷工具生成的 patient-reported outcome measures（PROMs，患者报告结局指标），或其他患者报告数据（例如由患者提供的图像）。作为一个相关例子，可穿戴传感器可用于向 bipolar disorder（双相情感障碍）患者提供“早期预警”（Prociow et al. 2012）。此外，数据整合还带来了一些近期成功案例，例如利用手机使用情况预测行为（Prociow et al. 2012）、从社交媒体数据中识别 adverse drug events（ADEs，药物不良事件）（Nikfarjam et al. 2015），以及根据遗传变异和社区条件预测 cardiac arrest（心脏骤停）发生率（Mooney et al. 2016a）。可以预期，医学相关数据集的整合将继续提高我们检测健康风险的能力，并通过更好地描述患者表型及其环境，更准确地描述结局。</p>
+<h3>精准医学计划</h3>
+<p>已发表的临床研究通常计算在人类总体人群中观察到的平均效应。这些效应与在该人群中随机选取的个体或某一门诊单个患者中可能观察到的效应并不相同。这里面很可能存在 ethnic（族群）和其他遗传差异、socioeconomic status（社会经济地位）差异、lifestyle（生活方式）差异、risk profile（风险谱）差异等（例如 chronic kidney disease（慢性肾病）中的患者多样性；Norris and Nissenson 2008）。例如，遗传相似性会按出生地或 ancestry（祖源）聚类，却与 race（种族）聚类得很差（Jorde and Wooding 2004）。所有患者都是不同的，而我们才刚刚开始学习如何针对个体进行个体化治疗（“N of 1” 问题）。到此时应该已经很明显了：以数据驱动的方式，将基于人群的临床知识转化为针对个体患者的实践，是很困难的（Hamburg and Collins 2010）。</p>
+<p>为了更好地评估这种转化潜力，目前正招募大规模志愿者队列参与研究，用于评估一般性的人群风险因素等目标。其中一个例子是 NIH 的 All of Us 项目，该项目目前正在美国推进，目标是招募 100 万名志愿者，愿意提供其临床、遗传、</p>
+<p>mHealth（移动健康）数据、PROMs、biometric（生物测量）以及其他相关临床数据（Ashley 2015）。All of Us 倡议有望为疾病风险因素提供重要新见解，也会让我们更深入地了解利用临床研究开发的干预措施之结局。All of Us 正将自己定位为开放科学和数据共享的范例，使数据科学家能够接触到比以往任何研究都更丰富的数据，并在此过程中把一系列新挑战带到前台（Adams and Petersen 2016）。预计 genome sequences（基因组序列）将成为这一研究平台的核心组成部分。其他倡议还包括 Institute of Systems Biology 的 P4 Medicine（Flores et al. 2013），以及 Geisinger Health System 的 MyCode 和 Vanderbilt University 的 BioVU 等 biobanks 的建设（Carey et al. 2016；Cronin et al. 2014）。</p>
+<h3>社区挑战以协作方式解决创新问题</h3>
+<p>解决转化信息学中困难问题的一种方法，是动员“citizen scientists（公民科学家）”群体，提出独特而新颖的解决方案（Saez-Rodriguez et al. 2016）。在信息学领域，已经形成了一个数据挑战生态系统。这些挑战通常是公开的，所有参与者均可参加。这一社区最初源自 Critical Assessment of Structure Prediction（CASP）（Moult et al. 2011），这是对预测 macromolecular structures（大分子结构）最佳方法进行的双年度、无偏评估。此后，又出现了许多其他“critical assessments（关键评测）”，以及其他组织发起的挑战，例如 DREAM challenges（Jarchum and Jones 2015），甚至还有专门举办挑战赛的营利性公司（如 Kaggle）。挑战赛是激发新方法和创新、建立协作关系并以无偏方式评估方法学的绝佳途径。如今，挑战赛的范围包括开发新的生物信息学分析工具、临床决策支持方法，以及 NLP（natural language processing，自然语言处理）和 genomics（基因组学）方法等。其中一个值得注意的挑战系列是定期举行的 Critical Assessment of Genome Interpretation（CAGI），其目标是评估从人类遗传序列推断表型的工具。方框 17.4 给出了一个使用个人基因组数据的 CAGI whole genome prediction challenge（全基因组预测挑战）示例。</p>
+<h3>方框 17.4 CAGI Personal Genome Project 社区挑战</h3>
+<p>Personal Genome Project（PGP，个人基因组计划）（Ball et al. 2014）旨在促进对人类基因组的研究，并鼓励采用“open consent（开放同意）”的个人参与。开放同意允许将个人基因组、性状和其他信息用于一般性研究。PGP 会招募参与者，要求其签署开放同意，填写详细的健康调查问卷，采集 DNA 样本，然后对其基因组进行测序并发布。Critical Assessment of Genome Interpretation（CAGI）的组织者认为，这为评估消费级基因检测及其他方法能否直接从基因组序列预测性状提供了一个机会，于是 PGP 挑战赛应运而生。2010 年，这项挑战很简单：发布前 10 个 PGP 基因组时不附带健康调查数据，以此挑战方法开发者。开发者随后尝试根据这些序列预测二元性状和数值性状。待预测结果收集完成后，再公开健康调查，并评估预测准确性。随后，在 2010 年至 2016 年间，又举办了另外两次 PGP 挑战，要求开发者仅将已知的性状谱（同样源自健康调查）与某个基因组进行匹配。性状谱列表中包含许多诱饵，使匹配更加困难。来自全球的多个团队提交了预测结果。三次挑战使人们获得了许多经验教训（图 17.2）。第一，将一个个体的完整性状谱与某个基因组进行匹配是一个极具挑战性的问题，表现最好的方法也只能匹配大约 20% 的基因组—性状谱配对。第二，单个性状极难预测，有时甚至仅仅判断某个性状在群体中有多常见都很困难。不过，随着时间推移，这些挑战赛的准确性还是有所提高。</p>
+<h3>电子健康记录系统可以被定制</h3>
+<p>转化医学的目标之一，是将新的研究发现转化或实施到临床实践中。传统上，电子病历系统很难针对特定临床场所进行工程化和定制。EHR 系统内置了扩展和决策支持机制，例如基于规则的患者照护提供者提醒。提醒可以被定制为在系统内发生某些定义事件时触发，而触发提醒的规则也可以定制，用于支持对潜在药物相互作用的通知、实验室检测或操作的提醒、pharmacogenetics（药物遗传学）适应证等（Nishimura et al. 2015）。例如，pharmacogenetic alerts（药物遗传学提醒）可以借助遗传数据促进个体化给药，而且开处方医生认为这类提醒具有优势（Overby et al. 2015）。然而，EHR 系统中提醒过于频繁会导致“alert fatigue（提醒疲劳）”，即医疗服务提供者开始忽视提醒，尤其是在提醒内容显而易见或属于假阳性操作时。近年来，EHR 系统变得更加可定制，并且可以通过标准 application programming interfaces（APIs，应用程序编程接口）实现标准化，从而在不同系统供应商之间具有互操作性。使用最广泛的标准是 Fast Healthcare Interoperability Resources（FHIR，读作“fire”）（Mandel et al. 2016），这是一项用于扩展 EHR 的通信与数据标准。FHIR 还可借助 Substitutable Medical Apps and Reusable Technologies（SMARTs）进行增强，从而支持构建利用 FHIR APIs 的新型应用（例如移动应用）（Bloomfield et al. 2017）。尽管 “SMART On FHIR” 仍在开发中，但它建立在 HL7 communication</p>
+<h3>图 17.2</h3>
+<p>CAGI PGP 2015 匹配挑战中五个提交结果的 receiver operating characteristic（ROC，受试者工作特征）曲线。挑战开发者提交了基因组健康谱匹配概率，并据此与实际已知的 genotype–phenotype pairs（基因型–表型配对）进行比较。AUC 为曲线下面积。详见 Cai et al. (2017)。</p></div>
+</div>
+</div>
+
+
+</div>
+</article><article class="wiki-section" id="sec-151">
+<header class="wiki-section-head" onclick="toggleWikiSection(this)">
+<div class="num">151</div>
+<div><h2>Ethical, Legal, and Social Implications of Translational Medicine</h2><div class="badges"><span>PDF page 569-570；印刷页码 待核对</span></div></div>
+<div class="arrow">▶</div>
+</header>
+<div class="wiki-section-body collapsed">
+<button class="sec-export-btn" onclick="event.stopPropagation();openExport('sec-151')">导出本节</button>
+<div class="bilingual">
+<div class="bilingual-col bilingual-source">
+<div class="col-label">English Source<span class="note">PDF extracted</span></div>
+<div class="col-content"><p style="color:var(--muted);font-style:italic">源文暂缺。</p></div>
+</div>
+<div class="bilingual-col bilingual-translation">
+<div class="col-label">中文译文</div>
+<div class="col-content"><h2>Ch17 Translational Bioinformatics / Ethical, Legal, and Social Implications of Translational Medicine</h2>
+<h3>Ethical, Legal, and Social Implications of Translational Medicine</h3>
+<p>……用于通过互联网传递临床数据的标准，并且正在获得广泛支持。SMART On FHIR 代表了转化信息学的一次巨大飞跃，因为它显著开放了健康记录系统扩展功能之间的互操作性。</p>
+<h3>预防政策的信息学</h3>
+<p>尽管转化信息学领域的大量工作集中在临床应用上，生物医学信息学同样有潜力为政策制定提供依据，尤其是在预防方面。例如，研究人员曾利用 EHRs 高效研究特定药物所指示的碰撞风险升高（Rudisill et al. 2016）。更广泛地说，部署新型信息采集设备（例如，将空气质量监测器安装在公共交通车辆上，以提供城市化区域中实时、空间细节丰富的空气污染估计；Devarakonda et al. 2013），以及重新利用最初并非为健康目的而采集的信息（Hipp et al. 2013; Lovasi et al. 2013; Mooney et al. 2016b）——即所谓“effluent data”（排出数据或副产数据）（Mooney and Pejaver 2017）——已经成为现代公共卫生信息学研究的重要支柱（Eysenbach 2009; Lazer et al. 2014; Santillana et al. 2014）。</p>
+<h3>转化医学的伦理、法律与社会影响</h3>
+<p>由于转化生物信息学研究的方法和结果可能直接影响患者照护，当前人们对这一领域工作所引发的伦理、法律与社会影响（ethical, legal, and social implications, ELSI）问题产生了更大兴趣。这些问题在人类基因组测序的背景下已有大量讨论（Collins 1999），但在转化医学的背景下同样重要。本章并不旨在为读者提供关于 ELSI 的完整背景知识，而是强调：在使用基因组学数据开发能够直接转化到患者照护中的方法时，必须格外谨慎。关于 ELSI 对基因组学影响的更完整讨论，读者可参考若干优秀综述（Oliver and McGuire 2011; Callier et al. 2016）。</p>
+<p>在发布新方法时，即使该方法仅用于研究目的，也应考虑一系列问题。这包括任何新方法会对患者或医疗服务提供者产生什么影响，以及此类工具是否可能带来非预期后果。如果该方法在临床中被误用，是否可能因其使用而对患者造成伤害？例如，假阳性会带来哪些风险？最后，还存在潜在的监管问题；这些问题在不同国家之间可能有所不同，并会影响新临床方法的部署，或影响临床结果向患者反馈的方式。</p>
+<h3>保护患者隐私</h3>
+<p>在对来源于患者的数据开展研究时，一个主要困难是保护患者、研究参与者及其家庭成员的隐私。开展研究时，通常会移除患者标识符；这些标识符包括患者姓名、美国社会安全号码（U.S. Social Security number）、病历号、地址、电话号码以及类似个人数据。在美国，1996 年《健康保险可携性与责任法案》（Health Insurance Portability and Accountability Act, HIPAA）定义了 18 类可从数据集中剥离的标识符，用于去除直接患者身份识别信息；这类数据集被称为“limited”（有限数据集）。在有限数据集基础上，可以通过进一步匿名化创建去标识化数据集，包括随机平移服务日期，或进行其他转换以模糊数据，使人难以直接重新识别这些数据最初来源于哪位患者。（需要注意的是，机构政策、人体受试者研究合规规定以及具体法律在去标识化方法上可能存在差异。）每一位研究者都有责任确保患者保密性得到维护；这包括保障信息安全、不尝试重新识别患者，以及在访问数据时采用“honest broker”（诚实中介）方法。（诚实中介是独立人员，他们只向已经获得 Institutional Review Board，即机构审查委员会批准的研究提供数据。）</p></div>
+</div>
+</div>
+
+
+</div>
+</article><article class="wiki-section" id="sec-152">
+<header class="wiki-section-head" onclick="toggleWikiSection(this)">
+<div class="num">152</div>
+<div><h2>Summary + Internet Resources + References</h2><div class="badges"><span>PDF page 570-574；印刷页码 待核对</span></div></div>
+<div class="arrow">▶</div>
+</header>
+<div class="wiki-section-body collapsed">
+<button class="sec-export-btn" onclick="event.stopPropagation();openExport('sec-152')">导出本节</button>
+<div class="bilingual">
+<div class="bilingual-col bilingual-source">
+<div class="col-label">English Source<span class="note">PDF extracted</span></div>
+<div class="col-content"><p style="color:var(--muted);font-style:italic">源文暂缺。</p></div>
+</div>
+<div class="bilingual-col bilingual-translation">
+<div class="col-label">中文译文</div>
+<div class="col-content"><h2>Ch17 Translational Bioinformatics / Summary + Internet Resources + References</h2>
+<h3>Summary</h3>
+<p>转化生物信息学（translational bioinformatics）的未来十分光明，并且仍将持续发展。随着我们通过高通量实验不断加深对疾病成因的认识，我们开始发展用于早期检测和诊断的新方法、新的干预手段，以及将结果反馈给患者的新工具。我们已经非常擅长在临床中进行基因组测序和解读。这推动了许多工具的发展，用于预测和优先排序致病性或功能性变异以及疾病相关基因。通过将我们丰富的遗传学知识与基于 EHRs（electronic health records，电子健康记录）、行为数据、患者报告数据等构建的新型复杂患者表型模型相连接，我们已经开始更好地建立基因型与表型之间的联系。这项工作推动了围绕患者数据计算的大量活动。一些新兴项目包括药物再利用（drug repurposing）工作、社区挑战赛与开放科学，以及有用的临床标志物发现。</p>
+<p>此外，借助 EHR 系统中的新技术，例如标准 APIs，我们能够将这些发现实现为数据分析方法和推荐方法，并通过健康记录或依附于健康记录开发的应用程序，把相关信息呈现给患者或医疗服务提供者，从而直接影响临床照护。</p>
+<h3>Internet Resources</h3>
+<div class="table-wrap"><table><thead><tr><th>资源</th><th>说明</th><th>URL</th></tr></thead><tbody><tr><td>Kaggle</td><td>一个用于举办社区挑战赛的营利性网站</td><td><a href="https://Kaggle.com" target="_blank" rel="noopener noreferrer">Kaggle.com</a></td></tr><tr><td>Promethease</td><td>一种根据遗传数据预测表型的方法</td><td><a href="https://www.snpedia.com/index.php/Promethease" target="_blank" rel="noopener noreferrer">www.snpedia.com/index.php/Promethease</a></td></tr></tbody></table></div>
+<h3>References</h3>
+<p>Adams, S.A. and Petersen, C. (2016). Precision medicine: opportunities, possibilities, and</p>
+<p>challenges for patients and providers. J. Am. Med. Inf. Assoc. 23 (4): 787–790.</p>
+<p>Adzhubei, I., Jordan, D.M., and Sunyaev, S.R. (2013). Predicting functional effect of human</p>
+<p>missense mutations using PolyPhen-2. Curr. Protoc. Hum. Genet. 76: 7.20.1–7.20.41.</p>
+<p>Anonymous (1996). Revisions of the International classification of diseases (ICD-9 and ICD-10):</p>
+<p>impact on health statistics. Epidemiol. Bull. 17 (2): 1–5.</p>
+<p>Ashley, E.A. (2015). The precision medicine initiative: a new national effort. JAMA 313 (21):</p>
+<p>2119–2120.</p>
+<p>Aubert, G. and Lansdorp, P.M. (2008). Telomeres and aging. Physiol. Rev. 88 (2): 557–579.</p>
+<p>Ball, M.P., Bobe, J.R., Chou, M.F. et al. (2014). Harvard personal genome project: lessons from</p>
+<p>participatory public research. Genome Med. 6 (2): 10.</p>
+<p>Bloomfield, R.A. Jr., Polo-Wood, F., Mandel, J.C., and Mandl, K.D. (2017). Opening the Duke</p>
+<p>electronic health record to apps: implementing SMART on FHIR. Int. J. Med. Inf. 99: 1–10.</p>
+<p>Bollati, V., Schwartz, J., Wright, R. et al. (2009). Decline in genomic DNA methylation through</p>
+<p>aging in a cohort of elderly subjects. Mech. Ageing Dev. 130 (4): 234–239.</p>
+<p>Boycott, K.M., Vanstone, M.R., Bulman, D.E., and MacKenzie, A.E. (2013). Rare-disease genetics</p>
+<p>in the era of next-generation sequencing: discovery to translation. Nat. Rev. Genet. 14 (10):</p>
+<p>681–691.</p>
+<p>Bromberg, Y., Yachdav, G., and Rost, B. (2008). SNAP predicts effect of mutations on protein</p>
+<p>function. Bioinformatics 24 (20): 2397–2398.</p>
+<p>Cai, B., Li, B., Kiga, N. et al. (2017). Matching phenotypes to whole genomes: lessons learned from</p>
+<p>four iterations of the personal genome project community challenges. Hum. Mutat. 38 (9):</p>
+<p>1266–1276.</p>
+<p>Callier, S.L., Abudu, R., Mehlman, M.J. et al. (2016). Ethical, legal, and social implications of</p>
+<p>personalized genomic medicine research: current literature and suggestions for the future.</p>
+<p>Bioethics 30 (9): 698–705.</p>
+<p>Carey, D.J., Fetterolf, S.N., Davis, F.D. et al. (2016). The Geisinger MyCode community health</p>
+<p>initiative: an electronic health record-linked biobank for precision medicine research. Genet.</p>
+<p>Med. 18 (9): 906–913.</p>
+<p>Cariaso, M. and Lennon, G. (2012). SNPedia: a wiki supporting personal genome annotation,</p>
+<p>interpretation and analysis. Nucleic Acids Res. 40 (Database issue): D1308–D1312.</p>
+<p>Chiaramello, E., Pinciroli, F., Bonalumi, A. et al. (2016). Use of “off-the-shelf” information</p>
+<p>extraction algorithms in clinical informatics: a feasibility study of MetaMap annotation of</p>
+<p>Italian medical notes. J. Biomed. Inf. 63: 22–32.</p>
+<p>Collins, F.S. (1999). Shattuck Lecture – medical and societal consequences of the Human Genome</p>
+<p>Project. N. Engl. J. Med. 341 (1): 28–37.</p>
+<p>Collins, A., Lonjou, C., and Morton, N.E. (1999). Genetic epidemiology of single-nucleotide</p>
+<p>polymorphisms. Proc. Natl. Acad. Sci. U.S.A. 96 (26): 15173–15177.</p>
+<p>Cooper, G.M. and Shendure, J. (2011). Needles in stacks of needles: finding disease-causal variants</p>
+<p>in a wealth of genomic data. Nat. Rev. Genet. 12 (9): 628–640.</p>
+<p>Corsello, S.M., Bittker, J.A., Liu, Z. et al. (2017). The drug repurposing hub: a next-generation drug</p>
+<p>library and information resource. Nat. Med. 23 (4): 405–408.</p>
+<p>Cronin, R.M., Field, J.R., Bradford, Y. et al. (2014). Phenome-wide association studies</p>
+<p>demonstrating pleiotropy of genetic variants within FTO with and without adjustment for body</p>
+<p>mass index. Front. Genet. 5: 250.</p>
+<p>Denny, J.C., Ritchie, M.D., Basford, M.A. et al. (2010). PheWAS: demonstrating the feasibility of a</p>
+<p>phenome-wide scan to discover gene-disease associations. Bioinformatics 26 (9): 1205–1210.</p>
+<p>Devarakonda, S., Sevusu, P., Liu, H. et al. (2013). Real-time air quality monitoring through mobile</p>
+<p>sensing in metropolitan areas. In: Proceedings of the 2nd ACM SIGKDD International Workshop</p>
+<p>on Urban Computing, Chicago, IL (11 August 2013). New York, NY: ACM.</p>
+<p>Dudley, J.T., Deshpande, T., and Butte, A.J. (2011). Exploiting drug-disease relationships for</p>
+<p>computational drug repositioning. Briefings Bioinf. 12 (4): 303–311.</p>
+<p>Edwards, N.J., Oberti, M., Thangudu, R.R. et al. (2015). The CPTAC data portal: a resource for</p>
+<p>cancer proteomics research. J. Proteome Res. 14 (6): 2707–2713.</p>
+<p>Eysenbach, G. (2009). Infodemiology and infoveillance: framework for an emerging set of public</p>
+<p>health informatics methods to analyze search, communication and publication behavior on the</p>
+<p>Internet. J. Med. Internet Res. 11 (1): e11.</p>
+<p>Fleurence, R.L., Curtis, L.H., Califf, R.M. et al. (2014). Launching PCORnet, a national</p>
+<p>patient-centered clinical research network. J. Am. Med. Inf. Assoc. 21 (4): 578–582.</p>
+<p>Flores, M., Glusman, G., Brogaard, K. et al. (2013). P4 medicine: how systems medicine will</p>
+<p>transform the healthcare sector and society. Per. Med. 10 (6): 565–576.</p>
+<p>Forbes, S.A., Beare, D., Boutselakis, H. et al. (2017). COSMIC: somatic cancer genetics at</p>
+<p>high-resolution. Nucleic Acids Res. 45 (Database issue): D777–D783.</p>
+<p>Gini, R., Schuemie, M., Brown, J. et al. (2016). Data extraction and management in networks of</p>
+<p>observational health care databases for scientific research: a comparison of EU-ADR, OMOP,</p>
+<p>mini-sentinel and MATRICE strategies. EGEMS (Wash DC) 4 (1): 1189.</p>
+<p>Hamburg, M.A. and Collins, F.S. (2010). The path to personalized medicine. N. Engl. J. Med. 363</p>
+<p>(4): 301–304.</p>
+<p>Hipp, J.A., Adlakha, D., Eyler, A.A. et al. (2013). Emerging technologies: webcams and</p>
+<p>crowd-sourcing to identify active transportation. Am. J. Prev. Med. 44 (1): 96.</p>
+<p>Ioannidis, N.M., Rothstein, J.H., Pejaver, V. et al. (2016). REVEL: an ensemble method for</p>
+<p>predicting the pathogenicity of rare missense variants. Am. J. Hum. Genet. 99 (4): 877–885.</p>
+<p>Jarchum, I. and Jones, S. (2015). DREAMing of benchmarks. Nat. Biotechnol. 33 (1): 49–50.</p>
+<p>Jensen, P.B., Jensen, L.J., and Brunak, S. (2012). Mining electronic health records: towards better</p>
+<p>research applications and clinical care. Nat. Rev. Genet. 13 (6): 395–405.</p>
+<p>Jha, A.K., DesRoches, C.M., Campbell, E.G. et al. (2009). Use of electronic health records in U.S.</p>
+<p>hospitals. N. Engl. J. Med. 360 (16): 1628–1638.</p>
+<p>Jorde, L.B. and Wooding, S.P. (2004). Genetic variation, classification and “race”. Nat. Genet. 36 (11</p>
+<p>Suppl): S28–S33.</p>
+<p>Kohler, S., Vasilevsky, N.A., Engelstad, M. et al. (2017). The human phenotype ontology in 2017.</p>
+<p>Nucleic Acids Res. 45 (D1): D865–D876.</p>
+<p>Laffitte, E. and Revuz, J. (2004). Thalidomide: an old drug with new clinical applications. Expert</p>
+<p>Opin. Drug Saf. 3 (1): 47–56.</p>
+<p>Landrum, M.J., Lee, J.M., Benson, M. et al. (2016). ClinVar: public archive of interpretations of</p>
+<p>clinically relevant variants. Nucleic Acids Res. 44 (D1): D862–D868.</p>
+<p>Lazer, D., Kennedy, R., King, G., and Vespignani, A. (2014). The parable of Google Flu: traps in big</p>
+<p>data analysis. Science 343 (6176): 1203–1205.</p>
+<p>Li, B., Krishnan, V.G., Mort, M.E. et al. (2009). Automated inference of molecular mechanisms of</p>
+<p>disease from amino acid substitutions. Bioinformatics 25 (21): 2744–2750.</p>
+<p>Liu, X., Wu, C., Li, C., and Boerwinkle, E. (2016). dbNSFP v3.0: a one-stop database of functional</p>
+<p>predictions and annotations for human nonsynonymous and splice-site SNVs. Hum. Mutat. 37</p>
+<p>(3): 235–241.</p>
+<p>Lovasi, G.S., O’Neil-Dunne, J.P., Lu, J.W. et al. (2013). Urban tree canopy and asthma, wheeze,</p>
+<p>rhinitis, and allergic sensitization to tree pollen in a New York City birth cohort. Environ.</p>
+<p>Health Perspect. 121 (4): 494.</p>
+<p>Lugo-Martinez, J., Pejaver, V., Pagel, K.A. et al. (2016). The loss and gain of functional amino acid</p>
+<p>residues is a common mechanism causing human inherited disease. PLoS Comput. Biol. 12 (8):</p>
+<p>e1005091.</p>
+<p>Mandel, J.C., Kreda, D.A., Mandl, K.D. et al. (2016). SMART on FHIR: a standards-based,</p>
+<p>interoperable apps platform for electronic health records. J. Am. Med. Inf. Assoc. 23 (5): 899–908.</p>
+<p>Mooney, S.D. and Klein, T.E. (2002). The functional importance of disease-associated mutation.</p>
+<p>BMC Bioinf. 3: 24.</p>
+<p>Mooney, S.J. and Pejaver, V. (2017). Big data in public health: terminology, machine learning, and</p>
+<p>privacy. Annu. Rev. Public Health 39: 95–112.</p>
+<p>Mooney, S.J., Grady, S.T., Sotoodehnia, N. et al. (2016a). In the wrong place with the wrong SNP:</p>
+<p>the association between stressful neighborhoods and cardiac arrest within Beta-2-adrenergic</p>
+<p>receptor variants. Epidemiology 27 (5): 656–662.</p>
+<p>Mooney, S.J., DiMaggio, C.J., Lovasi, G.S. et al. (2016b). Use of Google Street View to assess</p>
+<p>environmental contributions to pedestrian injury. Am. J. Public Health 106 (3): 462–469.</p>
+<p>Mort, M., Sterne-Weiler, T., Li, B. et al. (2014). MutPred splice: machine learning-based prediction</p>
+<p>of exonic variants that disrupt splicing. Genome Biol. 15 (1): R19.</p>
+<p>Moult, J., Fidelis, K., Kryshtafovych, A., and Tramontano, A. (2011). Critical assessment of</p>
+<p>methods of protein structure prediction (CASP)--round IX. Proteins 79 (Suppl 10): 1–5.</p>
+<p>Mungall, C.J., McMurry, J.A., Köhler, S. et al. (2017). The Monarch initiative: an integrative data</p>
+<p>and analytic platform connecting phenotypes to genotypes across species. Nucleic Acids Res. 45</p>
+<p>(D1): D712–D722.</p>
+<p>Murdoch, T.B. and Detsky, A.S. (2013). The inevitable application of big data to health care. JAMA</p>
+<p>309 (13): 1351–1352.</p>
+<p>Musen, M.A., Noy, N.F., Shah, N.H. et al. (2012). The National Center for Biomedical Ontology. J.</p>
+<p>Am. Med. Inf. Assoc. 19 (2): 190–195.</p>
+<p>Ng, P.C. and Henikoff, S. (2003). SIFT: predicting amino acid changes that affect protein function.</p>
+<p>Nucleic Acids Res. 31 (13): 3812–3814.</p>
+<p>Nikfarjam, A., Sarker, A., O’Connor, K. et al. (2015). Pharmacovigilance from social media:</p>
+<p>mining adverse drug reaction mentions using sequence labeling with word embedding cluster</p>
+<p>features. J. Am. Med. Inf. Assoc. 22 (3): 671–681.</p>
+<p>Nishimura, A.A., Shirts, B.H., Dorschner, M.O. et al. (2015). Development of clinical decision</p>
+<p>support alerts for pharmacogenomic incidental findings from exome sequencing. Genet. Med.</p>
+<p>17 (11): 939–942.</p>
+<p>Norris, K. and Nissenson, A.R. (2008). Race, gender, and socioeconomic disparities in CKD in the</p>
+<p>United States. J. Am. Soc. Nephrol. 19 (7): 1261–1270.</p>
+<p>Oliver, J.M. and McGuire, A.L. (2011). Exploring the ELSI universe: critical issues in the evolution</p>
+<p>of human genomic research. Genome Med. 3 (6): 38.</p>
+<p>Overby, C.L., Devine, E.B., Abernethy, N. et al. (2015). Making pharmacogenomic-based</p>
+<p>prescribing alerts more effective: a scenario-based pilot study with physicians. J. Biomed. Inf. 55:</p>
+<p>249–259.</p>
+<p>Pathak, J., Kho, A.N., and Denny, J.C. (2013). Electronic health records-driven phenotyping:</p>
+<p>challenges, recent advances, and perspectives. J. Am. Med. Inf. Assoc. 20 (e2): e206–e211.</p>
+<p>Prociow, P., Wac, K., and Crowe, J. (2012). Mobile psychiatry: towards improving the care for</p>
+<p>bipolar disorder. Int. J. Ment. Health Syst. 6 (1): 5.</p>
+<p>Radivojac, P., Peng, K., Clark, W.T. et al. (2008). An integrated approach to inferring gene-disease</p>
+<p>associations in humans. Proteins 72 (3): 1030–1037.</p>
+<p>Radivojac, P., Clark, W.T., Oron, T.R. et al. (2013). A large-scale evaluation of computational</p>
+<p>protein function prediction. Nat. Methods 10 (3): 221–227.</p>
+<p>Relling, M.V. and Klein, T.E. (2011). CPIC: clinical pharmacogenetics implementation consortium</p>
+<p>of the pharmacogenomics research network. Clin. Pharmacol. Ther. 89 (3): 464–467.</p>
+<p>Richards, S., Aziz, N., Bale, S. et al. (2015). Standards and guidelines for the interpretation of</p>
+<p>sequence variants: a joint consensus recommendation of the American College of Medical</p>
+<p>Genetics and Genomics and the Association for Molecular Pathology. Genet. Med. 17 (5):</p>
+<p>405–424.</p>
+<p>Ritchie, G.R.S., Dunham, I., Zeggini, E., and Flicek, P. (2014). Functional annotation of noncoding</p>
+<p>sequence variants. Nat. Methods 11 (3): 294–296.</p>
+<p>Rudisill, T.M., Zhu, M., Davidov, D. et al. (2016). Medication use and the risk of motor vehicle</p>
+<p>collision in West Virginia drivers 65 years of age and older: a case-crossover study. BMC Res.</p>
+<p>Notes 9: 166.</p>
+<p>Saez-Rodriguez, J., Costello, J.C., Friend, S.H. et al. (2016). Crowdsourcing biomedical research:</p>
+<p>leveraging communities as innovation engines. Nat. Rev. Genet. 17 (8): 470–486.</p>
+<p>Santillana, M., Zhang, D.W., Althouse, B.M., and Ayers, J.W. (2014). What can digital disease</p>
+<p>detection learn from (an external revision to) Google Flu Trends? Am. J. Prev. Med. 47 (3):</p>
+<p>341–347.</p>
+<p>Smith, B., Ashburner, M., Rosse, C. et al. (2007). The OBO foundry: coordinated evolution of</p>
+<p>ontologies to support biomedical data integration. Nat. Biotechnol. 25 (11): 1251–1255.</p>
+<p>Stenson, P.D., Mort, M., Ball, E.V. et al. (2017). The Human Gene Mutation Database: towards a</p>
+<p>comprehensive repository of inherited mutation data for medical research, genetic diagnosis</p>
+<p>and next-generation sequencing studies. Hum. Genet. 136 (6): 665–677.</p>
+<p>Thorn, C.F., Klein, T.E., and Altman, R.B. (2010). Pharmacogenomics and bioinformatics:</p>
+<p>PharmGKB. Pharmacogenomics 11 (4): 501–505.</p>
+<p>Tranchevent, L.C., Ardeshirdavani, A., ElShal, S. et al. (2016). Candidate gene prioritization with</p>
+<p>Endeavour. Nucleic Acids Res. 44 (W1): W117–W121.</p>
+<p>Vuokko, R., Mäkelä-Bengs, P., Hyppönen, H., and Doupi, P. (2015). Secondary use of structured</p>
+<p>patient data: interim results of a systematic review. Stud. Health Technol. Inf. 210: 291–295.</p>
+<p>Wang, Z. and Moult, J. (2003). Three-dimensional structural location and molecular functional</p>
+<p>effects of missense SNPs in the T cell receptor Vbeta domain. Proteins 53 (3): 748–757.</p>
+<p>Wang, X., Wang, G., Shen, C. et al. (2008). Using RNase sequence specificity to refine the</p>
+<p>identification of RNA-protein binding regions. BMC Genomics 9 (Suppl 1): S17.</p>
+<p>Wang, K., Li, M., and Hakonarson, H. (2010). ANNOVAR: functional annotation of genetic</p>
+<p>variants from high-throughput sequencing data. Nucleic Acids Res. 38 (16): e164.</p>
+<p>Warde-Farley, D., Donaldson, S.L., Comes, O. et al. (2010). The GeneMANIA prediction server:</p>
+<p>biological network integration for gene prioritization and predicting gene function. Nucleic</p>
+<p>Acids Res. 38 (Web Server issue): W214–W220.</p>
+<p>Wilson, V.L. and Jones, P.A. (1983). DNA methylation decreases in aging but not in immortal cells.</p>
+<p>Science 220 (4601): 1055–1057.</p>
+<p>Wishart, D.S., Feunang, Y.D., Guo, A.C. et al. (2018). DrugBank 5.0: a major update to the</p>
+<p>DrugBank database for 2018. Nucleic Acids Res. 46 (D1): D1074–D1082.</p>
+<p>Xin, J., Mark, A., Afrasiabi, C. et al. (2016). High-performance web services for querying gene and</p>
+<p>variant annotation. Genome Biol. 17 (1): 91.</p></div>
+</div>
+</div>
+
+
+</div>
+</article>
+<nav class="chapter-nav">
+<a class="prev" href="ch16.html">&larr; Ch16 Metagenomics and Microbial Community Analysis</a>
+<a class="center" href="index.html">Wiki 目录</a>
+<a class="next" href="ch18.html">Ch18 Statistical Methods for Biologists &rarr;</a>
+</nav>
+</main>
+</div>
+<div id="export-panel" class="export-panel" onclick="if(event.target===this)closeExport()">
+<div class="export-dialog">
+<h3>导出</h3>
+<label>格式</label>
+<select id="ex-fmt">
+<option value="html">HTML</option>
+<option value="md">Markdown</option>
+<option value="txt">纯文本 TXT</option>
+<option value="doc">Word (DOC)</option>
+</select>
+<label>内容语言</label>
+<div class="radio-group">
+<label><input type="radio" name="ex-lang" value="both" checked> 双语对照</label>
+<label><input type="radio" name="ex-lang" value="zh"> 仅中文</label>
+<label><input type="radio" name="ex-lang" value="en"> 仅英文</label>
+</div>
+<div class="dialog-actions">
+<button class="cancel" onclick="closeExport()">取消</button>
+<button class="confirm" onclick="doExport()">导出</button>
+</div>
+</div>
+</div>
+<script>window.__sectionData=[{"id": "sec-146", "title": "Introduction", "source_md": "", "trans_md": "# Ch17 Translational Bioinformatics / Introduction\n\n## Introduction\n\n转化生物信息学（translational bioinformatics）是一门新兴学科，它利用信息学和计算方法，在基础科学与临床及临床科学之间架起桥梁。随着基因组学和其他高通量技术的发展，我们正在见证一场围绕信息学方法展开的变革，而这些方法会直接影响人类健康。如今，我们已经能够以高度可重复的精度，低成本、快速地对人体组织和生物流体进行分子谱分析，因此这一令人振奋的领域正在迅速成长，并以更快的速度演进。本章概述转化信息学的基础内容，以及当前活跃研究领域。该领域的发展由我们收集海量异质数据的能力所驱动；这些数据共同描述患者、患者所处环境，以及患者表型的各种实验模型，包括利用模式生物推断得到的患者表型模型。转化信息学研究者开发或利用计算工具，以加深我们对基因型与表型之间关系的理解，并进一步利用这些知识改善患者健康结局。\n\n与转化生物信息学相关的技术和数据包括高通量分子数据（如基因组、转录组、蛋白质组和代谢组）、电子健康记录（electronic health record, EHR）数据、行为数据（例如由智能手机传感器获得的数据）、社交媒体数据，以及环境暴露数据（例如空气或水质测量数据）。目前，人们正在积极开发计算工具，用于整合其中两种或更多类型的数据，并利用这些数据描述和理解患者表型。基于表型模型，可以进一步预测干预措施的结果，例如治疗反应或疾病进展。例如，研究人员正在开发用于癌症检测的血液检测方法、基于移动智能手机活动评估临床抑郁风险的检测方法，以及通过尿液实现肾脏疾病早期检测的方法。然而，仍有大量工作有待完成，因为针对人类基因组开发、用于识别疾病风险变异的方法，其准确性仍不及临床医生自身的判断。同样，新的数据整合方法也正在被开发出来，这些方法纳入新的数据类型，并通过使用标准数据模型使数据整合更加容易。大规模患者研究参与者群体（队列，cohorts）正在被招募，用于理解人群层面的疾病风险和治疗结局，从而创造出更多数据分析机会；这些项目包括 Million Veterans Program、National Institute of Health’s (NIH) All of Us initiative，以及 UK Biobank。\n\n在基因和蛋白质研究中，理解并开展基于患者表型的计算分析正变得越来越重要，这也是转化信息学领域的主要关注点之一。随着我们开始在基因和蛋白质水平上理解某一特定疾病的分子病因，我们也开始认识到，该疾病实际临床表现的差异可能具有分子基础。对患者个体表型进行量化以定制治疗方案，是一个重要活跃研究领域的基础，这一领域被称为“精准医学”（precision medicine）。精准医学还通过将患者越来越精确地分类到不同组别或亚型中，帮助我们更好地理解疾病的分子病因，从而降低临床观察结果中的异质性。\n\nBioinformatics, Fourth Edition. Edited by Andreas D. Baxevanis, Gary D. Bader, and David S. Wishart.  \n© 2020 John Wiley & Sons, Inc. Published 2020 by John Wiley & Sons, Inc.  \nCompanion Website: www.wiley.com/go/baxevanis/Bioinformatics_4e\n\n因此，转化信息学具有很高的应用前景。它是少数能够直接应用于患者照护场景的生物信息学领域之一。用于识别致病变异的方法可以被临床遗传学家使用，以判断患者是否可能易患某种遗传性疾病，并据此提出建议。用于药物再利用或药物相互作用分析的工具可以被临床医生用于为患者识别个体化治疗方案。亚型和疾病分期的生化标志物可以用于癌症治疗决策。用于预测疾病风险的方法可以直接整合到患者病历和医疗服务提供者的临床信息学系统中。然而，这些应用并非没有风险。收集用于描述患者的大规模异质数据集，可能会影响患者隐私。同样，如果不准确或开发不充分的方法被过度自信地应用，也可能对患者造成伤害。因此，理解任何转化信息学研究或方法的风险、收益及其适当应用方式，是非常重要的。", "source_html": "<p style=\"color:var(--muted);font-style:italic\">源文暂缺。</p>", "trans_html": "<h2>Ch17 Translational Bioinformatics / Introduction</h2>\n<h3>Introduction</h3>\n<p>转化生物信息学（translational bioinformatics）是一门新兴学科，它利用信息学和计算方法，在基础科学与临床及临床科学之间架起桥梁。随着基因组学和其他高通量技术的发展，我们正在见证一场围绕信息学方法展开的变革，而这些方法会直接影响人类健康。如今，我们已经能够以高度可重复的精度，低成本、快速地对人体组织和生物流体进行分子谱分析，因此这一令人振奋的领域正在迅速成长，并以更快的速度演进。本章概述转化信息学的基础内容，以及当前活跃研究领域。该领域的发展由我们收集海量异质数据的能力所驱动；这些数据共同描述患者、患者所处环境，以及患者表型的各种实验模型，包括利用模式生物推断得到的患者表型模型。转化信息学研究者开发或利用计算工具，以加深我们对基因型与表型之间关系的理解，并进一步利用这些知识改善患者健康结局。</p>\n<p>与转化生物信息学相关的技术和数据包括高通量分子数据（如基因组、转录组、蛋白质组和代谢组）、电子健康记录（electronic health record, EHR）数据、行为数据（例如由智能手机传感器获得的数据）、社交媒体数据，以及环境暴露数据（例如空气或水质测量数据）。目前，人们正在积极开发计算工具，用于整合其中两种或更多类型的数据，并利用这些数据描述和理解患者表型。基于表型模型，可以进一步预测干预措施的结果，例如治疗反应或疾病进展。例如，研究人员正在开发用于癌症检测的血液检测方法、基于移动智能手机活动评估临床抑郁风险的检测方法，以及通过尿液实现肾脏疾病早期检测的方法。然而，仍有大量工作有待完成，因为针对人类基因组开发、用于识别疾病风险变异的方法，其准确性仍不及临床医生自身的判断。同样，新的数据整合方法也正在被开发出来，这些方法纳入新的数据类型，并通过使用标准数据模型使数据整合更加容易。大规模患者研究参与者群体（队列，cohorts）正在被招募，用于理解人群层面的疾病风险和治疗结局，从而创造出更多数据分析机会；这些项目包括 Million Veterans Program、National Institute of Health’s (NIH) All of Us initiative，以及 UK Biobank。</p>\n<p>在基因和蛋白质研究中，理解并开展基于患者表型的计算分析正变得越来越重要，这也是转化信息学领域的主要关注点之一。随着我们开始在基因和蛋白质水平上理解某一特定疾病的分子病因，我们也开始认识到，该疾病实际临床表现的差异可能具有分子基础。对患者个体表型进行量化以定制治疗方案，是一个重要活跃研究领域的基础，这一领域被称为“精准医学”（precision medicine）。精准医学还通过将患者越来越精确地分类到不同组别或亚型中，帮助我们更好地理解疾病的分子病因，从而降低临床观察结果中的异质性。</p>\n<p>Bioinformatics, Fourth Edition. Edited by Andreas D. Baxevanis, Gary D. Bader, and David S. Wishart.</p>\n<p>© 2020 John Wiley &amp; Sons, Inc. Published 2020 by John Wiley &amp; Sons, Inc.</p>\n<p>Companion Website: <a href=\"https://www.wiley.com/go/baxevanis/Bioinformatics_4e\" target=\"_blank\" rel=\"noopener noreferrer\">www.wiley.com/go/baxevanis/Bioinformatics_4e</a></p>\n<p>因此，转化信息学具有很高的应用前景。它是少数能够直接应用于患者照护场景的生物信息学领域之一。用于识别致病变异的方法可以被临床遗传学家使用，以判断患者是否可能易患某种遗传性疾病，并据此提出建议。用于药物再利用或药物相互作用分析的工具可以被临床医生用于为患者识别个体化治疗方案。亚型和疾病分期的生化标志物可以用于癌症治疗决策。用于预测疾病风险的方法可以直接整合到患者病历和医疗服务提供者的临床信息学系统中。然而，这些应用并非没有风险。收集用于描述患者的大规模异质数据集，可能会影响患者隐私。同样，如果不准确或开发不充分的方法被过度自信地应用，也可能对患者造成伤害。因此，理解任何转化信息学研究或方法的风险、收益及其适当应用方式，是非常重要的。</p>", "terms": []}, {"id": "sec-147", "title": "Databases Describing the Genetics of Human Health", "source_md": "", "trans_md": "# Ch17 Translational Bioinformatics / Databases Describing the Genetics of Human Health\n\n## 描述人类健康遗传学的数据库\n\n转化生物信息学领域的核心挑战之一，是理解基因型（genotype）与表型（phenotype）之间的关系。因此，该领域早期相当多的工作重点集中在人类基因组的收集与解读上。在临床环境中进行基因组测序正变得越来越普遍，并且与以往相比，正在应用于更多类型的患者群体。这促成了大型遗传变异数据库的出现；这些数据库中的遗传变异已经被标注为与人类疾病和表型相关。\n\n这些数据库基于科学研究中的发现：研究者识别出某些遗传变异在具有特定疾病或表型的患者中出现的频率，高于随机情况下的预期；这类研究称为关联研究（association studies）。由于关联研究基于统计观察，因此它们不一定能够识别疾病的根本遗传原因，尤其是在研究参与者数量相对较少的情况下。早期与特定疾病相关的遗传变异数据库，是通过人工审查和整理描述已鉴定致病变异的论文建立的；但此后我们了解到，其中一些变异被错误地关联到了疾病上，实际上并不具有致病性。为克服这一问题，较新的遗传变异资源不仅纳入同行评议出版物中的证据，还提供其他关于致病性（pathogenicity）和因果关系（causation）的证据线索，包括遗传检测机构的报告。American College of Medical Genetics（ACMG）近期制定了遗传变异临床解读指南，其中包括对计算方法的使用（Richards et al. 2015）。\n\n很大程度上由于历史原因，致病性遗传变异并不集中存放在单一的中央数据库中。为了用可能的致病变异对基因组进行完整注释，仍然必须使用多个资源。目前已有一些努力试图建立整合式接口，以便集中访问多个数据库，例如 MyVariant.info（Xin et al. 2016）；但这些资源通常无法提供商业性或“类商业性”遗传疾病数据库中那些独特且广泛的数据类型，因为这类数据库需要许可证才能使用。对于导致遗传性疾病的变异，商业数据库 Human Gene Mutation Database（HGMD）（Stenson et al. 2017）以及可免费使用的 ClinVar 数据库（Landrum et al. 2016）提供了关于致病变异的人工审查信息，并被广泛用于注释已测序的人类基因组。（Figure 17.1 给出了 ClinVar 中一个 CFTR 基因变异条目的截图；CFTR 是导致囊性纤维化的基因。）与治疗反应差异相关的变异由 Pharmacogenetics KnowledgeBase（PharmGKB）（Thorn et al. 2010）和 DrugBank（Wishart et al. 2018）进行人工审查整理；关于如何使用这些变异的临床指南则由 Clinical Pharmacogenetics Implementation Consortium（CPIC）提供（Relling and Klein 2011）。药物遗传学（pharmacogenetics）的例子包括 codeine 和 warfarin：codeine 由 CYP2D6 产物代谢，warfarin 由 VKORC1 和 CYP2C9 产物代谢；在这两种情况下，这些基因中的变异都与患者对相应药物的不同反应相关。肿瘤中发现的体细胞变异（somatic variants）被收集在 COSMIC 数据库中（Forbes et al. 2017）。其他值得关注的数据库还包括由公众人工审查维护的 wiki 资源 SNPedia（Cariaso and Lennon 2012），这是一个经过整理的人类单核苷酸多态性（single nucleotide polymorphisms）资源。\n\n<!-- PDF page 559 -->\n\n### Figure 17.1\n\nClinVar 中囊性纤维化基因（CFTR）一个良性变异的条目。该变异包含来自多个检测中心的证据报告，表明该单核苷酸变异不具有致病性。\n\n<!-- PDF page 560 -->\n\n有趣的是，SNPedia 的开发者还开发了一个全基因组分析工具 Promethease，该工具使用 SNPedia 对已测序的全基因组或外显子组（exomes）进行注释。另一个广泛用于注释已测序人类基因组的工具是 ANNOVAR。ANNOVAR 以 Variant Call Format 文件（简称 VCF，一种用于已注释遗传变异的标准文本文件格式）作为输入（Wang et al. 2010），将变异映射到基因，识别变异类别（例如插入、缺失和单核苷酸变异），并提供其他有用注释，例如突变影响预测。\n\n## 从序列预测和表征具有影响的遗传变异\n\n传统上，遗传变异与人类疾病之间的关联，是利用病例–对照研究（case–control studies）中推断出的遗传标记的统计差异来确定的（Collins et al. 1999）。近年来，许多互补性算法已经发表；这些算法利用我们对生物学的理解，来预测和理解导致疾病的遗传变异。（综述见 Cooper and Shendure [2011]。）变异可以包括单核苷酸变异、短插入和缺失（称为“indels”，通常短于几千个碱基），以及更大的插入和缺失；后者会造成结构变异（structural variations），其规模可能非常大，并可能包含完整基因。\n\n在人类群体中发现的遗传变异，可以根据它们是否与人类疾病和状况相关而分为不同类别（Box 17.1）。这些类别包括致病变异（pathogenic variants），即导致疾病的变异。意义未明变异（variants of unknown significance, VUS）可能导致疾病。多态性（polymorphisms）存在于人群中，但不会导致疾病或特定状况。生物信息学研究者早已认识到，致病性遗传变异往往发生在受到进化压力的位点上（Mooney and Klein 2002）。随着人们发现具有功能和进化重要性的位点更可能在人类遗传疾病中发生突变，同时已知致病变异数据库也不断增长，研究者开发出了同时利用这两类信息的计算方法，用于预测新的、具有影响的遗传变异。\n\n通常，这些方法属于监督式方法（supervised approaches）：也就是说，它们使用一个包含已知具有影响的变异（有作用）和中性变异（无作用）的数据库，来判断一个此前从未见过的变异更可能属于具有影响的集合，还是属于中性集合。这些方法需要一个已注释变异数据库（训练集，training set）、用于分类且具有统计学用途的蛋白质组学和基因组学特征，以及一种使用训练集和特征对变异进行分类预测的分类方法。\n\n### Box 17.1 遗传性癌症的基因检测\n\n癌症风险可能显著增加，发病年龄也可能显著提前，这取决于个体从父母那里遗传了特定基因中的哪些遗传变异。这些癌症包括特定类型的乳腺癌、卵巢癌、结直肠癌和前列腺癌。早期识别继承了这些“遗传性癌症”（hereditary cancers）风险的患者非常重要，因为可以进行预防性筛查或预防性操作（例如乳房切除术），以尽量降低癌症造成的影响。\n\n为了检测 BRCA1、BRCA2、TP53 和 PTEN 等风险基因中的特定变异，可以进行遗传检测。Color Genomics、Invitae、Myriad Genetics 以及其他公司提供的检测，既可由医疗服务提供者订购，也可由患者本人订购。这些检测结果能够提供风险评估，并可以识别致病变异以及意义未明变异。\n\n## 在蛋白质水平表征遗传变异\n\n致病变异往往以非随机方式出现在蛋白质结构中，并且往往埋藏在蛋白质内部，从而破坏蛋白质结构（Wang and Moult 2003）。这些变异也倾向于损伤蛋白质中的功能位点，例如结合位点（Lugo-Martinez）。", "source_html": "<p style=\"color:var(--muted);font-style:italic\">源文暂缺。</p>", "trans_html": "<h2>Ch17 Translational Bioinformatics / Databases Describing the Genetics of Human Health</h2>\n<h3>描述人类健康遗传学的数据库</h3>\n<p>转化生物信息学领域的核心挑战之一，是理解基因型（genotype）与表型（phenotype）之间的关系。因此，该领域早期相当多的工作重点集中在人类基因组的收集与解读上。在临床环境中进行基因组测序正变得越来越普遍，并且与以往相比，正在应用于更多类型的患者群体。这促成了大型遗传变异数据库的出现；这些数据库中的遗传变异已经被标注为与人类疾病和表型相关。</p>\n<p>这些数据库基于科学研究中的发现：研究者识别出某些遗传变异在具有特定疾病或表型的患者中出现的频率，高于随机情况下的预期；这类研究称为关联研究（association studies）。由于关联研究基于统计观察，因此它们不一定能够识别疾病的根本遗传原因，尤其是在研究参与者数量相对较少的情况下。早期与特定疾病相关的遗传变异数据库，是通过人工审查和整理描述已鉴定致病变异的论文建立的；但此后我们了解到，其中一些变异被错误地关联到了疾病上，实际上并不具有致病性。为克服这一问题，较新的遗传变异资源不仅纳入同行评议出版物中的证据，还提供其他关于致病性（pathogenicity）和因果关系（causation）的证据线索，包括遗传检测机构的报告。American College of Medical Genetics（ACMG）近期制定了遗传变异临床解读指南，其中包括对计算方法的使用（Richards et al. 2015）。</p>\n<p>很大程度上由于历史原因，致病性遗传变异并不集中存放在单一的中央数据库中。为了用可能的致病变异对基因组进行完整注释，仍然必须使用多个资源。目前已有一些努力试图建立整合式接口，以便集中访问多个数据库，例如 MyVariant.info（Xin et al. 2016）；但这些资源通常无法提供商业性或“类商业性”遗传疾病数据库中那些独特且广泛的数据类型，因为这类数据库需要许可证才能使用。对于导致遗传性疾病的变异，商业数据库 Human Gene Mutation Database（HGMD）（Stenson et al. 2017）以及可免费使用的 ClinVar 数据库（Landrum et al. 2016）提供了关于致病变异的人工审查信息，并被广泛用于注释已测序的人类基因组。（Figure 17.1 给出了 ClinVar 中一个 CFTR 基因变异条目的截图；CFTR 是导致囊性纤维化的基因。）与治疗反应差异相关的变异由 Pharmacogenetics KnowledgeBase（PharmGKB）（Thorn et al. 2010）和 DrugBank（Wishart et al. 2018）进行人工审查整理；关于如何使用这些变异的临床指南则由 Clinical Pharmacogenetics Implementation Consortium（CPIC）提供（Relling and Klein 2011）。药物遗传学（pharmacogenetics）的例子包括 codeine 和 warfarin：codeine 由 CYP2D6 产物代谢，warfarin 由 VKORC1 和 CYP2C9 产物代谢；在这两种情况下，这些基因中的变异都与患者对相应药物的不同反应相关。肿瘤中发现的体细胞变异（somatic variants）被收集在 COSMIC 数据库中（Forbes et al. 2017）。其他值得关注的数据库还包括由公众人工审查维护的 wiki 资源 SNPedia（Cariaso and Lennon 2012），这是一个经过整理的人类单核苷酸多态性（single nucleotide polymorphisms）资源。</p>\n<p>&lt;!-- PDF page 559 --&gt;</p>\n<h4>Figure 17.1</h4>\n<p>ClinVar 中囊性纤维化基因（CFTR）一个良性变异的条目。该变异包含来自多个检测中心的证据报告，表明该单核苷酸变异不具有致病性。</p>\n<p>&lt;!-- PDF page 560 --&gt;</p>\n<p>有趣的是，SNPedia 的开发者还开发了一个全基因组分析工具 Promethease，该工具使用 SNPedia 对已测序的全基因组或外显子组（exomes）进行注释。另一个广泛用于注释已测序人类基因组的工具是 ANNOVAR。ANNOVAR 以 Variant Call Format 文件（简称 VCF，一种用于已注释遗传变异的标准文本文件格式）作为输入（Wang et al. 2010），将变异映射到基因，识别变异类别（例如插入、缺失和单核苷酸变异），并提供其他有用注释，例如突变影响预测。</p>\n<h3>从序列预测和表征具有影响的遗传变异</h3>\n<p>传统上，遗传变异与人类疾病之间的关联，是利用病例–对照研究（case–control studies）中推断出的遗传标记的统计差异来确定的（Collins et al. 1999）。近年来，许多互补性算法已经发表；这些算法利用我们对生物学的理解，来预测和理解导致疾病的遗传变异。（综述见 Cooper and Shendure [2011]。）变异可以包括单核苷酸变异、短插入和缺失（称为“indels”，通常短于几千个碱基），以及更大的插入和缺失；后者会造成结构变异（structural variations），其规模可能非常大，并可能包含完整基因。</p>\n<p>在人类群体中发现的遗传变异，可以根据它们是否与人类疾病和状况相关而分为不同类别（Box 17.1）。这些类别包括致病变异（pathogenic variants），即导致疾病的变异。意义未明变异（variants of unknown significance, VUS）可能导致疾病。多态性（polymorphisms）存在于人群中，但不会导致疾病或特定状况。生物信息学研究者早已认识到，致病性遗传变异往往发生在受到进化压力的位点上（Mooney and Klein 2002）。随着人们发现具有功能和进化重要性的位点更可能在人类遗传疾病中发生突变，同时已知致病变异数据库也不断增长，研究者开发出了同时利用这两类信息的计算方法，用于预测新的、具有影响的遗传变异。</p>\n<p>通常，这些方法属于监督式方法（supervised approaches）：也就是说，它们使用一个包含已知具有影响的变异（有作用）和中性变异（无作用）的数据库，来判断一个此前从未见过的变异更可能属于具有影响的集合，还是属于中性集合。这些方法需要一个已注释变异数据库（训练集，training set）、用于分类且具有统计学用途的蛋白质组学和基因组学特征，以及一种使用训练集和特征对变异进行分类预测的分类方法。</p>\n<h4>Box 17.1 遗传性癌症的基因检测</h4>\n<p>癌症风险可能显著增加，发病年龄也可能显著提前，这取决于个体从父母那里遗传了特定基因中的哪些遗传变异。这些癌症包括特定类型的乳腺癌、卵巢癌、结直肠癌和前列腺癌。早期识别继承了这些“遗传性癌症”（hereditary cancers）风险的患者非常重要，因为可以进行预防性筛查或预防性操作（例如乳房切除术），以尽量降低癌症造成的影响。</p>\n<p>为了检测 BRCA1、BRCA2、TP53 和 PTEN 等风险基因中的特定变异，可以进行遗传检测。Color Genomics、Invitae、Myriad Genetics 以及其他公司提供的检测，既可由医疗服务提供者订购，也可由患者本人订购。这些检测结果能够提供风险评估，并可以识别致病变异以及意义未明变异。</p>\n<h3>在蛋白质水平表征遗传变异</h3>\n<p>致病变异往往以非随机方式出现在蛋白质结构中，并且往往埋藏在蛋白质内部，从而破坏蛋白质结构（Wang and Moult 2003）。这些变异也倾向于损伤蛋白质中的功能位点，例如结合位点（Lugo-Martinez）。</p>", "terms": []}, {"id": "sec-148", "title": "Prediction and Characterization of Impactful Genetic Variants from Sequence", "source_md": "", "trans_md": "# Ch17 Translational Bioinformatics / Prediction and Characterization of Impactful Genetic Variants from Sequence\n\n## 从序列预测和表征具有影响力的遗传变异\n\n基于这些观察结果，研究者已经发展出两类致病性预测方法。这些方法的差异在于构建模型时所使用的训练集不同。第一类方法使用的是已经通过实验验证的突变，通常是在体外实验或模式生物中进行检测。此类方法的例子包括 SIFT（Ng and Henikoff 2003）、SNAP（Bromberg et al. 2008）等。第二类方法使用的是人类疾病突变数据。此类方法的例子包括 MutPred（Li et al. 2009）、PolyPhen-2（Adzhubei et al. 2013）等。尽管这两类方法相似，但由于它们使用不同的训练集，可能会导致生成的预测结果存在差异。第一类方法预测的是对蛋白质功能的影响，而第二类方法预测的是在人类中的致病性。对于非同义单核苷酸变异，这些方法的准确率范围为 65% 至 85%，具体取决于所使用的软件方法，甚至也取决于变异所在的基因（Ioannidis et al. 2016）。为了使人类蛋白质组中氨基酸替换的分析更加容易，研究者开发了 dbNSFP 注释数据库；该数据库包含来自许多不同预测算法的注释，记录了所有可能错义改变的预测影响（Liu et al. 2016）。dbNSFP 包含人类蛋白质组中所有可能的氨基酸突变，因此，当研究人员发现新的突变时，可以直接在该数据库中查找，而不必使用许多工具分别计算影响预测——这是一项耗时且困难的任务！\n\n## 在基因组或转录组水平表征遗传变异\n\n并不令人意外的是，那些并不直接影响特定目标基因所编码蛋白质序列的遗传变异，也可能导致疾病。变异可以影响信使 RNA（messenger RNA, mRNA）的剪接和加工（Wang et al. 2008; Mort et al. 2014）、转录或翻译调控（Ritchie et al. 2014）、转录本非翻译区中的功能位点，以及具有表观遗传学重要性的位点。其机制与变异影响蛋白质序列和结构的方式相似：破坏非编码位点的变异同样可能导致疾病。尽管已经有许多工作致力于识别这些变异，但与那些更容易表征、会影响蛋白质序列的变异相比，这类变异的发现仍然相对滞后。随着全基因组测序的出现，识别具有重要意义的非编码变异已经极大地促进了新的致病变异的发现（Boycott et al. 2013）。\n\n## 使用信息学方法优先排序致病基因\n\n除了可用于优先排序潜在致病变异的方法之外，也存在类似的监督式方法，用于优先排序可能导致某些疾病或与某些疾病相关的基因。例如，如果假设已经有 15 个基因被高度确定地认为会导致家族性 Parkinson disease，那么识别第 16 个致病基因的可能性有多大？回答这个问题并不容易，因为人类基因组中大约有 20 000 个蛋白质编码基因，必须非常仔细地筛选，才能识别出真正的致病基因。该假设依赖于这样一个前提：已知训练集中的每个基因都共享某些分子特征，例如参与共同的代谢通路；这些特征可以被捕获为“features”（特征，即机器学习中使用的变量）。随后，可以使用监督式或半监督式方法，利用这些特征将其他基因推断为致病基因。这个过程可以通过生物信息学方法完成，其使用的方法和特征类似于预测某个基因或蛋白质的 Gene Ontology 术语或其他注释时所使用的方法和特征；本质上，它是将疾病关联视为一种注释。（方法列表另见第 7 章以及 Radivojac et al. [2013]。）这些特征可能包括基因产物功能、通路、组织表达、共享结构域、文献共现关系，以及许多其他类型的信息。使用这种“guilt by association”（关联推断）思路的方法包括 ENDEAVOUR（Tranchevent et al. 2016）、PhenoPred（Radivojac et al. 2008）和 GeneMANIA（Warde-Farley et al. 2010）；这些方法都曾被用于这一目的，并且可作为遗传学方法的补充，用于通过统计关联将新的基因与性状联系起来。\n\n## 将模式生物数据转译到人类\n\n目前，有许多人类患者具有难以诊断、甚至完全无法诊断的临床表型。理解这些“无法诊断的疾病”是临床基因组测序的一个活跃应用领域，其目标是发现新的致病变异及其潜在病因。类似地，许多遗传病已经在模式生物中通过 RNA interference 筛选或对人类疾病基因直系同源基因进行遗传敲除而得到表征；人们认为，这些模型可能为此前在人类中尚未诊断出的疾病提供线索。Monarch Initiative（Mungall et al. 2017）等项目正在使用生物信息学方法，促进将这些动物模型表型转译到人类疾病状态中，反之亦然。Monarch 是一个广泛的知识库，它整合来自文献的异质性数据，以帮助研究遗传病的潜在病因，理解那些尚不能明确诊断的患者表型，并通过开放科学方法更好地理解疾病机制。（关于开放数据如何帮助推动科学发展的社区挑战，另见“Informatics and Precision Medicine”中的讨论。）\n\n## 使用电子健康记录中的数据计算患者表型\n\n### 电子健康记录简介\n\n如上所述，对患者表型进行描述，对于理解疾病的分子病因正变得越来越重要。为此，研究者越来越多地转向患者病历，从中获得有关其表型的信息（Pathak et al. 2013）。在过去 20 年中，包括患者病历在内的医疗记录数据正在被数字化为 EHRs（electronic health records，电子健康记录）；不同卫生系统在采用这些 EHRs 的速度以及实施成功程度方面存在差异（Jha et al. 2009）。这些复杂系统管理住院和门诊体验的各个方面：安排患者就诊、管理账单、提交医嘱、追踪实验室检测结果、通过患者门户促进结果返还，以及几乎所有围绕临床护理展开的其他事务。并不令人意外的是，商业供应商提供的 EHR 系统规模庞大且复杂。与本书中描述的大多数其他数据集不同，健康记录数据并不是为了研究目的而收集的；研究用途通常只是二级用途，在数据收集时并不一定被纳入考虑。因此，健康记录数据可能难以访问和使用（Vuokko et al. 2015）。通常，EHR 中的数据可以是结构化的（coded，编码数据），也可以是非结构化的，例如纯文本或图像。结构化数据使用特定术语体系、数据字典或数值，因此可以较容易地进行分析。目前，EHR 系统中多达 80% 的数据是非结构化数据；因此，对于生物信息学研究者而言，如何利用这些患者记录中迄今难以访问的表型信息，构成了一项研究挑战。\n\n存储在 EHR 系统中的数据可以遵循由数据采集地点独有的数据模型，即使这些地点使用的是同一个通用供应商系统也是如此。为了从源系统中提取数据，或将其与其他系统的数据进行整合，必须对数据执行 extraction、transform、loading（提取、转换和加载）过程，使其能够被装载到可供分析的临床数据存储库中。提取步骤从源系统下载数据。转换步骤可能需要改变数据模型，或将特定字段映射到新的术语体系或数据类型。在转换步骤中进行数据抽象可能成本很高，并且可能涉及大量人工审查。在整个过程中，必须评估数据质量；如果可能，还必须校正数据，以维持最高标准。最后，加载过程将转换后的数据整合到数据存储库或数据仓库中，用于容纳整合后的数据集。这些存储库通常是关系数据库，并且可以使用广泛应用的 Structured Query Language（SQL，结构化查询语言）方便地进行查询。", "source_html": "<p style=\"color:var(--muted);font-style:italic\">源文暂缺。</p>", "trans_html": "<h2>Ch17 Translational Bioinformatics / Prediction and Characterization of Impactful Genetic Variants from Sequence</h2>\n<h3>从序列预测和表征具有影响力的遗传变异</h3>\n<p>基于这些观察结果，研究者已经发展出两类致病性预测方法。这些方法的差异在于构建模型时所使用的训练集不同。第一类方法使用的是已经通过实验验证的突变，通常是在体外实验或模式生物中进行检测。此类方法的例子包括 SIFT（Ng and Henikoff 2003）、SNAP（Bromberg et al. 2008）等。第二类方法使用的是人类疾病突变数据。此类方法的例子包括 MutPred（Li et al. 2009）、PolyPhen-2（Adzhubei et al. 2013）等。尽管这两类方法相似，但由于它们使用不同的训练集，可能会导致生成的预测结果存在差异。第一类方法预测的是对蛋白质功能的影响，而第二类方法预测的是在人类中的致病性。对于非同义单核苷酸变异，这些方法的准确率范围为 65% 至 85%，具体取决于所使用的软件方法，甚至也取决于变异所在的基因（Ioannidis et al. 2016）。为了使人类蛋白质组中氨基酸替换的分析更加容易，研究者开发了 dbNSFP 注释数据库；该数据库包含来自许多不同预测算法的注释，记录了所有可能错义改变的预测影响（Liu et al. 2016）。dbNSFP 包含人类蛋白质组中所有可能的氨基酸突变，因此，当研究人员发现新的突变时，可以直接在该数据库中查找，而不必使用许多工具分别计算影响预测——这是一项耗时且困难的任务！</p>\n<h3>在基因组或转录组水平表征遗传变异</h3>\n<p>并不令人意外的是，那些并不直接影响特定目标基因所编码蛋白质序列的遗传变异，也可能导致疾病。变异可以影响信使 RNA（messenger RNA, mRNA）的剪接和加工（Wang et al. 2008; Mort et al. 2014）、转录或翻译调控（Ritchie et al. 2014）、转录本非翻译区中的功能位点，以及具有表观遗传学重要性的位点。其机制与变异影响蛋白质序列和结构的方式相似：破坏非编码位点的变异同样可能导致疾病。尽管已经有许多工作致力于识别这些变异，但与那些更容易表征、会影响蛋白质序列的变异相比，这类变异的发现仍然相对滞后。随着全基因组测序的出现，识别具有重要意义的非编码变异已经极大地促进了新的致病变异的发现（Boycott et al. 2013）。</p>\n<h3>使用信息学方法优先排序致病基因</h3>\n<p>除了可用于优先排序潜在致病变异的方法之外，也存在类似的监督式方法，用于优先排序可能导致某些疾病或与某些疾病相关的基因。例如，如果假设已经有 15 个基因被高度确定地认为会导致家族性 Parkinson disease，那么识别第 16 个致病基因的可能性有多大？回答这个问题并不容易，因为人类基因组中大约有 20 000 个蛋白质编码基因，必须非常仔细地筛选，才能识别出真正的致病基因。该假设依赖于这样一个前提：已知训练集中的每个基因都共享某些分子特征，例如参与共同的代谢通路；这些特征可以被捕获为“features”（特征，即机器学习中使用的变量）。随后，可以使用监督式或半监督式方法，利用这些特征将其他基因推断为致病基因。这个过程可以通过生物信息学方法完成，其使用的方法和特征类似于预测某个基因或蛋白质的 Gene Ontology 术语或其他注释时所使用的方法和特征；本质上，它是将疾病关联视为一种注释。（方法列表另见第 7 章以及 Radivojac et al. [2013]。）这些特征可能包括基因产物功能、通路、组织表达、共享结构域、文献共现关系，以及许多其他类型的信息。使用这种“guilt by association”（关联推断）思路的方法包括 ENDEAVOUR（Tranchevent et al. 2016）、PhenoPred（Radivojac et al. 2008）和 GeneMANIA（Warde-Farley et al. 2010）；这些方法都曾被用于这一目的，并且可作为遗传学方法的补充，用于通过统计关联将新的基因与性状联系起来。</p>\n<h3>将模式生物数据转译到人类</h3>\n<p>目前，有许多人类患者具有难以诊断、甚至完全无法诊断的临床表型。理解这些“无法诊断的疾病”是临床基因组测序的一个活跃应用领域，其目标是发现新的致病变异及其潜在病因。类似地，许多遗传病已经在模式生物中通过 RNA interference 筛选或对人类疾病基因直系同源基因进行遗传敲除而得到表征；人们认为，这些模型可能为此前在人类中尚未诊断出的疾病提供线索。Monarch Initiative（Mungall et al. 2017）等项目正在使用生物信息学方法，促进将这些动物模型表型转译到人类疾病状态中，反之亦然。Monarch 是一个广泛的知识库，它整合来自文献的异质性数据，以帮助研究遗传病的潜在病因，理解那些尚不能明确诊断的患者表型，并通过开放科学方法更好地理解疾病机制。（关于开放数据如何帮助推动科学发展的社区挑战，另见“Informatics and Precision Medicine”中的讨论。）</p>\n<h3>使用电子健康记录中的数据计算患者表型</h3>\n<h4>电子健康记录简介</h4>\n<p>如上所述，对患者表型进行描述，对于理解疾病的分子病因正变得越来越重要。为此，研究者越来越多地转向患者病历，从中获得有关其表型的信息（Pathak et al. 2013）。在过去 20 年中，包括患者病历在内的医疗记录数据正在被数字化为 EHRs（electronic health records，电子健康记录）；不同卫生系统在采用这些 EHRs 的速度以及实施成功程度方面存在差异（Jha et al. 2009）。这些复杂系统管理住院和门诊体验的各个方面：安排患者就诊、管理账单、提交医嘱、追踪实验室检测结果、通过患者门户促进结果返还，以及几乎所有围绕临床护理展开的其他事务。并不令人意外的是，商业供应商提供的 EHR 系统规模庞大且复杂。与本书中描述的大多数其他数据集不同，健康记录数据并不是为了研究目的而收集的；研究用途通常只是二级用途，在数据收集时并不一定被纳入考虑。因此，健康记录数据可能难以访问和使用（Vuokko et al. 2015）。通常，EHR 中的数据可以是结构化的（coded，编码数据），也可以是非结构化的，例如纯文本或图像。结构化数据使用特定术语体系、数据字典或数值，因此可以较容易地进行分析。目前，EHR 系统中多达 80% 的数据是非结构化数据；因此，对于生物信息学研究者而言，如何利用这些患者记录中迄今难以访问的表型信息，构成了一项研究挑战。</p>\n<p>存储在 EHR 系统中的数据可以遵循由数据采集地点独有的数据模型，即使这些地点使用的是同一个通用供应商系统也是如此。为了从源系统中提取数据，或将其与其他系统的数据进行整合，必须对数据执行 extraction、transform、loading（提取、转换和加载）过程，使其能够被装载到可供分析的临床数据存储库中。提取步骤从源系统下载数据。转换步骤可能需要改变数据模型，或将特定字段映射到新的术语体系或数据类型。在转换步骤中进行数据抽象可能成本很高，并且可能涉及大量人工审查。在整个过程中，必须评估数据质量；如果可能，还必须校正数据，以维持最高标准。最后，加载过程将转换后的数据整合到数据存储库或数据仓库中，用于容纳整合后的数据集。这些存储库通常是关系数据库，并且可以使用广泛应用的 Structured Query Language（SQL，结构化查询语言）方便地进行查询。</p>", "terms": []}, {"id": "sec-149", "title": "Computing with Patient Phenotype Using Data in Electronic Health Records", "source_md": "", "trans_md": "# Ch17 Translational Bioinformatics / Computing with Patient Phenotype Using Data in Electronic Health Records\n\n# 利用电子健康记录中的数据进行患者表型计算\n\n**表 17.1  转化研究中常用的生物医学本体与术语示例。**\n\n| Ontology | Description |\n|---|---|\n| Gene Ontology (GO) | 广泛用于注释基因和蛋白质的三类术语，用于描述 molecular functions、biological processes 和 cellular components。 |\n| Human Phenotype Ontology (HPO) | 描述人类表型与疾病的概念。 |\n| International Classification of Diseases (ICD) | 在 electronic health record 系统中广泛使用的诊断代码。 |\n| Medical Subject Headings (MeSH) | 主要由图书馆员和 curator 使用，用于注释和分类生物医学文献的术语。 |\n| National Drug File (NDF) | Veterans Affairs Medical Centers 中药物使用相关的标准化名称、剂量和强度、包装规格、National Drug Code 以及其他元数据。 |\n| Phenotypic Quality Ontology (PATO) | 用于注释模式生物表型的术语体系。 |\n| RxNORM | 与许多其他术语体系相连接的规范化药物名称。 |\n| Systematized Nomenclature of Medicine – Clinical Terms (SNOMEDCT) | 广泛使用的临床本体。 |\n\n## 使用生物医学本体的结构化临床数据\n\n生物医学本体的发展，对于使我们能够有效挖掘和分析患者数据至关重要。本体是一种结构化词汇表，通过术语之间的语义关系来描述某一领域；在线也有一些资源可以访问标准化本体，例如 National Center for Biomedical Ontology (NCBO) 所提供的本体（Musen et al. 2012），或 Open Biomedical Ontologies Consortium (OBO)（Smith et al. 2007）。本体提供了可用于描述患者健康状态的标准术语或代码。\n\n例如，International Classification of Diseases (ICD) 很可能是世界上使用最广泛的本体，并被用作健康记录系统中标准的诊断、问题和计费代码分类体系（Anonymous 1996）。虽然 ICD 只提供诊断代码，但 Human Phenotype Ontology (HPO) 提供了对人类表型概念的访问（Kohler et al. 2017）。例如，在 EHR 中，一个患者可能被诊断为 influenza（标识符 ICD:J09 下的 ICD 术语），但该患者还可能具有 vomiting 的表型（HPO 标识符 HP:0002013），而这一点也许并未录入健康记录。\n\n表 17.1 给出了转化信息学中用于编码的一些术语示例。很多时候，供应商系统会使用未标准化的数据词典，因此要使其对研究有用，就需要后续映射到标准本体。\n\n## 通用数据模型\n\n随着门诊、医院和卫生系统从其患者那里积累越来越多的临床数据，这些数据与其他数据集之间的互操作性变得十分重要。可互操作的数据在操作层面上有助于跨不同临床站点交换数据。它们也有助于基于不同来源数据的研究，例如 comparative effectiveness research、发现疾病或病症的新风险、epidemiological data science 等。数据互操作性通过 common data models 来实现，这些模型允许数据集成与比较。Common data models 定义了用于描述临床数据的标准表和标准本体。这些数据模型会描述患者信息与人口统计学特征、患者 encounter（或 visit），包括生命体征和计费诊断代码、开具的处方、实验室或其他已下达的检查程序，以及临床叙述性笔记。\n\nCommon data models 可以包含完整标识数据，也可以包含去标识数据。在后者情况下，患者标识符已被移除，并施加了其他修改，以模糊数据并防止重新识别患者（关于保护患者隐私的讨论，见 Ethical, Legal, and Social Implications of Translational Medicine）。用于研究时，数据通常（但并非总是）会被去标识化。\n\n最常用的数据模型包括 Observational Health Data Sciences and Informatics (OHDSI) 的 Observational Medical Outcomes Partnership (OMOP) 数据模型（Gini et al. 2016）、Patient-Centered Outcomes Research Institute 数据模型（Fleurence et al. 2014），以及基于 Fast Healthcare Interoperability Resources，或 FHIR 的 schema（Mandel et al. 2016）；FHIR 将在下文更详细讨论。截至本文撰写时，已有超过 6.5 亿份患者病历采用 OMOP 格式。OMOP 可用于识别符合特定条件的患者群体，例如年龄、性别、既往诊断、已开具药物以及其他临床标准。OHDSI 项目提供了若干可用于访问 OMOP 数据模型数据的软件包，包括 Atlas 数据浏览器和 Achilles 可视化数据质量查看器。\n\n## 电子健康记录数据中很大一部分是纯文本\n\n除结构化（或编码）数据外，病历还包含大量文本数据。这些文本数据可以是描述一次患者 encounter 的笔记、患者家族史、已知药物过敏、其既往病史、病理报告，以及许多其他具有临床相关性的信息。基于临床笔记开展研究分析会因多种原因而困难。首先，临床笔记可能包含可识别信息——也就是说，它们可能含有研究者在法律或伦理上不能访问的患者标识信息，如姓名和年龄信息。其次，临床笔记作为文本，即便使用复杂的 natural language processing (NLP) 算法，也很难分析。第三，临床笔记的研究意义并不确定，其效用也可能不明确。尽管如此，从转化研究角度看，笔记仍然非常重要，因为患者的大量表型描述都嵌在其中。例如，诸如 “diarrhea”、“vomiting” 或 “fever” 这样的术语，可能只会出现在笔记文本中。\n\nMetaMap 及其他工具（Chiaramello et al. 2016）能够识别通常未在健康记录中编码的本体概念。其中一种本体就是 HPO，它包含描述表型的概念，既有 vomiting 或 diarrhea 这样的一般术语，也有非常具体的术语，如 “Abnormal serum insulin-like growth factor 1 level”。", "source_html": "<p style=\"color:var(--muted);font-style:italic\">源文暂缺。</p>", "trans_html": "<h2>Ch17 Translational Bioinformatics / Computing with Patient Phenotype Using Data in Electronic Health Records</h2>\n<h2>利用电子健康记录中的数据进行患者表型计算</h2>\n<p><strong>表 17.1  转化研究中常用的生物医学本体与术语示例。</strong></p>\n<div class=\"table-wrap\"><table><thead><tr><th>Ontology</th><th>Description</th></tr></thead><tbody><tr><td>Gene Ontology (GO)</td><td>广泛用于注释基因和蛋白质的三类术语，用于描述 molecular functions、biological processes 和 cellular components。</td></tr><tr><td>Human Phenotype Ontology (HPO)</td><td>描述人类表型与疾病的概念。</td></tr><tr><td>International Classification of Diseases (ICD)</td><td>在 electronic health record 系统中广泛使用的诊断代码。</td></tr><tr><td>Medical Subject Headings (MeSH)</td><td>主要由图书馆员和 curator 使用，用于注释和分类生物医学文献的术语。</td></tr><tr><td>National Drug File (NDF)</td><td>Veterans Affairs Medical Centers 中药物使用相关的标准化名称、剂量和强度、包装规格、National Drug Code 以及其他元数据。</td></tr><tr><td>Phenotypic Quality Ontology (PATO)</td><td>用于注释模式生物表型的术语体系。</td></tr><tr><td>RxNORM</td><td>与许多其他术语体系相连接的规范化药物名称。</td></tr><tr><td>Systematized Nomenclature of Medicine – Clinical Terms (SNOMEDCT)</td><td>广泛使用的临床本体。</td></tr></tbody></table></div>\n<h3>使用生物医学本体的结构化临床数据</h3>\n<p>生物医学本体的发展，对于使我们能够有效挖掘和分析患者数据至关重要。本体是一种结构化词汇表，通过术语之间的语义关系来描述某一领域；在线也有一些资源可以访问标准化本体，例如 National Center for Biomedical Ontology (NCBO) 所提供的本体（Musen et al. 2012），或 Open Biomedical Ontologies Consortium (OBO)（Smith et al. 2007）。本体提供了可用于描述患者健康状态的标准术语或代码。</p>\n<p>例如，International Classification of Diseases (ICD) 很可能是世界上使用最广泛的本体，并被用作健康记录系统中标准的诊断、问题和计费代码分类体系（Anonymous 1996）。虽然 ICD 只提供诊断代码，但 Human Phenotype Ontology (HPO) 提供了对人类表型概念的访问（Kohler et al. 2017）。例如，在 EHR 中，一个患者可能被诊断为 influenza（标识符 ICD:J09 下的 ICD 术语），但该患者还可能具有 vomiting 的表型（HPO 标识符 HP:0002013），而这一点也许并未录入健康记录。</p>\n<p>表 17.1 给出了转化信息学中用于编码的一些术语示例。很多时候，供应商系统会使用未标准化的数据词典，因此要使其对研究有用，就需要后续映射到标准本体。</p>\n<h3>通用数据模型</h3>\n<p>随着门诊、医院和卫生系统从其患者那里积累越来越多的临床数据，这些数据与其他数据集之间的互操作性变得十分重要。可互操作的数据在操作层面上有助于跨不同临床站点交换数据。它们也有助于基于不同来源数据的研究，例如 comparative effectiveness research、发现疾病或病症的新风险、epidemiological data science 等。数据互操作性通过 common data models 来实现，这些模型允许数据集成与比较。Common data models 定义了用于描述临床数据的标准表和标准本体。这些数据模型会描述患者信息与人口统计学特征、患者 encounter（或 visit），包括生命体征和计费诊断代码、开具的处方、实验室或其他已下达的检查程序，以及临床叙述性笔记。</p>\n<p>Common data models 可以包含完整标识数据，也可以包含去标识数据。在后者情况下，患者标识符已被移除，并施加了其他修改，以模糊数据并防止重新识别患者（关于保护患者隐私的讨论，见 Ethical, Legal, and Social Implications of Translational Medicine）。用于研究时，数据通常（但并非总是）会被去标识化。</p>\n<p>最常用的数据模型包括 Observational Health Data Sciences and Informatics (OHDSI) 的 Observational Medical Outcomes Partnership (OMOP) 数据模型（Gini et al. 2016）、Patient-Centered Outcomes Research Institute 数据模型（Fleurence et al. 2014），以及基于 Fast Healthcare Interoperability Resources，或 FHIR 的 schema（Mandel et al. 2016）；FHIR 将在下文更详细讨论。截至本文撰写时，已有超过 6.5 亿份患者病历采用 OMOP 格式。OMOP 可用于识别符合特定条件的患者群体，例如年龄、性别、既往诊断、已开具药物以及其他临床标准。OHDSI 项目提供了若干可用于访问 OMOP 数据模型数据的软件包，包括 Atlas 数据浏览器和 Achilles 可视化数据质量查看器。</p>\n<h3>电子健康记录数据中很大一部分是纯文本</h3>\n<p>除结构化（或编码）数据外，病历还包含大量文本数据。这些文本数据可以是描述一次患者 encounter 的笔记、患者家族史、已知药物过敏、其既往病史、病理报告，以及许多其他具有临床相关性的信息。基于临床笔记开展研究分析会因多种原因而困难。首先，临床笔记可能包含可识别信息——也就是说，它们可能含有研究者在法律或伦理上不能访问的患者标识信息，如姓名和年龄信息。其次，临床笔记作为文本，即便使用复杂的 natural language processing (NLP) 算法，也很难分析。第三，临床笔记的研究意义并不确定，其效用也可能不明确。尽管如此，从转化研究角度看，笔记仍然非常重要，因为患者的大量表型描述都嵌在其中。例如，诸如 “diarrhea”、“vomiting” 或 “fever” 这样的术语，可能只会出现在笔记文本中。</p>\n<p>MetaMap 及其他工具（Chiaramello et al. 2016）能够识别通常未在健康记录中编码的本体概念。其中一种本体就是 HPO，它包含描述表型的概念，既有 vomiting 或 diarrhea 这样的一般术语，也有非常具体的术语，如 “Abnormal serum insulin-like growth factor 1 level”。</p>", "terms": []}, {"id": "sec-150", "title": "Informatics and Precision Medicine", "source_md": "", "trans_md": "# Ch17 Translational Bioinformatics / Informatics and Precision Medicine\n\n# 信息学与精准医学\n\n## 描述患者表型\n\n讽刺的是，EHR（electronic health record，电子健康记录）数据并不一定是为了准确描述患者表型而收集的，这意味着它们在推动人类疾病研究方面是被低估、甚至被完全错过的一类机会（Jensen et al. 2012）。其原因很复杂。首先，健康记录常被用于计费、管理和跟踪医嘱，以及记录患者就诊过程中发生的事件。然而，表型数据的收集可能跨越多次就诊，而持续存在的问题未必会在某一次具体就诊中被提及；例如，一位患有 lupus（系统性红斑狼疮）的患者可能因季节性感冒在门诊接受治疗，但该次就诊记录中并不会提到 lupus。其次，即使记录中存在某种表型信息，也可能很难判断其状态。例如，某种癌症的诊断计费代码只能说明与癌症有关，但不能明确该患者是接受过癌症检测、曾患癌症且已缓解、仍有活动性癌症，还是正在被诊断为癌症。此外，tobacco use（吸烟）、alcohol use（饮酒）及其他行为等暴露因素，可能根本不会被编码进记录中。方框 17.2 给出了一个例子，说明如何将表型良好的患者与遗传学整合起来，从而发现新的关联。\n\n## 方框 17.2 关联临床表型与变异：PheWAS 方法\n\nbiobanks（生物样本库）作为精准医学项目的一部分，在学术医疗中心中日益流行。这些资源通常包含一群已同意参与研究或已去标识化的患者（即已授权将其数据和样本用于一般性研究），以及血液和临床健康记录数据。如果其中许多患者已经完成 genotyping（基因分型）或 sequencing（测序），就可以在该人群中发现 traits（由健康记录定义的性状，即表型）与 variants（变异）之间的关联。Vanderbilt University 通过建立 BioVU（一个 DNA 生物样本库）实现了这一点。在 BioVU 中，对数千名患者进行基因分型被用作将 variants 与其病历中的 ICD 诊断代码建立关联的第一步。由此，七种表型得到了先前 genome-wide association studies（GWAS，全基因组关联研究）的重复验证（Denny et al. 2010）：atrial fibrillation（房颤）、Crohn disease（克罗恩病）、carotid artery stenosis（颈动脉狭窄）、coronary artery disease（冠状动脉疾病）、multiple sclerosis（多发性硬化）、systemic lupus erythematosus（系统性红斑狼疮）以及 rheumatoid arthritis（类风湿性关节炎）。此后，又开展了许多其他研究，用以发现有潜力改善健康结局的新关系。\n\n## 药物再利用\n\n信息学方法使我们能够基于共享机制，提出对既往已批准药物的新用途设想（Dudley et al. 2011）。例如，thalidomide（沙利度胺）曾被批准为镇静药，并用于治疗 leprosy（麻风病）（Laffitte and Revuz 2004）；之后它被重新定位并于 2012 年获批用于治疗 multiple myeloma（多发性骨髓瘤）。如果两种疾病共享某种共同机制（例如由特定 kinase（激酶）引起的异常 phosphorylation（磷酸化）），那么针对一种疾病的治疗也可能适用于另一种疾病。这一方法已被应用于疾病及其疾病模型的 genomic（基因组）、proteomic（蛋白质组）及其他 high-throughput（高通量）分子数据集，进而得到共享通路及其他机制的数据库，可用于寻找现有药物的潜在新用途。类似地，另一种方法是将 small molecules（小分子）或药物作为 perturbagens（扰动因子），通过干预细胞间过程，测量其在特定细胞系或生物体中给药后诱导的分子变化；这些变化可能包括 transcriptome（转录组）基因表达的改变。此类高通量筛选可以提供关于疾病与潜在治疗之间相似机制的线索。Broad Institute 托管的 Drug Repurposing Hub 就是这样一个资源，可用于获取大量药物筛选数据，这些数据量化了药物对分子的影响，并可与患者特异性或其他 transcriptomic（转录组）数据集进行比较（Corsello et al. 2017）。据本文写作时统计，Drug Repurposing Hub 中有 6125 种经实验验证、可供分析的化合物。\n\n## 从 -omics 数据开发临床标志物\n\ngenomic、proteomic 和 metabolomic（代谢组）技术推动了 molecular marker（分子标志物）技术的发展，这些技术能够识别未诊断的疾病状态或患者的治疗路径。这些标志物可以包括 genetic variants（遗传变异）、表达的 transcripts（转录本）、proteins（蛋白质）或蛋白片段、metabolites（代谢物），甚至是来自 human microbiota（人体微生物群，见第 16 章）的特定微生物。例如，Clinical Proteomic Tumor Analysis Consortium（CPTAC，临床蛋白质组肿瘤分析联盟）（Edwards et al. 2015）是一个由 NIH 资助的联盟，正在开发技术和数据，以便快速且低成本地发现癌症中的 proteomic biomarkers（蛋白质组生物标志物），用于早期检测、诊断和治疗。疾病标志物可以从任何通过生化方法测得的特征中开发出来，并可与诊断或治疗结局相关联。方框 17.3 给出了一个例子，重点讨论 biological aging（生物学衰老）标志物的描述。\n\n## 方框 17.3 衰老标志物\n\n研究者们毕生致力于理解人类和模式生物衰老的基本机制。寻找人类衰老标志物至今仍被视为生物学和医学中的重大挑战。高通量研究已利用 transcriptomes（转录组）、proteomes（蛋白质组）、genetics（遗传学）、epigenetics（表观遗传学）和 metabolomics 来寻找衰老风险因素。\n\n标志物 1：telomeres（端粒）。telomeric repeats（端粒重复序列）构成染色体末端，其长度会随着细胞分裂而缩短。telomerase protein（端粒酶蛋白）可延长这些重复序列，而重复序列的缩短或完全丢失与 apoptosis（细胞凋亡）或 senescence（细胞衰老）相关。端粒缩短与衰老有关，而端粒缩短的增强（例如由功能失调的 mutant telomerase（突变端粒酶）导致）与衰老表型相关（Aubert and Lansdorp 2008）。\n\n标志物 2：DNA methylation（DNA 甲基化）。近年来，高通量测量 epigenetic DNA methylation 位点（5-methylcytosine，5-甲基胞嘧啶）已被发现可作为衰老标志物。在衰老 fibroblasts（成纤维细胞）中，DNA 甲基化水平会随年龄增长而下降，而永生化细胞则维持稳定的甲基化水平（Wilson and Jones 1983）。这一发现后来又得到了对 55 至 92 岁老年受试者衰老队列研究的支持（Bollati et al. 2009）。\n\n## 异质数据源的整合\n\n近年来，人们越来越关注将多个数据集整合在一起，以改善对患者表型的描述（Murdoch and Detsky 2013）。这些数据包括 behavioral datasets（行为数据集），例如主动或被动 mobile health（mHealth，移动健康）数据集、社交媒体数据、遗传数据、环境暴露数据、通过问卷工具生成的 patient-reported outcome measures（PROMs，患者报告结局指标），或其他患者报告数据（例如由患者提供的图像）。作为一个相关例子，可穿戴传感器可用于向 bipolar disorder（双相情感障碍）患者提供“早期预警”（Prociow et al. 2012）。此外，数据整合还带来了一些近期成功案例，例如利用手机使用情况预测行为（Prociow et al. 2012）、从社交媒体数据中识别 adverse drug events（ADEs，药物不良事件）（Nikfarjam et al. 2015），以及根据遗传变异和社区条件预测 cardiac arrest（心脏骤停）发生率（Mooney et al. 2016a）。可以预期，医学相关数据集的整合将继续提高我们检测健康风险的能力，并通过更好地描述患者表型及其环境，更准确地描述结局。\n\n## 精准医学计划\n\n已发表的临床研究通常计算在人类总体人群中观察到的平均效应。这些效应与在该人群中随机选取的个体或某一门诊单个患者中可能观察到的效应并不相同。这里面很可能存在 ethnic（族群）和其他遗传差异、socioeconomic status（社会经济地位）差异、lifestyle（生活方式）差异、risk profile（风险谱）差异等（例如 chronic kidney disease（慢性肾病）中的患者多样性；Norris and Nissenson 2008）。例如，遗传相似性会按出生地或 ancestry（祖源）聚类，却与 race（种族）聚类得很差（Jorde and Wooding 2004）。所有患者都是不同的，而我们才刚刚开始学习如何针对个体进行个体化治疗（“N of 1” 问题）。到此时应该已经很明显了：以数据驱动的方式，将基于人群的临床知识转化为针对个体患者的实践，是很困难的（Hamburg and Collins 2010）。\n\n为了更好地评估这种转化潜力，目前正招募大规模志愿者队列参与研究，用于评估一般性的人群风险因素等目标。其中一个例子是 NIH 的 All of Us 项目，该项目目前正在美国推进，目标是招募 100 万名志愿者，愿意提供其临床、遗传、\n\nmHealth（移动健康）数据、PROMs、biometric（生物测量）以及其他相关临床数据（Ashley 2015）。All of Us 倡议有望为疾病风险因素提供重要新见解，也会让我们更深入地了解利用临床研究开发的干预措施之结局。All of Us 正将自己定位为开放科学和数据共享的范例，使数据科学家能够接触到比以往任何研究都更丰富的数据，并在此过程中把一系列新挑战带到前台（Adams and Petersen 2016）。预计 genome sequences（基因组序列）将成为这一研究平台的核心组成部分。其他倡议还包括 Institute of Systems Biology 的 P4 Medicine（Flores et al. 2013），以及 Geisinger Health System 的 MyCode 和 Vanderbilt University 的 BioVU 等 biobanks 的建设（Carey et al. 2016；Cronin et al. 2014）。\n\n## 社区挑战以协作方式解决创新问题\n\n解决转化信息学中困难问题的一种方法，是动员“citizen scientists（公民科学家）”群体，提出独特而新颖的解决方案（Saez-Rodriguez et al. 2016）。在信息学领域，已经形成了一个数据挑战生态系统。这些挑战通常是公开的，所有参与者均可参加。这一社区最初源自 Critical Assessment of Structure Prediction（CASP）（Moult et al. 2011），这是对预测 macromolecular structures（大分子结构）最佳方法进行的双年度、无偏评估。此后，又出现了许多其他“critical assessments（关键评测）”，以及其他组织发起的挑战，例如 DREAM challenges（Jarchum and Jones 2015），甚至还有专门举办挑战赛的营利性公司（如 Kaggle）。挑战赛是激发新方法和创新、建立协作关系并以无偏方式评估方法学的绝佳途径。如今，挑战赛的范围包括开发新的生物信息学分析工具、临床决策支持方法，以及 NLP（natural language processing，自然语言处理）和 genomics（基因组学）方法等。其中一个值得注意的挑战系列是定期举行的 Critical Assessment of Genome Interpretation（CAGI），其目标是评估从人类遗传序列推断表型的工具。方框 17.4 给出了一个使用个人基因组数据的 CAGI whole genome prediction challenge（全基因组预测挑战）示例。\n\n## 方框 17.4 CAGI Personal Genome Project 社区挑战\n\nPersonal Genome Project（PGP，个人基因组计划）（Ball et al. 2014）旨在促进对人类基因组的研究，并鼓励采用“open consent（开放同意）”的个人参与。开放同意允许将个人基因组、性状和其他信息用于一般性研究。PGP 会招募参与者，要求其签署开放同意，填写详细的健康调查问卷，采集 DNA 样本，然后对其基因组进行测序并发布。Critical Assessment of Genome Interpretation（CAGI）的组织者认为，这为评估消费级基因检测及其他方法能否直接从基因组序列预测性状提供了一个机会，于是 PGP 挑战赛应运而生。2010 年，这项挑战很简单：发布前 10 个 PGP 基因组时不附带健康调查数据，以此挑战方法开发者。开发者随后尝试根据这些序列预测二元性状和数值性状。待预测结果收集完成后，再公开健康调查，并评估预测准确性。随后，在 2010 年至 2016 年间，又举办了另外两次 PGP 挑战，要求开发者仅将已知的性状谱（同样源自健康调查）与某个基因组进行匹配。性状谱列表中包含许多诱饵，使匹配更加困难。来自全球的多个团队提交了预测结果。三次挑战使人们获得了许多经验教训（图 17.2）。第一，将一个个体的完整性状谱与某个基因组进行匹配是一个极具挑战性的问题，表现最好的方法也只能匹配大约 20% 的基因组—性状谱配对。第二，单个性状极难预测，有时甚至仅仅判断某个性状在群体中有多常见都很困难。不过，随着时间推移，这些挑战赛的准确性还是有所提高。\n\n## 电子健康记录系统可以被定制\n\n转化医学的目标之一，是将新的研究发现转化或实施到临床实践中。传统上，电子病历系统很难针对特定临床场所进行工程化和定制。EHR 系统内置了扩展和决策支持机制，例如基于规则的患者照护提供者提醒。提醒可以被定制为在系统内发生某些定义事件时触发，而触发提醒的规则也可以定制，用于支持对潜在药物相互作用的通知、实验室检测或操作的提醒、pharmacogenetics（药物遗传学）适应证等（Nishimura et al. 2015）。例如，pharmacogenetic alerts（药物遗传学提醒）可以借助遗传数据促进个体化给药，而且开处方医生认为这类提醒具有优势（Overby et al. 2015）。然而，EHR 系统中提醒过于频繁会导致“alert fatigue（提醒疲劳）”，即医疗服务提供者开始忽视提醒，尤其是在提醒内容显而易见或属于假阳性操作时。近年来，EHR 系统变得更加可定制，并且可以通过标准 application programming interfaces（APIs，应用程序编程接口）实现标准化，从而在不同系统供应商之间具有互操作性。使用最广泛的标准是 Fast Healthcare Interoperability Resources（FHIR，读作“fire”）（Mandel et al. 2016），这是一项用于扩展 EHR 的通信与数据标准。FHIR 还可借助 Substitutable Medical Apps and Reusable Technologies（SMARTs）进行增强，从而支持构建利用 FHIR APIs 的新型应用（例如移动应用）（Bloomfield et al. 2017）。尽管 “SMART On FHIR” 仍在开发中，但它建立在 HL7 communication\n\n## 图 17.2\n\nCAGI PGP 2015 匹配挑战中五个提交结果的 receiver operating characteristic（ROC，受试者工作特征）曲线。挑战开发者提交了基因组健康谱匹配概率，并据此与实际已知的 genotype–phenotype pairs（基因型–表型配对）进行比较。AUC 为曲线下面积。详见 Cai et al. (2017)。", "source_html": "<p style=\"color:var(--muted);font-style:italic\">源文暂缺。</p>", "trans_html": "<h2>Ch17 Translational Bioinformatics / Informatics and Precision Medicine</h2>\n<h2>信息学与精准医学</h2>\n<h3>描述患者表型</h3>\n<p>讽刺的是，EHR（electronic health record，电子健康记录）数据并不一定是为了准确描述患者表型而收集的，这意味着它们在推动人类疾病研究方面是被低估、甚至被完全错过的一类机会（Jensen et al. 2012）。其原因很复杂。首先，健康记录常被用于计费、管理和跟踪医嘱，以及记录患者就诊过程中发生的事件。然而，表型数据的收集可能跨越多次就诊，而持续存在的问题未必会在某一次具体就诊中被提及；例如，一位患有 lupus（系统性红斑狼疮）的患者可能因季节性感冒在门诊接受治疗，但该次就诊记录中并不会提到 lupus。其次，即使记录中存在某种表型信息，也可能很难判断其状态。例如，某种癌症的诊断计费代码只能说明与癌症有关，但不能明确该患者是接受过癌症检测、曾患癌症且已缓解、仍有活动性癌症，还是正在被诊断为癌症。此外，tobacco use（吸烟）、alcohol use（饮酒）及其他行为等暴露因素，可能根本不会被编码进记录中。方框 17.2 给出了一个例子，说明如何将表型良好的患者与遗传学整合起来，从而发现新的关联。</p>\n<h3>方框 17.2 关联临床表型与变异：PheWAS 方法</h3>\n<p>biobanks（生物样本库）作为精准医学项目的一部分，在学术医疗中心中日益流行。这些资源通常包含一群已同意参与研究或已去标识化的患者（即已授权将其数据和样本用于一般性研究），以及血液和临床健康记录数据。如果其中许多患者已经完成 genotyping（基因分型）或 sequencing（测序），就可以在该人群中发现 traits（由健康记录定义的性状，即表型）与 variants（变异）之间的关联。Vanderbilt University 通过建立 BioVU（一个 DNA 生物样本库）实现了这一点。在 BioVU 中，对数千名患者进行基因分型被用作将 variants 与其病历中的 ICD 诊断代码建立关联的第一步。由此，七种表型得到了先前 genome-wide association studies（GWAS，全基因组关联研究）的重复验证（Denny et al. 2010）：atrial fibrillation（房颤）、Crohn disease（克罗恩病）、carotid artery stenosis（颈动脉狭窄）、coronary artery disease（冠状动脉疾病）、multiple sclerosis（多发性硬化）、systemic lupus erythematosus（系统性红斑狼疮）以及 rheumatoid arthritis（类风湿性关节炎）。此后，又开展了许多其他研究，用以发现有潜力改善健康结局的新关系。</p>\n<h3>药物再利用</h3>\n<p>信息学方法使我们能够基于共享机制，提出对既往已批准药物的新用途设想（Dudley et al. 2011）。例如，thalidomide（沙利度胺）曾被批准为镇静药，并用于治疗 leprosy（麻风病）（Laffitte and Revuz 2004）；之后它被重新定位并于 2012 年获批用于治疗 multiple myeloma（多发性骨髓瘤）。如果两种疾病共享某种共同机制（例如由特定 kinase（激酶）引起的异常 phosphorylation（磷酸化）），那么针对一种疾病的治疗也可能适用于另一种疾病。这一方法已被应用于疾病及其疾病模型的 genomic（基因组）、proteomic（蛋白质组）及其他 high-throughput（高通量）分子数据集，进而得到共享通路及其他机制的数据库，可用于寻找现有药物的潜在新用途。类似地，另一种方法是将 small molecules（小分子）或药物作为 perturbagens（扰动因子），通过干预细胞间过程，测量其在特定细胞系或生物体中给药后诱导的分子变化；这些变化可能包括 transcriptome（转录组）基因表达的改变。此类高通量筛选可以提供关于疾病与潜在治疗之间相似机制的线索。Broad Institute 托管的 Drug Repurposing Hub 就是这样一个资源，可用于获取大量药物筛选数据，这些数据量化了药物对分子的影响，并可与患者特异性或其他 transcriptomic（转录组）数据集进行比较（Corsello et al. 2017）。据本文写作时统计，Drug Repurposing Hub 中有 6125 种经实验验证、可供分析的化合物。</p>\n<h3>从 -omics 数据开发临床标志物</h3>\n<p>genomic、proteomic 和 metabolomic（代谢组）技术推动了 molecular marker（分子标志物）技术的发展，这些技术能够识别未诊断的疾病状态或患者的治疗路径。这些标志物可以包括 genetic variants（遗传变异）、表达的 transcripts（转录本）、proteins（蛋白质）或蛋白片段、metabolites（代谢物），甚至是来自 human microbiota（人体微生物群，见第 16 章）的特定微生物。例如，Clinical Proteomic Tumor Analysis Consortium（CPTAC，临床蛋白质组肿瘤分析联盟）（Edwards et al. 2015）是一个由 NIH 资助的联盟，正在开发技术和数据，以便快速且低成本地发现癌症中的 proteomic biomarkers（蛋白质组生物标志物），用于早期检测、诊断和治疗。疾病标志物可以从任何通过生化方法测得的特征中开发出来，并可与诊断或治疗结局相关联。方框 17.3 给出了一个例子，重点讨论 biological aging（生物学衰老）标志物的描述。</p>\n<h3>方框 17.3 衰老标志物</h3>\n<p>研究者们毕生致力于理解人类和模式生物衰老的基本机制。寻找人类衰老标志物至今仍被视为生物学和医学中的重大挑战。高通量研究已利用 transcriptomes（转录组）、proteomes（蛋白质组）、genetics（遗传学）、epigenetics（表观遗传学）和 metabolomics 来寻找衰老风险因素。</p>\n<p>标志物 1：telomeres（端粒）。telomeric repeats（端粒重复序列）构成染色体末端，其长度会随着细胞分裂而缩短。telomerase protein（端粒酶蛋白）可延长这些重复序列，而重复序列的缩短或完全丢失与 apoptosis（细胞凋亡）或 senescence（细胞衰老）相关。端粒缩短与衰老有关，而端粒缩短的增强（例如由功能失调的 mutant telomerase（突变端粒酶）导致）与衰老表型相关（Aubert and Lansdorp 2008）。</p>\n<p>标志物 2：DNA methylation（DNA 甲基化）。近年来，高通量测量 epigenetic DNA methylation 位点（5-methylcytosine，5-甲基胞嘧啶）已被发现可作为衰老标志物。在衰老 fibroblasts（成纤维细胞）中，DNA 甲基化水平会随年龄增长而下降，而永生化细胞则维持稳定的甲基化水平（Wilson and Jones 1983）。这一发现后来又得到了对 55 至 92 岁老年受试者衰老队列研究的支持（Bollati et al. 2009）。</p>\n<h3>异质数据源的整合</h3>\n<p>近年来，人们越来越关注将多个数据集整合在一起，以改善对患者表型的描述（Murdoch and Detsky 2013）。这些数据包括 behavioral datasets（行为数据集），例如主动或被动 mobile health（mHealth，移动健康）数据集、社交媒体数据、遗传数据、环境暴露数据、通过问卷工具生成的 patient-reported outcome measures（PROMs，患者报告结局指标），或其他患者报告数据（例如由患者提供的图像）。作为一个相关例子，可穿戴传感器可用于向 bipolar disorder（双相情感障碍）患者提供“早期预警”（Prociow et al. 2012）。此外，数据整合还带来了一些近期成功案例，例如利用手机使用情况预测行为（Prociow et al. 2012）、从社交媒体数据中识别 adverse drug events（ADEs，药物不良事件）（Nikfarjam et al. 2015），以及根据遗传变异和社区条件预测 cardiac arrest（心脏骤停）发生率（Mooney et al. 2016a）。可以预期，医学相关数据集的整合将继续提高我们检测健康风险的能力，并通过更好地描述患者表型及其环境，更准确地描述结局。</p>\n<h3>精准医学计划</h3>\n<p>已发表的临床研究通常计算在人类总体人群中观察到的平均效应。这些效应与在该人群中随机选取的个体或某一门诊单个患者中可能观察到的效应并不相同。这里面很可能存在 ethnic（族群）和其他遗传差异、socioeconomic status（社会经济地位）差异、lifestyle（生活方式）差异、risk profile（风险谱）差异等（例如 chronic kidney disease（慢性肾病）中的患者多样性；Norris and Nissenson 2008）。例如，遗传相似性会按出生地或 ancestry（祖源）聚类，却与 race（种族）聚类得很差（Jorde and Wooding 2004）。所有患者都是不同的，而我们才刚刚开始学习如何针对个体进行个体化治疗（“N of 1” 问题）。到此时应该已经很明显了：以数据驱动的方式，将基于人群的临床知识转化为针对个体患者的实践，是很困难的（Hamburg and Collins 2010）。</p>\n<p>为了更好地评估这种转化潜力，目前正招募大规模志愿者队列参与研究，用于评估一般性的人群风险因素等目标。其中一个例子是 NIH 的 All of Us 项目，该项目目前正在美国推进，目标是招募 100 万名志愿者，愿意提供其临床、遗传、</p>\n<p>mHealth（移动健康）数据、PROMs、biometric（生物测量）以及其他相关临床数据（Ashley 2015）。All of Us 倡议有望为疾病风险因素提供重要新见解，也会让我们更深入地了解利用临床研究开发的干预措施之结局。All of Us 正将自己定位为开放科学和数据共享的范例，使数据科学家能够接触到比以往任何研究都更丰富的数据，并在此过程中把一系列新挑战带到前台（Adams and Petersen 2016）。预计 genome sequences（基因组序列）将成为这一研究平台的核心组成部分。其他倡议还包括 Institute of Systems Biology 的 P4 Medicine（Flores et al. 2013），以及 Geisinger Health System 的 MyCode 和 Vanderbilt University 的 BioVU 等 biobanks 的建设（Carey et al. 2016；Cronin et al. 2014）。</p>\n<h3>社区挑战以协作方式解决创新问题</h3>\n<p>解决转化信息学中困难问题的一种方法，是动员“citizen scientists（公民科学家）”群体，提出独特而新颖的解决方案（Saez-Rodriguez et al. 2016）。在信息学领域，已经形成了一个数据挑战生态系统。这些挑战通常是公开的，所有参与者均可参加。这一社区最初源自 Critical Assessment of Structure Prediction（CASP）（Moult et al. 2011），这是对预测 macromolecular structures（大分子结构）最佳方法进行的双年度、无偏评估。此后，又出现了许多其他“critical assessments（关键评测）”，以及其他组织发起的挑战，例如 DREAM challenges（Jarchum and Jones 2015），甚至还有专门举办挑战赛的营利性公司（如 Kaggle）。挑战赛是激发新方法和创新、建立协作关系并以无偏方式评估方法学的绝佳途径。如今，挑战赛的范围包括开发新的生物信息学分析工具、临床决策支持方法，以及 NLP（natural language processing，自然语言处理）和 genomics（基因组学）方法等。其中一个值得注意的挑战系列是定期举行的 Critical Assessment of Genome Interpretation（CAGI），其目标是评估从人类遗传序列推断表型的工具。方框 17.4 给出了一个使用个人基因组数据的 CAGI whole genome prediction challenge（全基因组预测挑战）示例。</p>\n<h3>方框 17.4 CAGI Personal Genome Project 社区挑战</h3>\n<p>Personal Genome Project（PGP，个人基因组计划）（Ball et al. 2014）旨在促进对人类基因组的研究，并鼓励采用“open consent（开放同意）”的个人参与。开放同意允许将个人基因组、性状和其他信息用于一般性研究。PGP 会招募参与者，要求其签署开放同意，填写详细的健康调查问卷，采集 DNA 样本，然后对其基因组进行测序并发布。Critical Assessment of Genome Interpretation（CAGI）的组织者认为，这为评估消费级基因检测及其他方法能否直接从基因组序列预测性状提供了一个机会，于是 PGP 挑战赛应运而生。2010 年，这项挑战很简单：发布前 10 个 PGP 基因组时不附带健康调查数据，以此挑战方法开发者。开发者随后尝试根据这些序列预测二元性状和数值性状。待预测结果收集完成后，再公开健康调查，并评估预测准确性。随后，在 2010 年至 2016 年间，又举办了另外两次 PGP 挑战，要求开发者仅将已知的性状谱（同样源自健康调查）与某个基因组进行匹配。性状谱列表中包含许多诱饵，使匹配更加困难。来自全球的多个团队提交了预测结果。三次挑战使人们获得了许多经验教训（图 17.2）。第一，将一个个体的完整性状谱与某个基因组进行匹配是一个极具挑战性的问题，表现最好的方法也只能匹配大约 20% 的基因组—性状谱配对。第二，单个性状极难预测，有时甚至仅仅判断某个性状在群体中有多常见都很困难。不过，随着时间推移，这些挑战赛的准确性还是有所提高。</p>\n<h3>电子健康记录系统可以被定制</h3>\n<p>转化医学的目标之一，是将新的研究发现转化或实施到临床实践中。传统上，电子病历系统很难针对特定临床场所进行工程化和定制。EHR 系统内置了扩展和决策支持机制，例如基于规则的患者照护提供者提醒。提醒可以被定制为在系统内发生某些定义事件时触发，而触发提醒的规则也可以定制，用于支持对潜在药物相互作用的通知、实验室检测或操作的提醒、pharmacogenetics（药物遗传学）适应证等（Nishimura et al. 2015）。例如，pharmacogenetic alerts（药物遗传学提醒）可以借助遗传数据促进个体化给药，而且开处方医生认为这类提醒具有优势（Overby et al. 2015）。然而，EHR 系统中提醒过于频繁会导致“alert fatigue（提醒疲劳）”，即医疗服务提供者开始忽视提醒，尤其是在提醒内容显而易见或属于假阳性操作时。近年来，EHR 系统变得更加可定制，并且可以通过标准 application programming interfaces（APIs，应用程序编程接口）实现标准化，从而在不同系统供应商之间具有互操作性。使用最广泛的标准是 Fast Healthcare Interoperability Resources（FHIR，读作“fire”）（Mandel et al. 2016），这是一项用于扩展 EHR 的通信与数据标准。FHIR 还可借助 Substitutable Medical Apps and Reusable Technologies（SMARTs）进行增强，从而支持构建利用 FHIR APIs 的新型应用（例如移动应用）（Bloomfield et al. 2017）。尽管 “SMART On FHIR” 仍在开发中，但它建立在 HL7 communication</p>\n<h3>图 17.2</h3>\n<p>CAGI PGP 2015 匹配挑战中五个提交结果的 receiver operating characteristic（ROC，受试者工作特征）曲线。挑战开发者提交了基因组健康谱匹配概率，并据此与实际已知的 genotype–phenotype pairs（基因型–表型配对）进行比较。AUC 为曲线下面积。详见 Cai et al. (2017)。</p>", "terms": []}, {"id": "sec-151", "title": "Ethical, Legal, and Social Implications of Translational Medicine", "source_md": "", "trans_md": "# Ch17 Translational Bioinformatics / Ethical, Legal, and Social Implications of Translational Medicine\n\n## Ethical, Legal, and Social Implications of Translational Medicine\n\n……用于通过互联网传递临床数据的标准，并且正在获得广泛支持。SMART On FHIR 代表了转化信息学的一次巨大飞跃，因为它显著开放了健康记录系统扩展功能之间的互操作性。\n\n## 预防政策的信息学\n\n尽管转化信息学领域的大量工作集中在临床应用上，生物医学信息学同样有潜力为政策制定提供依据，尤其是在预防方面。例如，研究人员曾利用 EHRs 高效研究特定药物所指示的碰撞风险升高（Rudisill et al. 2016）。更广泛地说，部署新型信息采集设备（例如，将空气质量监测器安装在公共交通车辆上，以提供城市化区域中实时、空间细节丰富的空气污染估计；Devarakonda et al. 2013），以及重新利用最初并非为健康目的而采集的信息（Hipp et al. 2013; Lovasi et al. 2013; Mooney et al. 2016b）——即所谓“effluent data”（排出数据或副产数据）（Mooney and Pejaver 2017）——已经成为现代公共卫生信息学研究的重要支柱（Eysenbach 2009; Lazer et al. 2014; Santillana et al. 2014）。\n\n## 转化医学的伦理、法律与社会影响\n\n由于转化生物信息学研究的方法和结果可能直接影响患者照护，当前人们对这一领域工作所引发的伦理、法律与社会影响（ethical, legal, and social implications, ELSI）问题产生了更大兴趣。这些问题在人类基因组测序的背景下已有大量讨论（Collins 1999），但在转化医学的背景下同样重要。本章并不旨在为读者提供关于 ELSI 的完整背景知识，而是强调：在使用基因组学数据开发能够直接转化到患者照护中的方法时，必须格外谨慎。关于 ELSI 对基因组学影响的更完整讨论，读者可参考若干优秀综述（Oliver and McGuire 2011; Callier et al. 2016）。\n\n在发布新方法时，即使该方法仅用于研究目的，也应考虑一系列问题。这包括任何新方法会对患者或医疗服务提供者产生什么影响，以及此类工具是否可能带来非预期后果。如果该方法在临床中被误用，是否可能因其使用而对患者造成伤害？例如，假阳性会带来哪些风险？最后，还存在潜在的监管问题；这些问题在不同国家之间可能有所不同，并会影响新临床方法的部署，或影响临床结果向患者反馈的方式。\n\n## 保护患者隐私\n\n在对来源于患者的数据开展研究时，一个主要困难是保护患者、研究参与者及其家庭成员的隐私。开展研究时，通常会移除患者标识符；这些标识符包括患者姓名、美国社会安全号码（U.S. Social Security number）、病历号、地址、电话号码以及类似个人数据。在美国，1996 年《健康保险可携性与责任法案》（Health Insurance Portability and Accountability Act, HIPAA）定义了 18 类可从数据集中剥离的标识符，用于去除直接患者身份识别信息；这类数据集被称为“limited”（有限数据集）。在有限数据集基础上，可以通过进一步匿名化创建去标识化数据集，包括随机平移服务日期，或进行其他转换以模糊数据，使人难以直接重新识别这些数据最初来源于哪位患者。（需要注意的是，机构政策、人体受试者研究合规规定以及具体法律在去标识化方法上可能存在差异。）每一位研究者都有责任确保患者保密性得到维护；这包括保障信息安全、不尝试重新识别患者，以及在访问数据时采用“honest broker”（诚实中介）方法。（诚实中介是独立人员，他们只向已经获得 Institutional Review Board，即机构审查委员会批准的研究提供数据。）", "source_html": "<p style=\"color:var(--muted);font-style:italic\">源文暂缺。</p>", "trans_html": "<h2>Ch17 Translational Bioinformatics / Ethical, Legal, and Social Implications of Translational Medicine</h2>\n<h3>Ethical, Legal, and Social Implications of Translational Medicine</h3>\n<p>……用于通过互联网传递临床数据的标准，并且正在获得广泛支持。SMART On FHIR 代表了转化信息学的一次巨大飞跃，因为它显著开放了健康记录系统扩展功能之间的互操作性。</p>\n<h3>预防政策的信息学</h3>\n<p>尽管转化信息学领域的大量工作集中在临床应用上，生物医学信息学同样有潜力为政策制定提供依据，尤其是在预防方面。例如，研究人员曾利用 EHRs 高效研究特定药物所指示的碰撞风险升高（Rudisill et al. 2016）。更广泛地说，部署新型信息采集设备（例如，将空气质量监测器安装在公共交通车辆上，以提供城市化区域中实时、空间细节丰富的空气污染估计；Devarakonda et al. 2013），以及重新利用最初并非为健康目的而采集的信息（Hipp et al. 2013; Lovasi et al. 2013; Mooney et al. 2016b）——即所谓“effluent data”（排出数据或副产数据）（Mooney and Pejaver 2017）——已经成为现代公共卫生信息学研究的重要支柱（Eysenbach 2009; Lazer et al. 2014; Santillana et al. 2014）。</p>\n<h3>转化医学的伦理、法律与社会影响</h3>\n<p>由于转化生物信息学研究的方法和结果可能直接影响患者照护，当前人们对这一领域工作所引发的伦理、法律与社会影响（ethical, legal, and social implications, ELSI）问题产生了更大兴趣。这些问题在人类基因组测序的背景下已有大量讨论（Collins 1999），但在转化医学的背景下同样重要。本章并不旨在为读者提供关于 ELSI 的完整背景知识，而是强调：在使用基因组学数据开发能够直接转化到患者照护中的方法时，必须格外谨慎。关于 ELSI 对基因组学影响的更完整讨论，读者可参考若干优秀综述（Oliver and McGuire 2011; Callier et al. 2016）。</p>\n<p>在发布新方法时，即使该方法仅用于研究目的，也应考虑一系列问题。这包括任何新方法会对患者或医疗服务提供者产生什么影响，以及此类工具是否可能带来非预期后果。如果该方法在临床中被误用，是否可能因其使用而对患者造成伤害？例如，假阳性会带来哪些风险？最后，还存在潜在的监管问题；这些问题在不同国家之间可能有所不同，并会影响新临床方法的部署，或影响临床结果向患者反馈的方式。</p>\n<h3>保护患者隐私</h3>\n<p>在对来源于患者的数据开展研究时，一个主要困难是保护患者、研究参与者及其家庭成员的隐私。开展研究时，通常会移除患者标识符；这些标识符包括患者姓名、美国社会安全号码（U.S. Social Security number）、病历号、地址、电话号码以及类似个人数据。在美国，1996 年《健康保险可携性与责任法案》（Health Insurance Portability and Accountability Act, HIPAA）定义了 18 类可从数据集中剥离的标识符，用于去除直接患者身份识别信息；这类数据集被称为“limited”（有限数据集）。在有限数据集基础上，可以通过进一步匿名化创建去标识化数据集，包括随机平移服务日期，或进行其他转换以模糊数据，使人难以直接重新识别这些数据最初来源于哪位患者。（需要注意的是，机构政策、人体受试者研究合规规定以及具体法律在去标识化方法上可能存在差异。）每一位研究者都有责任确保患者保密性得到维护；这包括保障信息安全、不尝试重新识别患者，以及在访问数据时采用“honest broker”（诚实中介）方法。（诚实中介是独立人员，他们只向已经获得 Institutional Review Board，即机构审查委员会批准的研究提供数据。）</p>", "terms": []}, {"id": "sec-152", "title": "Summary + Internet Resources + References", "source_md": "", "trans_md": "# Ch17 Translational Bioinformatics / Summary + Internet Resources + References\n\n## Summary\n\n转化生物信息学（translational bioinformatics）的未来十分光明，并且仍将持续发展。随着我们通过高通量实验不断加深对疾病成因的认识，我们开始发展用于早期检测和诊断的新方法、新的干预手段，以及将结果反馈给患者的新工具。我们已经非常擅长在临床中进行基因组测序和解读。这推动了许多工具的发展，用于预测和优先排序致病性或功能性变异以及疾病相关基因。通过将我们丰富的遗传学知识与基于 EHRs（electronic health records，电子健康记录）、行为数据、患者报告数据等构建的新型复杂患者表型模型相连接，我们已经开始更好地建立基因型与表型之间的联系。这项工作推动了围绕患者数据计算的大量活动。一些新兴项目包括药物再利用（drug repurposing）工作、社区挑战赛与开放科学，以及有用的临床标志物发现。\n\n此外，借助 EHR 系统中的新技术，例如标准 APIs，我们能够将这些发现实现为数据分析方法和推荐方法，并通过健康记录或依附于健康记录开发的应用程序，把相关信息呈现给患者或医疗服务提供者，从而直接影响临床照护。\n\n## Internet Resources\n\n| 资源 | 说明 | URL |\n| --- | --- | --- |\n| Kaggle | 一个用于举办社区挑战赛的营利性网站 | Kaggle.com |\n| Promethease | 一种根据遗传数据预测表型的方法 | www.snpedia.com/index.php/Promethease |\n\n## References\n\nAdams, S.A. and Petersen, C. (2016). Precision medicine: opportunities, possibilities, and\nchallenges for patients and providers. J. Am. Med. Inf. Assoc. 23 (4): 787–790.\n\nAdzhubei, I., Jordan, D.M., and Sunyaev, S.R. (2013). Predicting functional effect of human\nmissense mutations using PolyPhen-2. Curr. Protoc. Hum. Genet. 76: 7.20.1–7.20.41.\n\nAnonymous (1996). Revisions of the International classification of diseases (ICD-9 and ICD-10):\nimpact on health statistics. Epidemiol. Bull. 17 (2): 1–5.\n\nAshley, E.A. (2015). The precision medicine initiative: a new national effort. JAMA 313 (21):\n2119–2120.\n\nAubert, G. and Lansdorp, P.M. (2008). Telomeres and aging. Physiol. Rev. 88 (2): 557–579.\n\nBall, M.P., Bobe, J.R., Chou, M.F. et al. (2014). Harvard personal genome project: lessons from\nparticipatory public research. Genome Med. 6 (2): 10.\n\nBloomfield, R.A. Jr., Polo-Wood, F., Mandel, J.C., and Mandl, K.D. (2017). Opening the Duke\nelectronic health record to apps: implementing SMART on FHIR. Int. J. Med. Inf. 99: 1–10.\n\nBollati, V., Schwartz, J., Wright, R. et al. (2009). Decline in genomic DNA methylation through\naging in a cohort of elderly subjects. Mech. Ageing Dev. 130 (4): 234–239.\n\nBoycott, K.M., Vanstone, M.R., Bulman, D.E., and MacKenzie, A.E. (2013). Rare-disease genetics\nin the era of next-generation sequencing: discovery to translation. Nat. Rev. Genet. 14 (10):\n681–691.\n\nBromberg, Y., Yachdav, G., and Rost, B. (2008). SNAP predicts effect of mutations on protein\nfunction. Bioinformatics 24 (20): 2397–2398.\n\nCai, B., Li, B., Kiga, N. et al. (2017). Matching phenotypes to whole genomes: lessons learned from\nfour iterations of the personal genome project community challenges. Hum. Mutat. 38 (9):\n1266–1276.\n\nCallier, S.L., Abudu, R., Mehlman, M.J. et al. (2016). Ethical, legal, and social implications of\npersonalized genomic medicine research: current literature and suggestions for the future.\nBioethics 30 (9): 698–705.\n\nCarey, D.J., Fetterolf, S.N., Davis, F.D. et al. (2016). The Geisinger MyCode community health\ninitiative: an electronic health record-linked biobank for precision medicine research. Genet.\nMed. 18 (9): 906–913.\n\nCariaso, M. and Lennon, G. (2012). SNPedia: a wiki supporting personal genome annotation,\ninterpretation and analysis. Nucleic Acids Res. 40 (Database issue): D1308–D1312.\n\nChiaramello, E., Pinciroli, F., Bonalumi, A. et al. (2016). Use of “off-the-shelf” information\nextraction algorithms in clinical informatics: a feasibility study of MetaMap annotation of\nItalian medical notes. J. Biomed. Inf. 63: 22–32.\n\nCollins, F.S. (1999). Shattuck Lecture – medical and societal consequences of the Human Genome\nProject. N. Engl. J. Med. 341 (1): 28–37.\n\nCollins, A., Lonjou, C., and Morton, N.E. (1999). Genetic epidemiology of single-nucleotide\npolymorphisms. Proc. Natl. Acad. Sci. U.S.A. 96 (26): 15173–15177.\n\nCooper, G.M. and Shendure, J. (2011). Needles in stacks of needles: finding disease-causal variants\nin a wealth of genomic data. Nat. Rev. Genet. 12 (9): 628–640.\n\nCorsello, S.M., Bittker, J.A., Liu, Z. et al. (2017). The drug repurposing hub: a next-generation drug\nlibrary and information resource. Nat. Med. 23 (4): 405–408.\n\nCronin, R.M., Field, J.R., Bradford, Y. et al. (2014). Phenome-wide association studies\ndemonstrating pleiotropy of genetic variants within FTO with and without adjustment for body\nmass index. Front. Genet. 5: 250.\n\nDenny, J.C., Ritchie, M.D., Basford, M.A. et al. (2010). PheWAS: demonstrating the feasibility of a\nphenome-wide scan to discover gene-disease associations. Bioinformatics 26 (9): 1205–1210.\n\nDevarakonda, S., Sevusu, P., Liu, H. et al. (2013). Real-time air quality monitoring through mobile\nsensing in metropolitan areas. In: Proceedings of the 2nd ACM SIGKDD International Workshop\non Urban Computing, Chicago, IL (11 August 2013). New York, NY: ACM.\n\nDudley, J.T., Deshpande, T., and Butte, A.J. (2011). Exploiting drug-disease relationships for\ncomputational drug repositioning. Briefings Bioinf. 12 (4): 303–311.\n\nEdwards, N.J., Oberti, M., Thangudu, R.R. et al. (2015). The CPTAC data portal: a resource for\ncancer proteomics research. J. Proteome Res. 14 (6): 2707–2713.\n\nEysenbach, G. (2009). Infodemiology and infoveillance: framework for an emerging set of public\nhealth informatics methods to analyze search, communication and publication behavior on the\nInternet. J. Med. Internet Res. 11 (1): e11.\n\nFleurence, R.L., Curtis, L.H., Califf, R.M. et al. (2014). Launching PCORnet, a national\npatient-centered clinical research network. J. Am. Med. Inf. Assoc. 21 (4): 578–582.\n\nFlores, M., Glusman, G., Brogaard, K. et al. (2013). P4 medicine: how systems medicine will\ntransform the healthcare sector and society. Per. Med. 10 (6): 565–576.\n\nForbes, S.A., Beare, D., Boutselakis, H. et al. (2017). COSMIC: somatic cancer genetics at\nhigh-resolution. Nucleic Acids Res. 45 (Database issue): D777–D783.\n\nGini, R., Schuemie, M., Brown, J. et al. (2016). Data extraction and management in networks of\nobservational health care databases for scientific research: a comparison of EU-ADR, OMOP,\nmini-sentinel and MATRICE strategies. EGEMS (Wash DC) 4 (1): 1189.\n\nHamburg, M.A. and Collins, F.S. (2010). The path to personalized medicine. N. Engl. J. Med. 363\n(4): 301–304.\n\nHipp, J.A., Adlakha, D., Eyler, A.A. et al. (2013). Emerging technologies: webcams and\ncrowd-sourcing to identify active transportation. Am. J. Prev. Med. 44 (1): 96.\n\nIoannidis, N.M., Rothstein, J.H., Pejaver, V. et al. (2016). REVEL: an ensemble method for\npredicting the pathogenicity of rare missense variants. Am. J. Hum. Genet. 99 (4): 877–885.\n\nJarchum, I. and Jones, S. (2015). DREAMing of benchmarks. Nat. Biotechnol. 33 (1): 49–50.\n\nJensen, P.B., Jensen, L.J., and Brunak, S. (2012). Mining electronic health records: towards better\nresearch applications and clinical care. Nat. Rev. Genet. 13 (6): 395–405.\n\nJha, A.K., DesRoches, C.M., Campbell, E.G. et al. (2009). Use of electronic health records in U.S.\nhospitals. N. Engl. J. Med. 360 (16): 1628–1638.\n\nJorde, L.B. and Wooding, S.P. (2004). Genetic variation, classification and “race”. Nat. Genet. 36 (11\nSuppl): S28–S33.\n\nKohler, S., Vasilevsky, N.A., Engelstad, M. et al. (2017). The human phenotype ontology in 2017.\nNucleic Acids Res. 45 (D1): D865–D876.\n\nLaffitte, E. and Revuz, J. (2004). Thalidomide: an old drug with new clinical applications. Expert\nOpin. Drug Saf. 3 (1): 47–56.\n\nLandrum, M.J., Lee, J.M., Benson, M. et al. (2016). ClinVar: public archive of interpretations of\nclinically relevant variants. Nucleic Acids Res. 44 (D1): D862–D868.\n\nLazer, D., Kennedy, R., King, G., and Vespignani, A. (2014). The parable of Google Flu: traps in big\ndata analysis. Science 343 (6176): 1203–1205.\n\nLi, B., Krishnan, V.G., Mort, M.E. et al. (2009). Automated inference of molecular mechanisms of\ndisease from amino acid substitutions. Bioinformatics 25 (21): 2744–2750.\n\nLiu, X., Wu, C., Li, C., and Boerwinkle, E. (2016). dbNSFP v3.0: a one-stop database of functional\npredictions and annotations for human nonsynonymous and splice-site SNVs. Hum. Mutat. 37\n(3): 235–241.\n\nLovasi, G.S., O’Neil-Dunne, J.P., Lu, J.W. et al. (2013). Urban tree canopy and asthma, wheeze,\nrhinitis, and allergic sensitization to tree pollen in a New York City birth cohort. Environ.\nHealth Perspect. 121 (4): 494.\n\nLugo-Martinez, J., Pejaver, V., Pagel, K.A. et al. (2016). The loss and gain of functional amino acid\nresidues is a common mechanism causing human inherited disease. PLoS Comput. Biol. 12 (8):\ne1005091.\n\nMandel, J.C., Kreda, D.A., Mandl, K.D. et al. (2016). SMART on FHIR: a standards-based,\ninteroperable apps platform for electronic health records. J. Am. Med. Inf. Assoc. 23 (5): 899–908.\n\nMooney, S.D. and Klein, T.E. (2002). The functional importance of disease-associated mutation.\nBMC Bioinf. 3: 24.\n\nMooney, S.J. and Pejaver, V. (2017). Big data in public health: terminology, machine learning, and\nprivacy. Annu. Rev. Public Health 39: 95–112.\n\nMooney, S.J., Grady, S.T., Sotoodehnia, N. et al. (2016a). In the wrong place with the wrong SNP:\nthe association between stressful neighborhoods and cardiac arrest within Beta-2-adrenergic\nreceptor variants. Epidemiology 27 (5): 656–662.\n\nMooney, S.J., DiMaggio, C.J., Lovasi, G.S. et al. (2016b). Use of Google Street View to assess\nenvironmental contributions to pedestrian injury. Am. J. Public Health 106 (3): 462–469.\n\nMort, M., Sterne-Weiler, T., Li, B. et al. (2014). MutPred splice: machine learning-based prediction\nof exonic variants that disrupt splicing. Genome Biol. 15 (1): R19.\n\nMoult, J., Fidelis, K., Kryshtafovych, A., and Tramontano, A. (2011). Critical assessment of\nmethods of protein structure prediction (CASP)--round IX. Proteins 79 (Suppl 10): 1–5.\n\nMungall, C.J., McMurry, J.A., Köhler, S. et al. (2017). The Monarch initiative: an integrative data\nand analytic platform connecting phenotypes to genotypes across species. Nucleic Acids Res. 45\n(D1): D712–D722.\n\nMurdoch, T.B. and Detsky, A.S. (2013). The inevitable application of big data to health care. JAMA\n309 (13): 1351–1352.\n\nMusen, M.A., Noy, N.F., Shah, N.H. et al. (2012). The National Center for Biomedical Ontology. J.\nAm. Med. Inf. Assoc. 19 (2): 190–195.\n\nNg, P.C. and Henikoff, S. (2003). SIFT: predicting amino acid changes that affect protein function.\nNucleic Acids Res. 31 (13): 3812–3814.\n\nNikfarjam, A., Sarker, A., O’Connor, K. et al. (2015). Pharmacovigilance from social media:\nmining adverse drug reaction mentions using sequence labeling with word embedding cluster\nfeatures. J. Am. Med. Inf. Assoc. 22 (3): 671–681.\n\nNishimura, A.A., Shirts, B.H., Dorschner, M.O. et al. (2015). Development of clinical decision\nsupport alerts for pharmacogenomic incidental findings from exome sequencing. Genet. Med.\n17 (11): 939–942.\n\nNorris, K. and Nissenson, A.R. (2008). Race, gender, and socioeconomic disparities in CKD in the\nUnited States. J. Am. Soc. Nephrol. 19 (7): 1261–1270.\n\nOliver, J.M. and McGuire, A.L. (2011). Exploring the ELSI universe: critical issues in the evolution\nof human genomic research. Genome Med. 3 (6): 38.\n\nOverby, C.L., Devine, E.B., Abernethy, N. et al. (2015). Making pharmacogenomic-based\nprescribing alerts more effective: a scenario-based pilot study with physicians. J. Biomed. Inf. 55:\n249–259.\n\nPathak, J., Kho, A.N., and Denny, J.C. (2013). Electronic health records-driven phenotyping:\nchallenges, recent advances, and perspectives. J. Am. Med. Inf. Assoc. 20 (e2): e206–e211.\n\nProciow, P., Wac, K., and Crowe, J. (2012). Mobile psychiatry: towards improving the care for\nbipolar disorder. Int. J. Ment. Health Syst. 6 (1): 5.\n\nRadivojac, P., Peng, K., Clark, W.T. et al. (2008). An integrated approach to inferring gene-disease\nassociations in humans. Proteins 72 (3): 1030–1037.\n\nRadivojac, P., Clark, W.T., Oron, T.R. et al. (2013). A large-scale evaluation of computational\nprotein function prediction. Nat. Methods 10 (3): 221–227.\n\nRelling, M.V. and Klein, T.E. (2011). CPIC: clinical pharmacogenetics implementation consortium\nof the pharmacogenomics research network. Clin. Pharmacol. Ther. 89 (3): 464–467.\n\nRichards, S., Aziz, N., Bale, S. et al. (2015). Standards and guidelines for the interpretation of\nsequence variants: a joint consensus recommendation of the American College of Medical\nGenetics and Genomics and the Association for Molecular Pathology. Genet. Med. 17 (5):\n405–424.\n\nRitchie, G.R.S., Dunham, I., Zeggini, E., and Flicek, P. (2014). Functional annotation of noncoding\nsequence variants. Nat. Methods 11 (3): 294–296.\n\nRudisill, T.M., Zhu, M., Davidov, D. et al. (2016). Medication use and the risk of motor vehicle\ncollision in West Virginia drivers 65 years of age and older: a case-crossover study. BMC Res.\nNotes 9: 166.\n\nSaez-Rodriguez, J., Costello, J.C., Friend, S.H. et al. (2016). Crowdsourcing biomedical research:\nleveraging communities as innovation engines. Nat. Rev. Genet. 17 (8): 470–486.\n\nSantillana, M., Zhang, D.W., Althouse, B.M., and Ayers, J.W. (2014). What can digital disease\ndetection learn from (an external revision to) Google Flu Trends? Am. J. Prev. Med. 47 (3):\n341–347.\n\nSmith, B., Ashburner, M., Rosse, C. et al. (2007). The OBO foundry: coordinated evolution of\nontologies to support biomedical data integration. Nat. Biotechnol. 25 (11): 1251–1255.\n\nStenson, P.D., Mort, M., Ball, E.V. et al. (2017). The Human Gene Mutation Database: towards a\ncomprehensive repository of inherited mutation data for medical research, genetic diagnosis\nand next-generation sequencing studies. Hum. Genet. 136 (6): 665–677.\n\nThorn, C.F., Klein, T.E., and Altman, R.B. (2010). Pharmacogenomics and bioinformatics:\nPharmGKB. Pharmacogenomics 11 (4): 501–505.\n\nTranchevent, L.C., Ardeshirdavani, A., ElShal, S. et al. (2016). Candidate gene prioritization with\nEndeavour. Nucleic Acids Res. 44 (W1): W117–W121.\n\nVuokko, R., Mäkelä-Bengs, P., Hyppönen, H., and Doupi, P. (2015). Secondary use of structured\npatient data: interim results of a systematic review. Stud. Health Technol. Inf. 210: 291–295.\n\nWang, Z. and Moult, J. (2003). Three-dimensional structural location and molecular functional\neffects of missense SNPs in the T cell receptor Vbeta domain. Proteins 53 (3): 748–757.\n\nWang, X., Wang, G., Shen, C. et al. (2008). Using RNase sequence specificity to refine the\nidentification of RNA-protein binding regions. BMC Genomics 9 (Suppl 1): S17.\n\nWang, K., Li, M., and Hakonarson, H. (2010). ANNOVAR: functional annotation of genetic\nvariants from high-throughput sequencing data. Nucleic Acids Res. 38 (16): e164.\n\nWarde-Farley, D., Donaldson, S.L., Comes, O. et al. (2010). The GeneMANIA prediction server:\nbiological network integration for gene prioritization and predicting gene function. Nucleic\nAcids Res. 38 (Web Server issue): W214–W220.\n\nWilson, V.L. and Jones, P.A. (1983). DNA methylation decreases in aging but not in immortal cells.\nScience 220 (4601): 1055–1057.\n\nWishart, D.S., Feunang, Y.D., Guo, A.C. et al. (2018). DrugBank 5.0: a major update to the\nDrugBank database for 2018. Nucleic Acids Res. 46 (D1): D1074–D1082.\n\nXin, J., Mark, A., Afrasiabi, C. et al. (2016). High-performance web services for querying gene and\nvariant annotation. Genome Biol. 17 (1): 91.", "source_html": "<p style=\"color:var(--muted);font-style:italic\">源文暂缺。</p>", "trans_html": "<h2>Ch17 Translational Bioinformatics / Summary + Internet Resources + References</h2>\n<h3>Summary</h3>\n<p>转化生物信息学（translational bioinformatics）的未来十分光明，并且仍将持续发展。随着我们通过高通量实验不断加深对疾病成因的认识，我们开始发展用于早期检测和诊断的新方法、新的干预手段，以及将结果反馈给患者的新工具。我们已经非常擅长在临床中进行基因组测序和解读。这推动了许多工具的发展，用于预测和优先排序致病性或功能性变异以及疾病相关基因。通过将我们丰富的遗传学知识与基于 EHRs（electronic health records，电子健康记录）、行为数据、患者报告数据等构建的新型复杂患者表型模型相连接，我们已经开始更好地建立基因型与表型之间的联系。这项工作推动了围绕患者数据计算的大量活动。一些新兴项目包括药物再利用（drug repurposing）工作、社区挑战赛与开放科学，以及有用的临床标志物发现。</p>\n<p>此外，借助 EHR 系统中的新技术，例如标准 APIs，我们能够将这些发现实现为数据分析方法和推荐方法，并通过健康记录或依附于健康记录开发的应用程序，把相关信息呈现给患者或医疗服务提供者，从而直接影响临床照护。</p>\n<h3>Internet Resources</h3>\n<div class=\"table-wrap\"><table><thead><tr><th>资源</th><th>说明</th><th>URL</th></tr></thead><tbody><tr><td>Kaggle</td><td>一个用于举办社区挑战赛的营利性网站</td><td><a href=\"https://Kaggle.com\" target=\"_blank\" rel=\"noopener noreferrer\">Kaggle.com</a></td></tr><tr><td>Promethease</td><td>一种根据遗传数据预测表型的方法</td><td><a href=\"https://www.snpedia.com/index.php/Promethease\" target=\"_blank\" rel=\"noopener noreferrer\">www.snpedia.com/index.php/Promethease</a></td></tr></tbody></table></div>\n<h3>References</h3>\n<p>Adams, S.A. and Petersen, C. (2016). Precision medicine: opportunities, possibilities, and</p>\n<p>challenges for patients and providers. J. Am. Med. Inf. Assoc. 23 (4): 787–790.</p>\n<p>Adzhubei, I., Jordan, D.M., and Sunyaev, S.R. (2013). Predicting functional effect of human</p>\n<p>missense mutations using PolyPhen-2. Curr. Protoc. Hum. Genet. 76: 7.20.1–7.20.41.</p>\n<p>Anonymous (1996). Revisions of the International classification of diseases (ICD-9 and ICD-10):</p>\n<p>impact on health statistics. Epidemiol. Bull. 17 (2): 1–5.</p>\n<p>Ashley, E.A. (2015). The precision medicine initiative: a new national effort. JAMA 313 (21):</p>\n<p>2119–2120.</p>\n<p>Aubert, G. and Lansdorp, P.M. (2008). Telomeres and aging. Physiol. Rev. 88 (2): 557–579.</p>\n<p>Ball, M.P., Bobe, J.R., Chou, M.F. et al. (2014). Harvard personal genome project: lessons from</p>\n<p>participatory public research. Genome Med. 6 (2): 10.</p>\n<p>Bloomfield, R.A. Jr., Polo-Wood, F., Mandel, J.C., and Mandl, K.D. (2017). Opening the Duke</p>\n<p>electronic health record to apps: implementing SMART on FHIR. Int. J. Med. Inf. 99: 1–10.</p>\n<p>Bollati, V., Schwartz, J., Wright, R. et al. (2009). Decline in genomic DNA methylation through</p>\n<p>aging in a cohort of elderly subjects. Mech. Ageing Dev. 130 (4): 234–239.</p>\n<p>Boycott, K.M., Vanstone, M.R., Bulman, D.E., and MacKenzie, A.E. (2013). Rare-disease genetics</p>\n<p>in the era of next-generation sequencing: discovery to translation. Nat. Rev. Genet. 14 (10):</p>\n<p>681–691.</p>\n<p>Bromberg, Y., Yachdav, G., and Rost, B. (2008). SNAP predicts effect of mutations on protein</p>\n<p>function. Bioinformatics 24 (20): 2397–2398.</p>\n<p>Cai, B., Li, B., Kiga, N. et al. (2017). Matching phenotypes to whole genomes: lessons learned from</p>\n<p>four iterations of the personal genome project community challenges. Hum. Mutat. 38 (9):</p>\n<p>1266–1276.</p>\n<p>Callier, S.L., Abudu, R., Mehlman, M.J. et al. (2016). Ethical, legal, and social implications of</p>\n<p>personalized genomic medicine research: current literature and suggestions for the future.</p>\n<p>Bioethics 30 (9): 698–705.</p>\n<p>Carey, D.J., Fetterolf, S.N., Davis, F.D. et al. (2016). The Geisinger MyCode community health</p>\n<p>initiative: an electronic health record-linked biobank for precision medicine research. Genet.</p>\n<p>Med. 18 (9): 906–913.</p>\n<p>Cariaso, M. and Lennon, G. (2012). SNPedia: a wiki supporting personal genome annotation,</p>\n<p>interpretation and analysis. Nucleic Acids Res. 40 (Database issue): D1308–D1312.</p>\n<p>Chiaramello, E., Pinciroli, F., Bonalumi, A. et al. (2016). Use of “off-the-shelf” information</p>\n<p>extraction algorithms in clinical informatics: a feasibility study of MetaMap annotation of</p>\n<p>Italian medical notes. J. Biomed. Inf. 63: 22–32.</p>\n<p>Collins, F.S. (1999). Shattuck Lecture – medical and societal consequences of the Human Genome</p>\n<p>Project. N. Engl. J. Med. 341 (1): 28–37.</p>\n<p>Collins, A., Lonjou, C., and Morton, N.E. (1999). Genetic epidemiology of single-nucleotide</p>\n<p>polymorphisms. Proc. Natl. Acad. Sci. U.S.A. 96 (26): 15173–15177.</p>\n<p>Cooper, G.M. and Shendure, J. (2011). Needles in stacks of needles: finding disease-causal variants</p>\n<p>in a wealth of genomic data. Nat. Rev. Genet. 12 (9): 628–640.</p>\n<p>Corsello, S.M., Bittker, J.A., Liu, Z. et al. (2017). The drug repurposing hub: a next-generation drug</p>\n<p>library and information resource. Nat. Med. 23 (4): 405–408.</p>\n<p>Cronin, R.M., Field, J.R., Bradford, Y. et al. (2014). Phenome-wide association studies</p>\n<p>demonstrating pleiotropy of genetic variants within FTO with and without adjustment for body</p>\n<p>mass index. Front. Genet. 5: 250.</p>\n<p>Denny, J.C., Ritchie, M.D., Basford, M.A. et al. (2010). PheWAS: demonstrating the feasibility of a</p>\n<p>phenome-wide scan to discover gene-disease associations. Bioinformatics 26 (9): 1205–1210.</p>\n<p>Devarakonda, S., Sevusu, P., Liu, H. et al. (2013). Real-time air quality monitoring through mobile</p>\n<p>sensing in metropolitan areas. In: Proceedings of the 2nd ACM SIGKDD International Workshop</p>\n<p>on Urban Computing, Chicago, IL (11 August 2013). New York, NY: ACM.</p>\n<p>Dudley, J.T., Deshpande, T., and Butte, A.J. (2011). Exploiting drug-disease relationships for</p>\n<p>computational drug repositioning. Briefings Bioinf. 12 (4): 303–311.</p>\n<p>Edwards, N.J., Oberti, M., Thangudu, R.R. et al. (2015). The CPTAC data portal: a resource for</p>\n<p>cancer proteomics research. J. Proteome Res. 14 (6): 2707–2713.</p>\n<p>Eysenbach, G. (2009). Infodemiology and infoveillance: framework for an emerging set of public</p>\n<p>health informatics methods to analyze search, communication and publication behavior on the</p>\n<p>Internet. J. Med. Internet Res. 11 (1): e11.</p>\n<p>Fleurence, R.L., Curtis, L.H., Califf, R.M. et al. (2014). Launching PCORnet, a national</p>\n<p>patient-centered clinical research network. J. Am. Med. Inf. Assoc. 21 (4): 578–582.</p>\n<p>Flores, M., Glusman, G., Brogaard, K. et al. (2013). P4 medicine: how systems medicine will</p>\n<p>transform the healthcare sector and society. Per. Med. 10 (6): 565–576.</p>\n<p>Forbes, S.A., Beare, D., Boutselakis, H. et al. (2017). COSMIC: somatic cancer genetics at</p>\n<p>high-resolution. Nucleic Acids Res. 45 (Database issue): D777–D783.</p>\n<p>Gini, R., Schuemie, M., Brown, J. et al. (2016). Data extraction and management in networks of</p>\n<p>observational health care databases for scientific research: a comparison of EU-ADR, OMOP,</p>\n<p>mini-sentinel and MATRICE strategies. EGEMS (Wash DC) 4 (1): 1189.</p>\n<p>Hamburg, M.A. and Collins, F.S. (2010). The path to personalized medicine. N. Engl. J. Med. 363</p>\n<p>(4): 301–304.</p>\n<p>Hipp, J.A., Adlakha, D., Eyler, A.A. et al. (2013). Emerging technologies: webcams and</p>\n<p>crowd-sourcing to identify active transportation. Am. J. Prev. Med. 44 (1): 96.</p>\n<p>Ioannidis, N.M., Rothstein, J.H., Pejaver, V. et al. (2016). REVEL: an ensemble method for</p>\n<p>predicting the pathogenicity of rare missense variants. Am. J. Hum. Genet. 99 (4): 877–885.</p>\n<p>Jarchum, I. and Jones, S. (2015). DREAMing of benchmarks. Nat. Biotechnol. 33 (1): 49–50.</p>\n<p>Jensen, P.B., Jensen, L.J., and Brunak, S. (2012). Mining electronic health records: towards better</p>\n<p>research applications and clinical care. Nat. Rev. Genet. 13 (6): 395–405.</p>\n<p>Jha, A.K., DesRoches, C.M., Campbell, E.G. et al. (2009). Use of electronic health records in U.S.</p>\n<p>hospitals. N. Engl. J. Med. 360 (16): 1628–1638.</p>\n<p>Jorde, L.B. and Wooding, S.P. (2004). Genetic variation, classification and “race”. Nat. Genet. 36 (11</p>\n<p>Suppl): S28–S33.</p>\n<p>Kohler, S., Vasilevsky, N.A., Engelstad, M. et al. (2017). The human phenotype ontology in 2017.</p>\n<p>Nucleic Acids Res. 45 (D1): D865–D876.</p>\n<p>Laffitte, E. and Revuz, J. (2004). Thalidomide: an old drug with new clinical applications. Expert</p>\n<p>Opin. Drug Saf. 3 (1): 47–56.</p>\n<p>Landrum, M.J., Lee, J.M., Benson, M. et al. (2016). ClinVar: public archive of interpretations of</p>\n<p>clinically relevant variants. Nucleic Acids Res. 44 (D1): D862–D868.</p>\n<p>Lazer, D., Kennedy, R., King, G., and Vespignani, A. (2014). The parable of Google Flu: traps in big</p>\n<p>data analysis. Science 343 (6176): 1203–1205.</p>\n<p>Li, B., Krishnan, V.G., Mort, M.E. et al. (2009). Automated inference of molecular mechanisms of</p>\n<p>disease from amino acid substitutions. Bioinformatics 25 (21): 2744–2750.</p>\n<p>Liu, X., Wu, C., Li, C., and Boerwinkle, E. (2016). dbNSFP v3.0: a one-stop database of functional</p>\n<p>predictions and annotations for human nonsynonymous and splice-site SNVs. Hum. Mutat. 37</p>\n<p>(3): 235–241.</p>\n<p>Lovasi, G.S., O’Neil-Dunne, J.P., Lu, J.W. et al. (2013). Urban tree canopy and asthma, wheeze,</p>\n<p>rhinitis, and allergic sensitization to tree pollen in a New York City birth cohort. Environ.</p>\n<p>Health Perspect. 121 (4): 494.</p>\n<p>Lugo-Martinez, J., Pejaver, V., Pagel, K.A. et al. (2016). The loss and gain of functional amino acid</p>\n<p>residues is a common mechanism causing human inherited disease. PLoS Comput. Biol. 12 (8):</p>\n<p>e1005091.</p>\n<p>Mandel, J.C., Kreda, D.A., Mandl, K.D. et al. (2016). SMART on FHIR: a standards-based,</p>\n<p>interoperable apps platform for electronic health records. J. Am. Med. Inf. Assoc. 23 (5): 899–908.</p>\n<p>Mooney, S.D. and Klein, T.E. (2002). The functional importance of disease-associated mutation.</p>\n<p>BMC Bioinf. 3: 24.</p>\n<p>Mooney, S.J. and Pejaver, V. (2017). Big data in public health: terminology, machine learning, and</p>\n<p>privacy. Annu. Rev. Public Health 39: 95–112.</p>\n<p>Mooney, S.J., Grady, S.T., Sotoodehnia, N. et al. (2016a). In the wrong place with the wrong SNP:</p>\n<p>the association between stressful neighborhoods and cardiac arrest within Beta-2-adrenergic</p>\n<p>receptor variants. Epidemiology 27 (5): 656–662.</p>\n<p>Mooney, S.J., DiMaggio, C.J., Lovasi, G.S. et al. (2016b). Use of Google Street View to assess</p>\n<p>environmental contributions to pedestrian injury. Am. J. Public Health 106 (3): 462–469.</p>\n<p>Mort, M., Sterne-Weiler, T., Li, B. et al. (2014). MutPred splice: machine learning-based prediction</p>\n<p>of exonic variants that disrupt splicing. Genome Biol. 15 (1): R19.</p>\n<p>Moult, J., Fidelis, K., Kryshtafovych, A., and Tramontano, A. (2011). Critical assessment of</p>\n<p>methods of protein structure prediction (CASP)--round IX. Proteins 79 (Suppl 10): 1–5.</p>\n<p>Mungall, C.J., McMurry, J.A., Köhler, S. et al. (2017). The Monarch initiative: an integrative data</p>\n<p>and analytic platform connecting phenotypes to genotypes across species. Nucleic Acids Res. 45</p>\n<p>(D1): D712–D722.</p>\n<p>Murdoch, T.B. and Detsky, A.S. (2013). The inevitable application of big data to health care. JAMA</p>\n<p>309 (13): 1351–1352.</p>\n<p>Musen, M.A., Noy, N.F., Shah, N.H. et al. (2012). The National Center for Biomedical Ontology. J.</p>\n<p>Am. Med. Inf. Assoc. 19 (2): 190–195.</p>\n<p>Ng, P.C. and Henikoff, S. (2003). SIFT: predicting amino acid changes that affect protein function.</p>\n<p>Nucleic Acids Res. 31 (13): 3812–3814.</p>\n<p>Nikfarjam, A., Sarker, A., O’Connor, K. et al. (2015). Pharmacovigilance from social media:</p>\n<p>mining adverse drug reaction mentions using sequence labeling with word embedding cluster</p>\n<p>features. J. Am. Med. Inf. Assoc. 22 (3): 671–681.</p>\n<p>Nishimura, A.A., Shirts, B.H., Dorschner, M.O. et al. (2015). Development of clinical decision</p>\n<p>support alerts for pharmacogenomic incidental findings from exome sequencing. Genet. Med.</p>\n<p>17 (11): 939–942.</p>\n<p>Norris, K. and Nissenson, A.R. (2008). Race, gender, and socioeconomic disparities in CKD in the</p>\n<p>United States. J. Am. Soc. Nephrol. 19 (7): 1261–1270.</p>\n<p>Oliver, J.M. and McGuire, A.L. (2011). Exploring the ELSI universe: critical issues in the evolution</p>\n<p>of human genomic research. Genome Med. 3 (6): 38.</p>\n<p>Overby, C.L., Devine, E.B., Abernethy, N. et al. (2015). Making pharmacogenomic-based</p>\n<p>prescribing alerts more effective: a scenario-based pilot study with physicians. J. Biomed. Inf. 55:</p>\n<p>249–259.</p>\n<p>Pathak, J., Kho, A.N., and Denny, J.C. (2013). Electronic health records-driven phenotyping:</p>\n<p>challenges, recent advances, and perspectives. J. Am. Med. Inf. Assoc. 20 (e2): e206–e211.</p>\n<p>Prociow, P., Wac, K., and Crowe, J. (2012). Mobile psychiatry: towards improving the care for</p>\n<p>bipolar disorder. Int. J. Ment. Health Syst. 6 (1): 5.</p>\n<p>Radivojac, P., Peng, K., Clark, W.T. et al. (2008). An integrated approach to inferring gene-disease</p>\n<p>associations in humans. Proteins 72 (3): 1030–1037.</p>\n<p>Radivojac, P., Clark, W.T., Oron, T.R. et al. (2013). A large-scale evaluation of computational</p>\n<p>protein function prediction. Nat. Methods 10 (3): 221–227.</p>\n<p>Relling, M.V. and Klein, T.E. (2011). CPIC: clinical pharmacogenetics implementation consortium</p>\n<p>of the pharmacogenomics research network. Clin. Pharmacol. Ther. 89 (3): 464–467.</p>\n<p>Richards, S., Aziz, N., Bale, S. et al. (2015). Standards and guidelines for the interpretation of</p>\n<p>sequence variants: a joint consensus recommendation of the American College of Medical</p>\n<p>Genetics and Genomics and the Association for Molecular Pathology. Genet. Med. 17 (5):</p>\n<p>405–424.</p>\n<p>Ritchie, G.R.S., Dunham, I., Zeggini, E., and Flicek, P. (2014). Functional annotation of noncoding</p>\n<p>sequence variants. Nat. Methods 11 (3): 294–296.</p>\n<p>Rudisill, T.M., Zhu, M., Davidov, D. et al. (2016). Medication use and the risk of motor vehicle</p>\n<p>collision in West Virginia drivers 65 years of age and older: a case-crossover study. BMC Res.</p>\n<p>Notes 9: 166.</p>\n<p>Saez-Rodriguez, J., Costello, J.C., Friend, S.H. et al. (2016). Crowdsourcing biomedical research:</p>\n<p>leveraging communities as innovation engines. Nat. Rev. Genet. 17 (8): 470–486.</p>\n<p>Santillana, M., Zhang, D.W., Althouse, B.M., and Ayers, J.W. (2014). What can digital disease</p>\n<p>detection learn from (an external revision to) Google Flu Trends? Am. J. Prev. Med. 47 (3):</p>\n<p>341–347.</p>\n<p>Smith, B., Ashburner, M., Rosse, C. et al. (2007). The OBO foundry: coordinated evolution of</p>\n<p>ontologies to support biomedical data integration. Nat. Biotechnol. 25 (11): 1251–1255.</p>\n<p>Stenson, P.D., Mort, M., Ball, E.V. et al. (2017). The Human Gene Mutation Database: towards a</p>\n<p>comprehensive repository of inherited mutation data for medical research, genetic diagnosis</p>\n<p>and next-generation sequencing studies. Hum. Genet. 136 (6): 665–677.</p>\n<p>Thorn, C.F., Klein, T.E., and Altman, R.B. (2010). Pharmacogenomics and bioinformatics:</p>\n<p>PharmGKB. Pharmacogenomics 11 (4): 501–505.</p>\n<p>Tranchevent, L.C., Ardeshirdavani, A., ElShal, S. et al. (2016). Candidate gene prioritization with</p>\n<p>Endeavour. Nucleic Acids Res. 44 (W1): W117–W121.</p>\n<p>Vuokko, R., Mäkelä-Bengs, P., Hyppönen, H., and Doupi, P. (2015). Secondary use of structured</p>\n<p>patient data: interim results of a systematic review. Stud. Health Technol. Inf. 210: 291–295.</p>\n<p>Wang, Z. and Moult, J. (2003). Three-dimensional structural location and molecular functional</p>\n<p>effects of missense SNPs in the T cell receptor Vbeta domain. Proteins 53 (3): 748–757.</p>\n<p>Wang, X., Wang, G., Shen, C. et al. (2008). Using RNase sequence specificity to refine the</p>\n<p>identification of RNA-protein binding regions. BMC Genomics 9 (Suppl 1): S17.</p>\n<p>Wang, K., Li, M., and Hakonarson, H. (2010). ANNOVAR: functional annotation of genetic</p>\n<p>variants from high-throughput sequencing data. Nucleic Acids Res. 38 (16): e164.</p>\n<p>Warde-Farley, D., Donaldson, S.L., Comes, O. et al. (2010). The GeneMANIA prediction server:</p>\n<p>biological network integration for gene prioritization and predicting gene function. Nucleic</p>\n<p>Acids Res. 38 (Web Server issue): W214–W220.</p>\n<p>Wilson, V.L. and Jones, P.A. (1983). DNA methylation decreases in aging but not in immortal cells.</p>\n<p>Science 220 (4601): 1055–1057.</p>\n<p>Wishart, D.S., Feunang, Y.D., Guo, A.C. et al. (2018). DrugBank 5.0: a major update to the</p>\n<p>DrugBank database for 2018. Nucleic Acids Res. 46 (D1): D1074–D1082.</p>\n<p>Xin, J., Mark, A., Afrasiabi, C. et al. (2016). High-performance web services for querying gene and</p>\n<p>variant annotation. Genome Biol. 17 (1): 91.</p>", "terms": []}];</script>
+<script>
+function toggleWikiSection(h){var s=h.closest(".wiki-section");s.classList.toggle("open");var b=s.querySelector(".wiki-section-body");if(b)b.classList.toggle("collapsed")}
+function expandAll(){document.querySelectorAll(".wiki-section").forEach(function(s){s.classList.add("open");var b=s.querySelector(".wiki-section-body");if(b)b.classList.remove("collapsed")})}
+function collapseAll(){document.querySelectorAll(".wiki-section").forEach(function(s){s.classList.remove("open");var b=s.querySelector(".wiki-section-body");if(b)b.classList.add("collapsed")})}
+var FS_KEY="wiki-fs",FS_MIN=11,FS_MAX=21,FS_STEP=1;
+function getFS(){return parseFloat(localStorage.getItem(FS_KEY))||16}
+function setFS(v){v=Math.max(FS_MIN,Math.min(FS_MAX,v));localStorage.setItem(FS_KEY,v);document.documentElement.style.setProperty("--fs",v+"px");var el=document.getElementById("fs-label");if(el)el.textContent=v+"px"}
+function fsUp(){setFS(getFS()+FS_STEP)}
+function fsDown(){setFS(getFS()-FS_STEP)}
+setFS(getFS());
+(function(){
+var secs=document.querySelectorAll(".wiki-section");
+var links=document.querySelectorAll(".wiki-toc ol a");
+if(!secs.length||!links.length)return;
+var obs=new IntersectionObserver(function(entries){
+entries.forEach(function(e){if(e.isIntersecting){
+var id=e.target.id;
+links.forEach(function(l){l.classList.toggle("active",l.getAttribute("href")==="#"+id)});
+}});
+},{threshold:0.15,rootMargin:"-60px 0px -60% 0px"});
+secs.forEach(function(s){obs.observe(s)});
+})();
+var _exportScope="chapter";
+function openExport(scope){_exportScope=scope||"chapter";document.getElementById("export-panel").classList.add("open")}
+function closeExport(){document.getElementById("export-panel").classList.remove("open")}
+function doExport(){
+var fmt=document.getElementById("ex-fmt").value;
+var lang=document.querySelector('input[name="ex-lang"]:checked').value;
+var scope=_exportScope;
+var data=window.__sectionData||[];
+if(!data.length){alert("No data");return}
+var items=data;
+if(scope.startsWith("sec-")){items=data.filter(function(d){return d.id===scope})}
+var title=document.title;
+var out="",fname="export",mime="text/plain";
+if(fmt==="html"){out=buildHtmlExport(items,lang,title);fname+=".html";mime="text/html"}
+else if(fmt==="md"){out=buildMdExport(items,lang);fname+=".md";mime="text/markdown"}
+else if(fmt==="txt"){out=buildTxtExport(items,lang);fname+=".txt"}
+else if(fmt==="doc"){out=buildDocExport(items,lang,title);fname+=".doc";mime="application/msword"}
+var blob=new Blob(["﻿"+out],{type:mime+";charset=utf-8"});
+var a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=fname;a.click();URL.revokeObjectURL(a.href)
+closeExport()
+}
+function h2t(h){var d=document.createElement("div");d.innerHTML=h;return(d.textContent||d.innerText||"").trim()}
+function buildHtmlExport(items,lang,title){
+var css="body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Noto Serif SC',serif;max-width:900px;margin:0 auto;padding:40px 24px;line-height:1.8;font-size:16px;color:#211812}"
++"h1,h2,h3{margin:24px 0 8px}table{border-collapse:collapse;width:100%;margin:12px 0}th,td{border:1px solid #d8c9b7;padding:6px 10px;text-align:left}th{background:#f0e8dc}"
++"img{max-width:100%;height:auto;border-radius:6px;margin:8px 0}"
++".bilingual{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin:16px 0}.bilingual>div{min-width:0}"
++".col-head{font-size:12px;font-weight:700;color:#6c5f54;border-bottom:1px solid #d8c9b7;padding-bottom:4px;margin-bottom:12px}";
+var body="";
+items.forEach(function(d){
+body+="<h2>"+d.title+"</h2>\n";
+if(lang==="both"){body+='<div class="bilingual"><div><div class="col-head">English</div>'+d.source_html+'</div><div><div class="col-head">中文</div>'+d.trans_html+"</div></div>\n"}
+else if(lang==="en"){body+=d.source_html+"\n"}
+else{body+=d.trans_html+"\n"}
+if(d.terms&&d.terms.length){body+="<table><tr><th>English</th><th>中文</th></tr>";d.terms.forEach(function(t){body+="<tr><td>"+t[0]+"</td><td>"+t[1]+"</td></tr>"});body+="</table>\n"}
+});
+return "<!doctype html><html><head><meta charset='utf-8'><title>"+title+"</title><style>"+css+"</style></head><body><h1>"+title+"</h1>\n"+body+"</body></html>"
+}
+function buildMdExport(items,lang){
+var out="";
+items.forEach(function(d){
+out+="## "+d.title+"\n\n";
+if(lang==="both"){out+="### English\n\n"+d.source_md+"\n\n### 中文\n\n"+d.trans_md+"\n\n"}
+else if(lang==="en"){out+=d.source_md+"\n\n"}
+else{out+=d.trans_md+"\n\n"}
+if(d.terms&&d.terms.length){out+="### 术语表\n\n| English | 中文 |\n|---------|------|\n";d.terms.forEach(function(t){out+="| "+t[0]+" | "+t[1]+" |\n"});out+="\n"}
+out+="---\n\n"
+});
+return out
+}
+function buildTxtExport(items,lang){
+var out="";
+items.forEach(function(d){
+out+=d.title+"\n"+Array(d.title.length+1).join("=")+"\n\n";
+if(lang==="both"){out+="[English]\n"+h2t(d.source_html)+"\n\n[中文]\n"+h2t(d.trans_html)+"\n\n"}
+else if(lang==="en"){out+=h2t(d.source_html)+"\n\n"}
+else{out+=h2t(d.trans_html)+"\n\n"}
+if(d.terms&&d.terms.length){out+="[术语表]\n";d.terms.forEach(function(t){out+=t[0]+" — "+t[1]+"\n"});out+="\n"}
+out+="\n"
+});
+return out
+}
+function buildDocExport(items,lang,title){
+var css="body{font-family:'PingFang SC','SimSun',serif;font-size:14pt;line-height:1.8;margin:2cm}table{border-collapse:collapse;width:100%}th,td{border:1px solid #999;padding:4px 8px}th{background:#eee}img{max-width:100%}";
+var body="<h1>"+title+"</h1>\n";
+items.forEach(function(d){
+body+="<h2>"+d.title+"</h2>\n";
+if(lang==="both"){body+="<h3>English</h3>"+d.source_html+"<h3>中文</h3>"+d.trans_html+"\n"}
+else if(lang==="en"){body+=d.source_html+"\n"}
+else{body+=d.trans_html+"\n"}
+if(d.terms&&d.terms.length){body+="<table><tr><th>English</th><th>中文</th></tr>";d.terms.forEach(function(t){body+="<tr><td>"+t[0]+"</td><td>"+t[1]+"</td></tr>"});body+="</table>\n"}
+});
+return '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word"><head><meta charset="utf-8"><style>'+css+'</style></head><body>'+body+'</body></html>'
+}
+</script>
+<script>
+(function(){
+var box=document.getElementById("nav-q"),panel=document.getElementById("search-results");
+if(!box)return;
+var data=window.__sectionData||[];
+function hl(text,q){if(!q)return text;var re=new RegExp("("+q.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+")","gi");return text.replace(re,"<mark>$1</mark>")}
+function snippet(text,q,len){len=len||120;var i=text.toLowerCase().indexOf(q.toLowerCase());if(i<0)return text.substring(0,len)+"…";var s=Math.max(0,i-40),e=Math.min(text.length,i+len-40);return(s>0?"…":"")+text.substring(s,e)+(e<text.length?"…":"")}
+function search(q){
+if(!q||q.length<2){panel.classList.remove("open");panel.innerHTML="";return}
+var ql=q.toLowerCase(),results=[];
+data.forEach(function(s){
+var score=0;
+if(s.title.toLowerCase().indexOf(ql)>=0)score+=10;
+if(s.terms&&s.terms.some(function(t){return t[0].toLowerCase().indexOf(ql)>=0||t[1].indexOf(ql)>=0}))score+=5;
+if(s.trans_md.toLowerCase().indexOf(ql)>=0)score+=2;
+if(s.source_md.toLowerCase().indexOf(ql)>=0)score+=1;
+if(score>0)results.push({sec:s,score:score});
+});
+results.sort(function(a,b){return b.score-a.score});
+var html="";
+if(!results.length){html='<div class="sr-empty">本章未找到匹配内容</div>'}
+else{results.slice(0,20).forEach(function(r){
+var snip=snippet(r.sec.trans_md||r.sec.source_md||r.sec.title,q);
+html+='<a class="sr-item" data-sec="'+r.sec.id+'" href="javascript:void(0)">'
++'<div class="sr-title">'+hl(r.sec.title,q)+'</div>'
++'<div class="sr-snippet">'+hl(snip,q)+'</div></a>';
+})}
+html+='<a class="sr-goto" href="../book.html?q='+encodeURIComponent(q)+'">在全书中搜索 &quot;'+hl(q,q)+'&quot; →</a>';
+panel.innerHTML=html;panel.classList.add("open");
+panel.querySelectorAll(".sr-item").forEach(function(el){
+el.addEventListener("click",function(){
+panel.classList.remove("open");
+var secId=el.getAttribute("data-sec");
+var target=document.getElementById(secId);
+if(target){target.classList.add("open");var b=target.querySelector(".wiki-section-body");if(b)b.classList.remove("collapsed");target.scrollIntoView({behavior:"smooth",block:"start"})}
+});
+});
+}
+var timer;
+box.addEventListener("input",function(){clearTimeout(timer);var q=box.value.trim();timer=setTimeout(function(){search(q)},200)});
+box.addEventListener("keydown",function(e){if(e.key==="Escape"){panel.classList.remove("open")}});
+document.addEventListener("click",function(e){if(!panel.contains(e.target)&&e.target!==box)panel.classList.remove("open")});
+})();
+</script>
+</body>
+</html>

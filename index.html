@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bioinformatics 4e 中英双语翻译</title>
+<style>.global-nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;gap:0;height:38px;padding:0 18px;background:rgba(33,24,18,.92);backdrop-filter:blur(12px);font-size:12.5px;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC",sans-serif}
+.global-nav a,.global-nav span{color:rgba(255,247,234,.7);text-decoration:none;padding:8px 12px;white-space:nowrap;transition:color .12s}
+.global-nav a:hover{color:#fff7ea}
+.global-nav [aria-current="page"]{color:#fff7ea;font-weight:700;border-bottom:2px solid #e8a87c;padding-bottom:6px}
+.global-nav .nav-sep{flex:1;min-width:8px}
+.global-nav .nav-search{display:flex;align-items:center;gap:0}
+.global-nav .nav-search input{width:180px;height:26px;border:1px solid rgba(255,255,255,.18);border-radius:999px;background:rgba(255,255,255,.1);color:#fff7ea;font:inherit;font-size:12px;padding:0 10px;outline:none;transition:border-color .15s,width .2s}
+.global-nav .nav-search input:focus{border-color:rgba(255,255,255,.45);width:260px}
+.global-nav .nav-search input::placeholder{color:rgba(255,247,234,.4)}
+.search-results{display:none;position:fixed;top:38px;right:18px;width:420px;max-height:70vh;overflow-y:auto;background:#fffdf8;border:1px solid #d8c9b7;border-radius:14px;box-shadow:0 18px 60px rgba(0,0,0,.25);z-index:101;padding:8px 0;font-size:13px}
+.search-results.open{display:block}
+.search-results .sr-item{display:block;padding:10px 16px;cursor:pointer;border-bottom:1px solid rgba(216,201,183,.4);color:#211812;text-decoration:none;transition:background .1s}
+.search-results .sr-item:last-child{border-bottom:none}
+.search-results .sr-item:hover{background:rgba(147,70,51,.06)}
+.search-results .sr-ch{font-size:10px;font-weight:800;color:#934633;letter-spacing:.1em;text-transform:uppercase}
+.search-results .sr-title{font-weight:700;margin:2px 0}
+.search-results .sr-snippet{font-size:12px;color:#6c5f54;line-height:1.5}
+.search-results .sr-snippet mark{background:#fde68a;color:inherit;border-radius:2px;padding:0 1px}
+.search-results .sr-empty{padding:20px 16px;color:#6c5f54;text-align:center}
+.search-results .sr-goto{display:block;padding:10px 16px;text-align:center;font-size:12px;font-weight:700;color:#245f63;border-top:1px solid #d8c9b7;cursor:pointer;text-decoration:none}
+.search-results .sr-goto:hover{background:rgba(36,95,99,.06)}
+
+:root{--bg:#f7efe3;--ink:#201812;--muted:#74675c;--line:#dbcab7;--accent:#934633;--teal:#245f63;--card:#fffdf8;--shadow:0 28px 80px rgba(72,45,24,.16)}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC","Noto Serif SC","Songti SC",serif;background:radial-gradient(circle at 12% 5%,#fff0c4 0,#f7efe3 34%,#ead9c4 100%)}
+main{max-width:1120px;margin:0 auto;padding:64px 32px 88px}.hero{min-height:48vh;display:grid;align-items:center;border-bottom:1px solid var(--line);margin-bottom:36px}.eyebrow{color:var(--teal);font-size:13px;font-weight:900;letter-spacing:.24em;text-transform:uppercase}.hero h1{font-size:clamp(46px,8vw,92px);line-height:.98;margin:18px 0;font-family:"Songti SC","Noto Serif SC",serif}.hero p{max-width:760px;font-size:19px;line-height:1.75;color:var(--muted)}.actions{display:flex;flex-wrap:wrap;gap:14px;margin-top:26px}.btn{display:inline-flex;align-items:center;justify-content:center;border-radius:999px;padding:12px 18px;text-decoration:none;font-weight:800;border:1px solid var(--line);background:var(--card);color:var(--ink)}.btn.primary{background:var(--ink);color:#fff7ea;border-color:var(--ink)}.btn.ghost{cursor:pointer;font:inherit}.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:28px 0 34px}.stat{background:rgba(255,253,248,.82);border:1px solid var(--line);border-radius:22px;padding:20px;box-shadow:var(--shadow)}.stat strong{display:block;font-size:34px;line-height:1}.stat span{color:var(--muted);font-size:13px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}.chapter-card{display:block;background:rgba(255,253,248,.86);border:1px solid var(--line);border-radius:22px;padding:20px;color:var(--ink);box-shadow:0 18px 46px rgba(72,45,24,.1);transition:transform .18s ease,box-shadow .18s ease}.chapter-card:hover{transform:translateY(-3px);box-shadow:var(--shadow)}.chapter-card span{display:inline-block;color:var(--accent);font-weight:900;letter-spacing:.12em;text-transform:uppercase;font-size:12px}.chapter-card strong{display:block;font-size:20px;line-height:1.28;margin:8px 0}.chapter-card em{font-style:normal;color:var(--muted);font-size:13px}.card-links{display:flex;gap:10px;margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}.card-links a{font-size:12px;font-weight:700;padding:4px 12px;border-radius:999px;border:1px solid var(--line);color:var(--ink);text-decoration:none;transition:background .15s}.card-links a:hover{background:var(--ink);color:#fff7ea}.note{margin-top:30px;color:var(--muted);font-size:14px}@media(max-width:760px){main{padding:40px 20px}.stats{grid-template-columns:1fr}.hero{min-height:auto;padding:40px 0}.hero h1{font-size:46px}}
+</style>
+</head>
+<body>
+<nav class="global-nav"><span aria-current="page">总书架</span><a href="bio4e/book.html">连续阅读</a><a href="bio4e/wiki/index.html">双语 Wiki</a><a href="bioinformatics_glossary.html">术语表</a><div class="nav-sep"></div><div class="nav-search"><input id="nav-q" type="search" placeholder="搜索标题、译文、术语…" autocomplete="off" data-book-url="bio4e/book.html"></div></nav><div id="search-results" class="search-results"></div>
+<main>
+  <section class="hero">
+    <div>
+      <div class="eyebrow">Bilingual Translation</div>
+      <h1>Bioinformatics 4e<br>中英双语</h1>
+      <p>Bioinformatics (4th Edition) 中英双语翻译，含连续阅读版、双语 Wiki 与术语表。</p>
+      <div class="actions">
+        <a class="btn primary" href="bio4e/book.html" target="_blank" rel="noopener noreferrer">打开连续阅读版</a>
+        <a class="btn primary" href="bio4e/wiki/index.html" target="_blank" rel="noopener noreferrer">打开双语 Wiki</a>
+        <a class="btn" href="bioinformatics_glossary.html" target="_blank" rel="noopener noreferrer">术语表</a>
+      </div>
+    </div>
+  </section>
+  <section class="stats">
+    <div class="stat"><strong>156</strong><span>章节条目</span></div>
+    <div class="stat"><strong>156</strong><span>已完成译文</span></div>
+    <div class="stat"><strong>18</strong><span>章</span></div>
+  </section>
+  <section class="grid"><div class="chapter-card"><span>Ch1</span><strong>Biological Sequence Databases</strong><em>12 小节</em><div class="card-links"><a href="bio4e/book.html#ch1-biological-sequence-databases" target="_blank" rel="noopener noreferrer">阅读版</a><a href="bio4e/wiki/ch01.html" target="_blank" rel="noopener noreferrer">双语 Wiki</a></div></div><div class="chapter-card"><span>Ch2</span><strong>Information Retrieval from Biological Databases</strong><em>4 小节</em><div class="card-links"><a href="bio4e/book.html#ch2-information-retrieval-from-biological-databases" target="_blank" rel="noopener noreferrer">阅读版</a><a href="bio4e/wiki/ch02.html" target="_blank" rel="noopener noreferrer">双语 Wiki</a></div></div><div class="chapter-card"><span>Ch3</span><strong>Assessing Pairwise Sequence Similarity: BLAST and FASTA</strong><em>11 小节</em><div class="card-links"><a href="bio4e/book.html#ch3-assessing-pairwise-sequence-similarity-blast-and-fasta" target="_blank" rel="noopener noreferrer">阅读版</a><a href="bio4e/wiki/ch03.html" target="_blank" rel="noopener noreferrer">双语 Wiki</a></div></div><div class="chapter-card"><span>Ch4</span><strong>Genome Browsers</strong><em>7 小节</em><div class="card-links"><a href="bio4e/book.html#ch4-genome-browsers" target="_blank" rel="noopener noreferrer">阅读版</a><a href="bio4e/wiki/ch04.html" target="_blank" rel="noopener noreferrer">双语 Wiki</a></div></div><div class="chapter-card"><span>Ch5</span><strong>Genome Annotation</strong><em>6 小节</em><div class="card-links"><a href="bio4e/book.html#ch5-genome-annotation" target="_blank" rel="noopener noreferrer">阅读版</a><a href="bio4e/wiki/ch05.html" target="_blank" rel="noopener noreferrer">双语 Wiki</a></div></div><div class="chapter-card"><span>Ch6</span><strong>Predictive Methods Using RNA Sequences</strong><em>11 小节</em><div class="card-links"><a href="bio4e/book.html#ch6-predictive-methods-using-rna-sequences" target="_blank" rel="noopener noreferrer">阅读版</a><a href="bio4e/wiki/ch06.html" target="_blank" rel="noopener noreferrer">双语 Wiki</a></div></div><div class="chapter-card"><span>Ch7</span><strong>Predictive Methods Using Protein Sequences</strong><em>4 小节</em><div class="card-links"><a href="bio4e/book.html#ch7-predictive-methods-using-protein-sequences" target="_blank" rel="noopener noreferrer">阅读版</a><a href="bio4e/wiki/ch07.html" target="_blank" rel="noopener noreferrer">双语 Wiki</a></div></div><div class="chapter-card"><span>Ch8</span><strong>Multiple Sequence Alignments</strong><em>9 小节</em><div class="card-links"><a href="bio4e/book.html#ch8-multiple-sequence-alignments" target="_blank" rel="noopener noreferrer">阅读版</a><a href="bio4e/wiki/ch08.html" target="_blank" rel="noopener noreferrer">双语 Wiki</a></div></div><div class="chapter-card"><span>Ch9</span><strong>Molecular Evolution and Phylogenetic Analysis</strong><em>8 小节</em><div class="card-links"><a href="bio4e/book.html#ch9-molecular-evolution-and-phylogenetic-analysis" target="_blank" rel="noopener noreferrer">阅读版</a><a href="bio4e/wiki/ch09.html" target="_blank" rel="noopener noreferrer">双语 Wiki</a></div></div><div class="chapter-card"><span>Ch10</span><strong>Expression Analysis</strong><em>12 小节</em><div class="card-links"><a href="bio4e/book.html#ch10-expression-analysis" target="_blank" rel="noopener noreferrer">阅读版</a><a href="bio4e/wiki/ch10.html" target="_blank" rel="noopener noreferrer">双语 Wiki</a></div></div><div class="chapter-card"><span>Ch11</span><strong>Proteomics and Protein Identification by Mass Spectrometry</strong><em>16 小节</em><div class="card-links"><a href="bio4e/book.html#ch11-proteomics-and-protein-identification-by-mass-spectrometry" target="_blank" rel="noopener noreferrer">阅读版</a><a href="bio4e/wiki/ch11.html" target="_blank" rel="noopener noreferrer">双语 Wiki</a></div></div><div class="chapter-card"><span>Ch12</span><strong>Protein Structure Prediction and Analysis</strong><em>9 小节</em><div class="card-links"><a href="bio4e/book.html#ch12-protein-structure-prediction-and-analysis" target="_blank" rel="noopener noreferrer">阅读版</a><a href="bio4e/wiki/ch12.html" target="_blank" rel="noopener noreferrer">双语 Wiki</a></div></div><div class="chapter-card"><span>Ch13</span><strong>Biological Networks and Pathways</strong><em>11 小节</em><div class="card-links"><a href="bio4e/book.html#ch13-biological-networks-and-pathways" target="_blank" rel="noopener noreferrer">阅读版</a><a href="bio4e/wiki/ch13.html" target="_blank" rel="noopener noreferrer">双语 Wiki</a></div></div><div class="chapter-card"><span>Ch14</span><strong>Metabolomics</strong><em>7 小节</em><div class="card-links"><a href="bio4e/book.html#ch14-metabolomics" target="_blank" rel="noopener noreferrer">阅读版</a><a href="bio4e/wiki/ch14.html" target="_blank" rel="noopener noreferrer">双语 Wiki</a></div></div><div class="chapter-card"><span>Ch15</span><strong>Population Genetics</strong><em>9 小节</em><div class="card-links"><a href="bio4e/book.html#ch15-population-genetics" target="_blank" rel="noopener noreferrer">阅读版</a><a href="bio4e/wiki/ch15.html" target="_blank" rel="noopener noreferrer">双语 Wiki</a></div></div><div class="chapter-card"><span>Ch16</span><strong>Metagenomics and Microbial Community Analysis</strong><em>9 小节</em><div class="card-links"><a href="bio4e/book.html#ch16-metagenomics-and-microbial-community-analysis" target="_blank" rel="noopener noreferrer">阅读版</a><a href="bio4e/wiki/ch16.html" target="_blank" rel="noopener noreferrer">双语 Wiki</a></div></div><div class="chapter-card"><span>Ch17</span><strong>Translational Bioinformatics</strong><em>7 小节</em><div class="card-links"><a href="bio4e/book.html#ch17-translational-bioinformatics" target="_blank" rel="noopener noreferrer">阅读版</a><a href="bio4e/wiki/ch17.html" target="_blank" rel="noopener noreferrer">双语 Wiki</a></div></div><div class="chapter-card"><span>Ch18</span><strong>Statistical Methods for Biologists</strong><em>4 小节</em><div class="card-links"><a href="bio4e/book.html#ch18-statistical-methods-for-biologists" target="_blank" rel="noopener noreferrer">阅读版</a><a href="bio4e/wiki/ch18.html" target="_blank" rel="noopener noreferrer">双语 Wiki</a></div></div></section>
+  <p class="note">最近更新：2026-05-23</p>
+</main>
+<script>
+(function(){
+var box=document.getElementById("nav-q");
+if(!box)return;
+var bookUrl=box.getAttribute("data-book-url")||"book.html";
+box.addEventListener("keydown",function(e){
+if(e.key==="Enter"){var q=box.value.trim();if(q)location.href=bookUrl+"?q="+encodeURIComponent(q)}
+});
+})();
+</script>
+</body>
+</html>

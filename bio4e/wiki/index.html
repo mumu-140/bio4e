@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bioinformatics 4e — 中英双语 Wiki</title>
+<style>
+.global-nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;gap:0;height:38px;padding:0 18px;background:rgba(33,24,18,.92);backdrop-filter:blur(12px);font-size:12.5px;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC",sans-serif}
+.global-nav a,.global-nav span{color:rgba(255,247,234,.7);text-decoration:none;padding:8px 12px;white-space:nowrap;transition:color .12s}
+.global-nav a:hover{color:#fff7ea}
+.global-nav [aria-current="page"]{color:#fff7ea;font-weight:700;border-bottom:2px solid #e8a87c;padding-bottom:6px}
+.global-nav .nav-sep{flex:1;min-width:8px}
+.global-nav .nav-search{display:flex;align-items:center;gap:0}
+.global-nav .nav-search input{width:180px;height:26px;border:1px solid rgba(255,255,255,.18);border-radius:999px;background:rgba(255,255,255,.1);color:#fff7ea;font:inherit;font-size:12px;padding:0 10px;outline:none;transition:border-color .15s,width .2s}
+.global-nav .nav-search input:focus{border-color:rgba(255,255,255,.45);width:260px}
+.global-nav .nav-search input::placeholder{color:rgba(255,247,234,.4)}
+.search-results{display:none;position:fixed;top:38px;right:18px;width:420px;max-height:70vh;overflow-y:auto;background:#fffdf8;border:1px solid #d8c9b7;border-radius:14px;box-shadow:0 18px 60px rgba(0,0,0,.25);z-index:101;padding:8px 0;font-size:13px}
+.search-results.open{display:block}
+.search-results .sr-item{display:block;padding:10px 16px;cursor:pointer;border-bottom:1px solid rgba(216,201,183,.4);color:#211812;text-decoration:none;transition:background .1s}
+.search-results .sr-item:last-child{border-bottom:none}
+.search-results .sr-item:hover{background:rgba(147,70,51,.06)}
+.search-results .sr-ch{font-size:10px;font-weight:800;color:#934633;letter-spacing:.1em;text-transform:uppercase}
+.search-results .sr-title{font-weight:700;margin:2px 0}
+.search-results .sr-snippet{font-size:12px;color:#6c5f54;line-height:1.5}
+.search-results .sr-snippet mark{background:#fde68a;color:inherit;border-radius:2px;padding:0 1px}
+.search-results .sr-empty{padding:20px 16px;color:#6c5f54;text-align:center}
+.search-results .sr-goto{display:block;padding:10px 16px;text-align:center;font-size:12px;font-weight:700;color:#245f63;border-top:1px solid #d8c9b7;cursor:pointer;text-decoration:none}
+.search-results .sr-goto:hover{background:rgba(36,95,99,.06)}
+:root{--paper:#fbf5ea;--ink:#211812;--muted:#6c5f54;--accent:#934633;--accent2:#245f63;--line:#d8c9b7;--shadow:0 18px 46px rgba(72,45,24,.1)}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC","Noto Serif SC","Songti SC",serif;background:radial-gradient(circle at 12% 5%,#fff0c4 0,#f7efe3 34%,#ead9c4 100%)}
+main{max-width:1000px;margin:0 auto;padding:56px 32px 80px}
+.hero{padding:40px 0 32px;border-bottom:1px solid var(--line);margin-bottom:28px}
+.eyebrow{color:var(--accent2);font-size:12px;font-weight:900;letter-spacing:.24em;text-transform:uppercase}
+.hero h1{font-size:clamp(36px,7vw,64px);line-height:1;margin:12px 0;font-family:"Songti SC","Noto Serif SC",serif}
+.hero p{max-width:640px;font-size:16px;line-height:1.7;color:var(--muted)}
+.hero .back{display:inline-block;margin-top:16px;font-size:13px;color:var(--accent2)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:28px}
+.stat{background:rgba(255,253,248,.82);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:var(--shadow)}
+.stat strong{display:block;font-size:30px;line-height:1}.stat span{color:var(--muted);font-size:12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+.wcard{display:block;background:rgba(255,253,248,.86);border:1px solid var(--line);border-radius:18px;padding:18px;text-decoration:none;color:var(--ink);box-shadow:var(--shadow);transition:transform .18s,box-shadow .18s}
+.wcard:hover{transform:translateY(-2px);box-shadow:0 28px 80px rgba(72,45,24,.16)}
+.wcard-num{display:inline-block;color:var(--accent);font-weight:900;letter-spacing:.12em;text-transform:uppercase;font-size:11px}
+.wcard strong{display:block;font-size:17px;line-height:1.28;margin:6px 0}
+.wcard em{font-style:normal;color:var(--muted);font-size:12px}
+.note{margin-top:24px;color:var(--muted);font-size:13px}
+@media(max-width:640px){main{padding:32px 16px}.stats{grid-template-columns:1fr}.hero h1{font-size:36px}}
+</style>
+</head>
+<body>
+<nav class="global-nav"><a href="../../index.html">总书架</a><a href="../book.html">连续阅读</a><span aria-current="page">双语 Wiki</span><a href="../../bioinformatics_glossary.html">术语表</a><div class="nav-sep"></div><div class="nav-search"><input id="nav-q" type="search" placeholder="搜索标题、译文、术语…" autocomplete="off" data-book-url="../book.html"></div></nav><div id="search-results" class="search-results"></div>
+<main>
+<section class="hero">
+<div class="eyebrow">Bilingual Wiki</div>
+<h1>Bioinformatics 4e<br>中英双语 Wiki</h1>
+<p>原文与译文左右并排对照，按章节浏览。点击章节卡片进入。</p>
+<div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:14px">
+<a href="export.html" style="display:inline-flex;align-items:center;padding:8px 18px;border-radius:999px;background:var(--ink);color:#fff7ea;font-weight:700;font-size:13px;text-decoration:none;border:1px solid var(--ink)">导出整本书</a>
+</div>
+</section>
+<section class="stats">
+<div class="stat"><strong>18</strong><span>章</span></div>
+<div class="stat"><strong>156</strong><span>小节</span></div>
+<div class="stat"><strong>247</strong><span>术语条目</span></div>
+</section>
+<section class="grid"><a class="wcard" href="ch01.html"><span class="wcard-num">Ch1</span><strong>Biological Sequence Databases</strong><em>12 小节</em></a><a class="wcard" href="ch02.html"><span class="wcard-num">Ch2</span><strong>Information Retrieval from Biological Databases</strong><em>4 小节</em></a><a class="wcard" href="ch03.html"><span class="wcard-num">Ch3</span><strong>Assessing Pairwise Sequence Similarity: BLAST and FASTA</strong><em>11 小节</em></a><a class="wcard" href="ch04.html"><span class="wcard-num">Ch4</span><strong>Genome Browsers</strong><em>7 小节</em></a><a class="wcard" href="ch05.html"><span class="wcard-num">Ch5</span><strong>Genome Annotation</strong><em>6 小节</em></a><a class="wcard" href="ch06.html"><span class="wcard-num">Ch6</span><strong>Predictive Methods Using RNA Sequences</strong><em>11 小节</em></a><a class="wcard" href="ch07.html"><span class="wcard-num">Ch7</span><strong>Predictive Methods Using Protein Sequences</strong><em>4 小节</em></a><a class="wcard" href="ch08.html"><span class="wcard-num">Ch8</span><strong>Multiple Sequence Alignments</strong><em>9 小节</em></a><a class="wcard" href="ch09.html"><span class="wcard-num">Ch9</span><strong>Molecular Evolution and Phylogenetic Analysis</strong><em>8 小节</em></a><a class="wcard" href="ch10.html"><span class="wcard-num">Ch10</span><strong>Expression Analysis</strong><em>12 小节</em></a><a class="wcard" href="ch11.html"><span class="wcard-num">Ch11</span><strong>Proteomics and Protein Identification by Mass Spectrometry</strong><em>16 小节</em></a><a class="wcard" href="ch12.html"><span class="wcard-num">Ch12</span><strong>Protein Structure Prediction and Analysis</strong><em>9 小节</em></a><a class="wcard" href="ch13.html"><span class="wcard-num">Ch13</span><strong>Biological Networks and Pathways</strong><em>11 小节</em></a><a class="wcard" href="ch14.html"><span class="wcard-num">Ch14</span><strong>Metabolomics</strong><em>7 小节</em></a><a class="wcard" href="ch15.html"><span class="wcard-num">Ch15</span><strong>Population Genetics</strong><em>9 小节</em></a><a class="wcard" href="ch16.html"><span class="wcard-num">Ch16</span><strong>Metagenomics and Microbial Community Analysis</strong><em>9 小节</em></a><a class="wcard" href="ch17.html"><span class="wcard-num">Ch17</span><strong>Translational Bioinformatics</strong><em>7 小节</em></a><a class="wcard" href="ch18.html"><span class="wcard-num">Ch18</span><strong>Statistical Methods for Biologists</strong><em>4 小节</em></a></section>
+<p class="note">最近更新：2026-05-23</p>
+</main>
+<script>
+(function(){
+var box=document.getElementById("nav-q");
+if(!box)return;
+var bookUrl=box.getAttribute("data-book-url")||"book.html";
+box.addEventListener("keydown",function(e){
+if(e.key==="Enter"){var q=box.value.trim();if(q)location.href=bookUrl+"?q="+encodeURIComponent(q)}
+});
+})();
+</script>
+</body>
+</html>

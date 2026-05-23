@@ -1,0 +1,839 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ch18 Statistical Methods for Biologists — Bioinformatics 4e Wiki</title>
+<style>.global-nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;gap:0;height:38px;padding:0 18px;background:rgba(33,24,18,.92);backdrop-filter:blur(12px);font-size:12.5px;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC",sans-serif}
+.global-nav a,.global-nav span{color:rgba(255,247,234,.7);text-decoration:none;padding:8px 12px;white-space:nowrap;transition:color .12s}
+.global-nav a:hover{color:#fff7ea}
+.global-nav [aria-current="page"]{color:#fff7ea;font-weight:700;border-bottom:2px solid #e8a87c;padding-bottom:6px}
+.global-nav .nav-sep{flex:1;min-width:8px}
+.global-nav .nav-search{display:flex;align-items:center;gap:0}
+.global-nav .nav-search input{width:180px;height:26px;border:1px solid rgba(255,255,255,.18);border-radius:999px;background:rgba(255,255,255,.1);color:#fff7ea;font:inherit;font-size:12px;padding:0 10px;outline:none;transition:border-color .15s,width .2s}
+.global-nav .nav-search input:focus{border-color:rgba(255,255,255,.45);width:260px}
+.global-nav .nav-search input::placeholder{color:rgba(255,247,234,.4)}
+.search-results{display:none;position:fixed;top:38px;right:18px;width:420px;max-height:70vh;overflow-y:auto;background:#fffdf8;border:1px solid #d8c9b7;border-radius:14px;box-shadow:0 18px 60px rgba(0,0,0,.25);z-index:101;padding:8px 0;font-size:13px}
+.search-results.open{display:block}
+.search-results .sr-item{display:block;padding:10px 16px;cursor:pointer;border-bottom:1px solid rgba(216,201,183,.4);color:#211812;text-decoration:none;transition:background .1s}
+.search-results .sr-item:last-child{border-bottom:none}
+.search-results .sr-item:hover{background:rgba(147,70,51,.06)}
+.search-results .sr-ch{font-size:10px;font-weight:800;color:#934633;letter-spacing:.1em;text-transform:uppercase}
+.search-results .sr-title{font-weight:700;margin:2px 0}
+.search-results .sr-snippet{font-size:12px;color:#6c5f54;line-height:1.5}
+.search-results .sr-snippet mark{background:#fde68a;color:inherit;border-radius:2px;padding:0 1px}
+.search-results .sr-empty{padding:20px 16px;color:#6c5f54;text-align:center}
+.search-results .sr-goto{display:block;padding:10px 16px;text-align:center;font-size:12px;font-weight:700;color:#245f63;border-top:1px solid #d8c9b7;cursor:pointer;text-decoration:none}
+.search-results .sr-goto:hover{background:rgba(36,95,99,.06)}
+
+:root{--paper:#fbf5ea;--ink:#211812;--muted:#6c5f54;--accent:#934633;--accent2:#245f63;--line:#d8c9b7;--mono-bg:#102026;--mono-ink:#e9fff5;--shadow:0 18px 46px rgba(72,45,24,.1);--fs:16px;--fs-min:11px;--fs-max:21px}
+*{box-sizing:border-box;margin:0}
+body{color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC","Noto Serif SC","Songti SC",serif;background:var(--paper);line-height:1.7;font-size:var(--fs)}
+a{color:var(--accent2);text-decoration:none}a:hover{text-decoration:underline}
+.wiki-shell{display:grid;grid-template-columns:260px minmax(0,1fr);min-height:100vh}
+.wiki-toc{position:sticky;top:0;height:100vh;overflow-y:auto;padding:28px 20px;border-right:1px solid var(--line);background:rgba(255,253,248,.92);font-size:13px}
+.wiki-toc .brand{font-weight:900;color:var(--accent);letter-spacing:.18em;text-transform:uppercase;font-size:11px;margin-bottom:14px}
+.wiki-toc .brand a{color:inherit}
+.wiki-toc h2{font-size:18px;line-height:1.25;margin:0 0 16px;font-family:"Songti SC","Noto Serif SC",serif}
+.wiki-toc ol{list-style:none;padding:0;margin:0}
+.wiki-toc li{margin:3px 0}
+.wiki-toc li a{display:block;padding:4px 8px;border-radius:6px;color:var(--ink);font-size:12.5px;line-height:1.35;transition:background .12s}
+.wiki-toc li a:hover,.wiki-toc li a.active{background:rgba(147,70,51,.1);text-decoration:none}
+.wiki-toc-footer{margin-top:20px;padding-top:14px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:6px}
+.wiki-toc-footer a{font-size:12px;padding:4px 0}
+.wiki-toc .actions{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.wiki-toc .actions button{font:inherit;font-size:11px;padding:4px 10px;border-radius:999px;border:1px solid var(--line);background:var(--paper);cursor:pointer;color:var(--muted)}
+.wiki-toc .actions button:hover{background:var(--ink);color:var(--paper)}
+.wiki-content{padding:32px 40px 80px;max-width:none}
+.breadcrumb{font-size:12px;color:var(--muted);margin-bottom:20px}
+.breadcrumb a{color:var(--accent2)}
+.wiki-chapter-header{margin-bottom:36px;padding-bottom:24px;border-bottom:1px solid var(--line)}
+.wiki-chapter-header .kicker{color:var(--accent);font-weight:900;letter-spacing:.24em;text-transform:uppercase;font-size:12px}
+.wiki-chapter-header h1{font-size:38px;line-height:1.15;margin:8px 0 6px;font-family:"Songti SC","Noto Serif SC",serif}
+.wiki-chapter-header .meta{font-size:13px;color:var(--muted)}
+.toolbar{display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap}
+.toolbar .font-ctrl{display:inline-flex;align-items:center;gap:4px;font-size:12px;color:var(--muted)}
+.toolbar .font-ctrl button{width:28px;height:28px;border-radius:50%;border:1px solid var(--line);background:var(--paper);cursor:pointer;font-size:14px;font-weight:700;color:var(--ink);display:grid;place-items:center;transition:background .12s}
+.toolbar .font-ctrl button:hover{background:var(--ink);color:var(--paper)}
+.toolbar .font-ctrl .fs-label{min-width:36px;text-align:center;font-variant-numeric:tabular-nums}
+.toolbar .export-btn{font:inherit;font-size:12px;padding:5px 14px;border-radius:999px;border:1px solid var(--line);background:var(--paper);cursor:pointer;color:var(--ink);font-weight:600;transition:background .12s}
+.toolbar .export-btn:hover{background:var(--ink);color:var(--paper)}
+.export-panel{display:none;position:fixed;top:0;left:0;width:100%;height:100%;z-index:999;background:rgba(0,0,0,.4)}
+.export-panel.open{display:flex;align-items:center;justify-content:center}
+.export-dialog{background:var(--paper);border-radius:22px;padding:32px;max-width:480px;width:90%;box-shadow:0 32px 80px rgba(0,0,0,.3);max-height:90vh;overflow-y:auto}
+.export-dialog h3{font-size:20px;margin:0 0 20px;font-family:"Songti SC","Noto Serif SC",serif}
+.export-dialog label{display:block;font-size:13px;font-weight:700;margin:14px 0 6px;color:var(--muted)}
+.export-dialog select,.export-dialog .radio-group{width:100%;font:inherit;font-size:14px;padding:8px 12px;border-radius:10px;border:1px solid var(--line);background:#fff;color:var(--ink)}
+.export-dialog .radio-group{display:flex;flex-wrap:wrap;gap:8px;padding:6px 0;border:none}
+.export-dialog .radio-group label{display:inline-flex;align-items:center;gap:4px;font-weight:400;margin:0;cursor:pointer}
+.export-dialog .dialog-actions{display:flex;gap:10px;margin-top:24px;justify-content:flex-end}
+.export-dialog .dialog-actions button{font:inherit;font-size:14px;padding:8px 20px;border-radius:999px;border:1px solid var(--line);cursor:pointer;font-weight:700}
+.export-dialog .dialog-actions .cancel{background:var(--paper);color:var(--ink)}
+.export-dialog .dialog-actions .confirm{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.export-dialog .dialog-actions .confirm:hover{opacity:.85}
+.wiki-section{background:rgba(255,253,248,.82);border:1px solid var(--line);border-radius:18px;margin:24px 0;overflow:hidden;box-shadow:var(--shadow)}
+.wiki-section-head{display:grid;grid-template-columns:48px 1fr auto;gap:14px;align-items:center;padding:20px 28px;cursor:pointer;user-select:none;transition:background .15s}
+.wiki-section-head:hover{background:rgba(255,248,237,.95)}
+.wiki-section-head .num{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:var(--ink);color:var(--paper);font-weight:900;font-size:13px;flex-shrink:0}
+.wiki-section-head h2{font-size:20px;line-height:1.28;margin:0}
+.wiki-section-head .badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.wiki-section-head .badges span{font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:1px 7px}
+.wiki-section-head .arrow{font-size:11px;color:var(--muted);transition:transform .2s;flex-shrink:0}
+.wiki-section.open .arrow{transform:rotate(90deg)}
+.wiki-section-body{padding:0 28px 28px}
+.wiki-section-body.collapsed{display:none}
+.sec-export-btn{float:right;font:inherit;font-size:11px;padding:3px 10px;border-radius:999px;border:1px solid var(--line);background:var(--paper);cursor:pointer;color:var(--muted);margin-bottom:8px}
+.sec-export-btn:hover{background:var(--ink);color:var(--paper)}
+.bilingual{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:16px;clear:both}
+.bilingual-col{padding:24px 32px;min-width:0}
+.bilingual-source{background:rgba(0,0,0,.025);border-right:1px solid var(--line)}
+.bilingual-translation{background:#fff}
+.col-label{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:baseline}
+.col-label .note{font-weight:400;font-size:10px;letter-spacing:0;text-transform:none;opacity:.7}
+.bilingual-col h1,.bilingual-col h2{font-size:1.15em;margin:20px 0 8px;font-family:"Songti SC","Noto Serif SC",serif}
+.bilingual-col h3{font-size:1em;margin:16px 0 6px}
+.bilingual-col p{margin:0 0 10px;line-height:1.75}
+.bilingual-col ul,.bilingual-col ol{padding-left:20px;margin:0 0 10px}
+.bilingual-col li{margin:3px 0}
+.bilingual-col blockquote{border-left:3px solid var(--line);margin:0 0 10px;padding:6px 14px;color:var(--muted);font-size:.9em}
+.bilingual-col pre{background:var(--mono-bg);color:var(--mono-ink);border-radius:8px;padding:12px 16px;overflow-x:auto;font-size:.8em;line-height:1.5;margin:0 0 10px}
+.bilingual-col code{font-family:"SF Mono","Fira Code",monospace;font-size:.85em;background:rgba(0,0,0,.06);padding:1px 4px;border-radius:3px}
+.bilingual-col pre code{background:none;padding:0}
+.bilingual-col table{border-collapse:collapse;width:100%;margin:0 0 10px;font-size:.85em}
+.bilingual-col th,.bilingual-col td{border:1px solid var(--line);padding:5px 8px;text-align:left}
+.bilingual-col th{background:rgba(0,0,0,.04);font-weight:700}
+.bilingual-col img{max-width:100%;height:auto;border-radius:6px}
+.bilingual-col figure{margin:10px 0}
+.bilingual-col figcaption{font-size:12px;color:var(--muted);margin-top:4px}
+.terminology{margin:12px 0}
+.terminology summary{font-size:13px;font-weight:700;cursor:pointer;color:var(--accent);padding:6px 0}
+.terminology table{border-collapse:collapse;width:100%;margin:8px 0;font-size:13px}
+.terminology th,.terminology td{border:1px solid var(--line);padding:4px 10px;text-align:left}
+.terminology th{background:rgba(0,0,0,.04);font-weight:700}
+.image-gallery{margin:12px 0}
+.image-gallery .gallery-label{font-size:12px;color:var(--muted);margin-bottom:6px}
+.image-gallery .gallery-strip{display:flex;gap:8px;overflow-x:auto;padding:4px 0}
+.image-gallery .gallery-strip a{flex-shrink:0;text-decoration:none;text-align:center}
+.image-gallery .gallery-strip img{height:80px;border-radius:6px;border:1px solid var(--line)}
+.image-gallery .gallery-strip span{display:block;font-size:10px;color:var(--muted);margin-top:2px;max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chapter-nav{display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:center;margin-top:48px;padding-top:24px;border-top:1px solid var(--line);font-size:14px}
+.chapter-nav .prev{text-align:left}.chapter-nav .center{text-align:center}.chapter-nav .next{text-align:right}
+@media(max-width:900px){
+.wiki-shell{grid-template-columns:1fr}
+.wiki-toc{display:none}
+.wiki-content{padding:20px 16px 60px}
+.bilingual{grid-template-columns:1fr}
+.bilingual-source{border-right:none;border-bottom:1px solid var(--line)}
+.wiki-chapter-header h1{font-size:28px}
+}
+</style>
+</head>
+<body>
+<nav class="global-nav"><a href="../../index.html">总书架</a><a href="../book.html">连续阅读</a><span aria-current="page">双语 Wiki</span><a href="../../bioinformatics_glossary.html">术语表</a><div class="nav-sep"></div><div class="nav-search"><input id="nav-q" type="search" placeholder="搜索标题、译文、术语…" autocomplete="off"></div></nav><div id="search-results" class="search-results"></div>
+<div class="wiki-shell">
+<nav class="wiki-toc">
+<div class="brand"><a href="index.html">Wiki Index</a></div>
+<h2>Ch18<br>Statistical Methods for Biologists</h2>
+<ol class="wiki-toc-list"><li><a href="#sec-153">Introduction</a></li><li><a href="#sec-154">Descriptive Representations of Data</a></li><li><a href="#sec-155">Statistical Inference and Statistical Hypothesis Testing</a></li><li><a href="#sec-156">Summary + Acknowledgments + Internet Resources + Further Reading + References</a></li></ol>
+<div class="actions"><button onclick="expandAll()">全部展开</button><button onclick="collapseAll()">全部折叠</button></div>
+<div class="wiki-toc-footer"><a href="ch17.html">&larr; Ch17 Translational Bioinformatics</a></div>
+</nav>
+<main class="wiki-content">
+<nav class="breadcrumb"><a href="index.html">Wiki</a> &rsaquo; Ch18 Statistical Methods for Biologists</nav>
+<div class="toolbar">
+<div class="font-ctrl"><button onclick="fsDown()" title="缩小字体">−</button><span id="fs-label">16px</span><button onclick="fsUp()" title="放大字体">+</button></div>
+<button class="export-btn" onclick="openExport('chapter')">导出本章</button>
+</div>
+<section class="wiki-chapter-header">
+<div class="kicker">Chapter 18</div>
+<h1>Statistical Methods for Biologists</h1>
+<div class="meta">4 小节</div>
+</section>
+<article class="wiki-section" id="sec-153">
+<header class="wiki-section-head" onclick="toggleWikiSection(this)">
+<div class="num">153</div>
+<div><h2>Introduction</h2><div class="badges"><span>PDF page 575；印刷页码 待核对</span></div></div>
+<div class="arrow">▶</div>
+</header>
+<div class="wiki-section-body collapsed">
+<button class="sec-export-btn" onclick="event.stopPropagation();openExport('sec-153')">导出本节</button>
+<div class="bilingual">
+<div class="bilingual-col bilingual-source">
+<div class="col-label">English Source<span class="note">PDF extracted</span></div>
+<div class="col-content"><p style="color:var(--muted);font-style:italic">源文暂缺。</p></div>
+</div>
+<div class="bilingual-col bilingual-translation">
+<div class="col-label">中文译文</div>
+<div class="col-content"><h2>Ch18 Statistical Methods for Biologists / Introduction</h2>
+<h3>Introduction</h3>
+<p>二十世纪以来，生物学和生物医学数据的生成与积累出现了显著增长，这使二十一世纪的研究环境发生了根本性变化：研究者置身于一个数据丰富、知识密集的环境之中。为了在这一环境中有效开展工作，生物学家必须能够在日常研究中利用大量数据和已经积累的知识。这些数据集通常包含成千上万、数百万，甚至数十亿个独立数据项，其规模已经远远超出人工分析所能处理的范围。因此，生物学家理解这些大型数据集所派生出的概括性表示（summative representations）至关重要。</p>
+<p>例如，均值（mean，或 average）这样的统计量，就是对一组数据进行派生表示的常用方式；而统计学（statistics）则是从数据集中推导并应用有用统计量的科学。在 bioinformatics 的语境中，来自多种 “-omics” 技术的大型数据集，或知识库（knowledge bases）中汇集的信息，都必须通过描述性、概括性的表示加以总结，以便促进对数据集的评估，并支持其在其他分析中的使用。很多时候，这些进一步分析会从数据集中产生新的信息和知识。</p>
+<p>然而，要形成准确的解释，并由此生成新的信息和知识，研究者必须对数据集本身、产生该数据集的实验，以及用于分析该数据集的方法具有基本理解。统计学为建立这种基础理解提供了关键视角和一整套概念，使研究者能够理解数据集，并判断如何有效地使用它。</p></div>
+</div>
+</div>
+
+
+</div>
+</article><article class="wiki-section" id="sec-154">
+<header class="wiki-section-head" onclick="toggleWikiSection(this)">
+<div class="num">154</div>
+<div><h2>Descriptive Representations of Data</h2><div class="badges"><span>PDF page 575-588；印刷页码 待核对</span></div></div>
+<div class="arrow">▶</div>
+</header>
+<div class="wiki-section-body collapsed">
+<button class="sec-export-btn" onclick="event.stopPropagation();openExport('sec-154')">导出本节</button>
+<div class="bilingual">
+<div class="bilingual-col bilingual-source">
+<div class="col-label">English Source<span class="note">PDF extracted</span></div>
+<div class="col-content"><p style="color:var(--muted);font-style:italic">源文暂缺。</p></div>
+</div>
+<div class="bilingual-col bilingual-translation">
+<div class="col-label">中文译文</div>
+<div class="col-content"><h2>Ch18 Statistical Methods for Biologists / Descriptive Representations of Data</h2>
+<h3>数据的描述性表示</h3>
+<h4>数据、信息与知识</h4>
+<p>数据（data）、信息（information）和知识（knowledge）彼此相关，但它们是相互分离且各不相同的概念。这些术语常常被互换使用，从而导致人们对到底收集、提供或分析的是什么产生混淆。具体而言，数据是简单事实和观察结果的无组织集合。这个关于数据的定义进一步引出了一个问题：“什么是观察结果？”观察结果（observation）是对某种现象获得的测量值。对于统计学家而言，这种现象就是一个统计实验。在科学研究语境中，观察结果是对某个特定物理实体或事件的某种性质或特征的数量或程度的测定。因此，数据就是这类测量值的无组织集合。信息则是经过组织、分析和解释，并转化为有用形式的数据，通常用于决策。最后，知识是在某一特定领域或研究方向中，通过教育和经验获得的信息、理解与技能。如 Figure 18.1 所示，单个观察结果被收集形成数据，数据经过解释转化为有用信息，信息进一步被提炼为新的知识。</p>
+<p>Bioinformatics, Fourth Edition. Edited by Andreas D. Baxevanis, Gary D. Bader, and David S. Wishart.</p>
+<p>© 2020 John Wiley &amp; Sons, Inc. Published 2020 by John Wiley &amp; Sons, Inc.</p>
+<p>Companion Website: <a href="https://www.wiley.com/go/baxevanis/Bioinformatics_4e" target="_blank" rel="noopener noreferrer">www.wiley.com/go/baxevanis/Bioinformatics_4e</a></p>
+<p><strong>Figure 18.1 观察结果、数据、信息与知识之间的关系。</strong></p>
+<p>Source: Reproduced with permission of Hunter Moseley, <a href="https://doi.org/10.6084/m9.figshare.4968125.v1." target="_blank" rel="noopener noreferrer">https://doi.org/10.6084/m9.figshare.4968125.v1.</a> Licensed under CC By 4.0.</p>
+<p>从数据的角度看，表示同一或相似现象的一组相关观察结果称为随机变量（random variable）。在统计学中，这一术语具有更抽象的定义：随机变量被表示为一个数学函数，它把统计实验（现象）的可能结果映射到一个由可能取值（观察结果）组成的可测空间。根据所测量的性质或特征不同，随机变量可以是数值型（numerical）或类别型（categorical），如 Figure 18.2 所示。数值型随机变量是一组可能的可测数量范围。如果该范围用实数或类似的无限数集来定义，那么这个数值型随机变量就是连续型（continuous）。在这一语境中，连续性是表示随机变量的数学函数 f(x) 的一个性质，即当 x 趋近于 c 时，f(x) 的极限趋近于 f(c)。例如，使用荧光共振能量转移（fluorescence resonance energy transfer, FRET）测量供体与受体发色团之间的距离，就是一个连续型随机变量，因为可能观察到的是一个连续的实数范围，即由代表 FRET 分析实验所产生的一组观察结果的统计实验映射而来的结果。连续型随机变量的另一个例子是小鼠在 Morris 水迷宫测试中寻找平台所用的时间。</p>
+<p>如果取值范围用整数来定义，即正数和/或负数的计数值，那么这个数值型随机变量就是离散型（discrete）。在流式细胞仪中计数得到的细胞数量，就是一个在自然数，即非负整数，离散范围内的离散型随机变量。另一个例子是在给定观察站、给定时间段内看到或听到的某类鸟的“点计数”（point count）或数量。</p>
+<p>类别型随机变量是一组可能的定性测量观察结果，用于描述某种特征或相对性质。如果这些取值具有相对顺序、逻辑顺序或等级，那么该类别变量被认为是有序型（ordinal）。在特定核苷酸序列中观察到的核苷酸相对顺序，就是一个有序型随机变量。另一个例子是，在某种操作过程中，让患者以 1（经历最严重疼痛）到 5（无疼痛）的量表报告其疼痛相对水平。如果这些取值没有逻辑顺序，那么该类别变量被认为是名义型（nominal）。动物的性别就是一个名义型随机变量，在大多数情况下限于雄性和雌性。另一个例子是带有或不带有特定 CRISPR-Cas9 基因敲除的人类细胞系。</p>
+<p><strong>Figure 18.2 变量类型及其层级关系。</strong></p>
+<p>Source: Reproduced with permission of Hunter Moseley, <a href="https://doi.org/10.6084/m9.figshare.4968143.v1." target="_blank" rel="noopener noreferrer">https://doi.org/10.6084/m9.figshare.4968143.v1.</a> Licensed under CC By 4.0.</p>
+<p>Figure 18.2 中的主要内容可概括如下：</p>
+<div class="table-wrap"><table><thead><tr><th>变量类型</th><th>定义</th><th>示例问题或取值</th></tr></thead><tbody><tr><td>数值型：连续型</td><td>位于实数或复数取值范围内</td><td>How many? How much?；[0.0, 10.0]；{1.50, 4.58, 9.45}</td></tr><tr><td>数值型：离散型</td><td>位于可计数的整数取值范围内</td><td>定量测量的观察结果；[0, 10]；{0, 3, 4, 7, 9, 10}</td></tr><tr><td>类别型：有序型</td><td>具有逻辑顺序或等级</td><td>What relative quality?；{1st, 2nd, 3rd}；{low, med, high}</td></tr><tr><td>类别型：名义型</td><td>没有逻辑顺序</td><td>What type? What category?；{male, female}；{blue, green, red}</td></tr></tbody></table></div>
+<h4>数据集与数据模式</h4>
+<p>dataset 及其较早被接受的拼写形式 data set，简单来说就是一组相关数据和信息的集合。但 dataset 的规范定义，是指一组相关的数据和信息集合，它们按照可观察现象（变量）以及把不同现象之间的观察结果联系起来的实体来组织，即涉及多个统计实验。这种组织方式通常表示为二维矩阵或关系表，其中列或字段表示不同的数据变量，行表示不同的实体。</p>
+<p>例如，可以为一组经过适当知情同意的人类受试者收集年龄、性别、种族、体重、身高、疾病状态、治疗方式以及其他结局变量，并将其组织为一个二维表。在这个表中，特定随机变量的取值，即第 2 列及之后的列，与某个特定人类个体，即第 1 列中去标识化的受试者 ID 相关联，用于临床试验（Figure 18.3a）。在这一语境中，来自单个临床、生物医学、生物学和/或分析实验的一组相互关联的观察结果，被组织成这类二维数据集。然而，数据集也可以指规范数据集的集合，其中单个生物学和/或分析实验代表第三个维度。因此，为了分析和解释数据集，需要对数据集的组织方式进行描述，这种描述称为数据模式（data schema）（Figure 18.3b,c）。此外，根据使用语境不同，data schema 也常被称为数据字典（data dictionary）、数据库模式（database schema）或元数据（metadata）。随着数据集在规模和复杂度上持续增长，数据组织和数据模式的质量常常成为数据集可用性的限制因素。</p>
+<p><strong>Figure 18.3 示例数据集的组织方式。</strong></p>
+<p>(a) 一个二维（2D）关系表的一部分，将去标识化的人类受试者（行）与特定样本变量（列）相关联。</p>
+<p>(b) 一个 2D 数据模式，显示数据集的组织方式和变量类型。</p>
+<p>(c) 一个三维（3D）数据模式，显示受试者与生物学/分析实验之间的额外关系（维度）。</p>
+<p>Source: Reproduced with permission of Hunter Moseley, <a href="https://doi.org/10.6084/m9.figshare.4968146.v1." target="_blank" rel="noopener noreferrer">https://doi.org/10.6084/m9.figshare.4968146.v1.</a> Licensed under CC By 4.0.</p>
+<p>如前所述，数据集通常过大，无法通过人工检查来全面审视和理解。因此，需要用概括性的、描述性的数据表示来对其进行评估和解释。描述性数据表示主要有三大类型：数据模式、描述性统计量和图形。作为起点，数据模式可以很好地提供数据集的描述性总览。通过描述良好的数据模式，可以容易地确定变量的数量和具体类型。同时，变量相对于实体——即受试者——的组织方式也会变得清晰（Figure 18.3b），进而可以推断出跨生物学实验和分析实验关联变量和/或受试者的更高阶组织方式（Figure 18.3c）。</p>
+<h4>描述性统计量</h4>
+<p>描述性统计量（descriptive statistic）是一个单一的可测量特征，它以定量方式描述或概括一组相关数据（Daniel and Wayne 1995）。然而，在严格的统计学定义中，有两个相关概念：统计量（statistic）和参数（parameter）。统计量是某个样本变量或可测样本属性的单一度量，其中样本是总体中实体的一个子集。参数一词则保留用于指总体的某种特征或属性，而这种特征或属性通常无法被直接测量。多数数据集只包含代表某个总体子集的数据，这个子集称为样本。例如，1000 名女性网球运动员的平均身高，代表这 1000 名网球运动员样本的平均身高统计量；这个统计量可用于推断所有女性网球运动员这一总体的平均身高参数。</p>
+<p>但是，一个数据集也可能包含某个有限总体的全部数据，例如“某个企业的全部人类员工”。在这种情况下，该有限总体的某个参数可以直接从数据集中测量出来，而不只是由样本统计量估计得到。不过，这类狭义定义的总体也可以被看作更大总体的样本，例如“地球上所有人类”，甚至“曾经生活过或可能生活的所有人类”。因此，将给定数据集变量的某个可测描述性特征归类为统计量还是参数，是一个视角问题。</p>
+<p>Figure 18.4 列出了用于表示样本变量数据集合的最常用描述性统计量。浅蓝色行中的第一个描述性统计量是数据集合的大小（size）或基数（cardinality）。大小的重要性怎么强调都不为过，因为它是对一组相关数据——即变量——中所包含数据数量的最直接度量。反过来，数据数量通常限制了该变量的信息含量。</p>
+<p>Figure 18.4 中浅绿色行显示的下一类最常用描述性统计量，称为集中趋势统计量（statistics of central tendency）。在统计学中，集中趋势是指一组取值或一个可能取值范围的典型值、中心值或期望值。最著名的集中趋势统计量是一组数值的算术平均数（arithmetic mean）或平均值（average）。例如，{3.2, 4.1, 4.1, 4.2, 4.4, 5.1, 5.1, 5.4, 5.4, 5.5, 5.8, 5.8, 6.2, 7.0, 7.5} 的平均值是 5.25，它代表这组数值中相当典型的一个值。在这一语境中，中心值或典型值表示某个分布中最频繁出现的值或值集；分布（distribution）是所有可能出现取值的频率集合。这个最高频取值或典型值，常被用于表示某种变量的一组较大取值中某个取值分布的位置。</p>
+<p>算术平均数或平均值是最常用的集中趋势统计量，因为在对分布作出某些假设，尤其是对称性假设时，它能够为期望值提供最准确的估计，并且在结果的准确性和精确性方面所需的数据量最少。然而，对于许多真实世界的数据集合，其他精确性较低的统计量，尤其是中位数（median）和众数（mode），反而能为给定取值分布的期望值提供更准确的估计。特别是，中位数常用于避免数据集合中极端离群值的影响，因为它对少数极端离群值的存在不敏感，而且易于可靠计算。众数对常见期望取值分布中的多种异常偏离非常不敏感，但通常精确性较低；它需要更大的数据量才能可靠计算，因此更难以用可预测的方式计算。</p>
+<p><strong>Figure 18.4 样本变量常用描述性统计量。</strong></p>
+<p>浅蓝色行为数据数量统计量。浅绿色行为集中趋势统计量。浅橙色行为期望区间统计量。浅黄色行为依赖性统计量。</p>
+<p>Source: Reproduced with permission of Cmglee, <a href="https://commons.wikimedia.org/wiki/File:Visualisation_mode_median_mean.svg." target="_blank" rel="noopener noreferrer">https://commons.wikimedia.org/wiki/File:Visualisation_mode_median_mean.svg.</a> Licensed under CC By 3.0.</p>
+<p>Figure 18.4 中浅橙色行的下一类描述性统计量，用期望区间和离散程度来概括观察到的取值。其中最简单的是范围（range）。从数学上讲，范围是由全部观察结果（数据）或全部可能观察结果组成的非重复取值集合；这里的集合在数学上定义为“不同”对象的集合，而在此情境中就是非重复取值。不过，range 有多种不同但相关的含义，包括经典统计学定义，即在一组数值型或有序型取值中最大值与最小值之间的差。然而，在名义型变量语境中，数学定义——非重复取值集合——最有用。对于数值型或有序型变量，范围最常被描述为同时包含最小值和最大值的区间，并表示为用方括号括起来、以逗号分隔的这两个值，例如对于观察结果集合 {2, 4, 5, 5, 5, 6, 6, 8, 11}，其范围为 [2, 11]（Galton 1886; Pearson 1895）。可以在任一端使用圆括号表示直到边界值但不包括该边界值；例如，记号 [0, 10) 表示该范围可以包含从 0 到小于 10 的所有值。这个范围定义最能体现期望取值区间的概念。</p>
+<p>样本方差（sample variance）是下一个期望区间描述性统计量，它表示测量值围绕样本均值的分散程度。与均值一样，方差对于期望取值区间的描述准确性依赖于对底层取值分布的某些假设，尤其是对称性。方差的平方根是标准差（standard deviation，常缩写为 SD 或 StdDev），这是一个更容易与样本均值联系起来的度量。均值标准误（standard error of the mean，常缩写为 SE 或 SEM）是对样本均值相对于总体均值的精确性的概率性描述。在对底层取值分布作出某些假设，尤其是对称性假设时，样本均值的准确性或置信度可以用标准误单位来定义。最后一个期望区间描述性统计量是置信区间（confidence interval, CI），它确定一个在某一置信水平下包含期望值的范围。这是对期望区间的一种很好描述，因为它不对分布作假设，并且像样本众数一样，对常见期望分布的多种异常偏离相当不敏感。另一种基于样本均值和标准误计算 CI 的公式为：</p>
+<p>CIx,z = [x − zSEx, x + zSEx]</p>
+<p>其中 z ≈ 2 等价于 95% CI，z ≈ 3 等价于 99% CI。</p>
+<p>Figure 18.4 中浅黄色行的最后一类描述性统计量，用于描述两个样本变量之间的依赖性（dependence）。样本协方差（sample covariance）描述两个样本变量如何共同变化，其计算方式类似于样本方差。换言之，样本协方差描述两个样本变量的测量值如何以线性依赖的方式围绕各自样本均值共同分散。从一种视觉角度看，协方差描述的是以样本均值为中心的共同离散区域，其取值范围为 (−∞, ∞)。</p>
+<p>接下来，Pearson 相关系数（Pearson’s correlation coefficient），简称 Pearson 相关（Pearson’s correlation），描述两个样本变量之间的线性依赖关系（Pearson 1895）。它与协方差的关系涉及两个样本变量标准差的倒数，因此常被看作是由每个样本变量的标准差归一化后的协方差。这种归一化会将 Pearson 相关限制在 [−1, 1] 的范围内，这通常更容易解释为两个样本变量之间依赖强度的大小。Figure 18.5 展示了相关相对于协方差在可解释性上的优势：两组样本中 x 与 y 之间的协方差相同，但蓝色样本和红色样本的 Pearson 相关不同。红色样本中较高的方差代表 x 与 y 之间较低的依赖性，尽管这种依赖的性质，即黑色回归线的斜率，是相同的。这个例子说明，协方差和相关不能彼此进行定量比较，即使它们在符号上可以进行定性比较：正协方差会对应正相关，负协方差和零协方差也分别对应负相关和零相关。</p>
+<p><strong>Figure 18.5 协方差与相关。</strong></p>
+<p>红色样本比蓝色样本具有更高的样本方差，因此对应更低的相关，尽管样本变量之间的协方差相同。</p>
+<p>Source: Moseley, Hunter (2017): Example of covariance-correlation differences. figshare. <a href="https://doi.org/10.6084/m9.figshare.4968149.v1." target="_blank" rel="noopener noreferrer">doi.org/10.6084/m9.figshare.4968149.v1.</a></p>
+<p>Spearman 秩相关系数（Spearman’s rank correlation coefficient），简称 Spearman 相关（Spearman’s correlation），描述两个样本变量之间的单调、非线性依赖关系（Spearman 1904）。两个样本变量之间的单调关系意味着这两个样本变量取值的秩顺序得以保持。从视觉上看，单调关系意味着任意给定的水平线或垂直线只会与函数 y = f(x) 所描述的曲线相交一次，其中 x 和 y 是两个样本变量。Spearman 相关描述两个样本变量之间这种单调或秩顺序依赖的强度，其方式类似于 Pearson 相关描述两个样本变量之间线性依赖的方式。具体而言，Spearman 相关根据两个样本变量之间秩顺序或反向秩顺序的保持程度计算，取值范围为 [−1, 1]。</p>
+<p>最后一个常见的依赖性描述性统计量是决定系数（coefficient of determination），它度量一个或多个样本变量对某个给定数学模型的拟合程度。不过，从另一个角度看，决定系数描述的是一组样本变量基于模型的依赖性。该统计量的计算方式为：1 减去残差平方和与观察值相对于样本均值的总差异平方和之比。决定系数的取值范围为 [0, 1]，常被描述为模型与数据之间未解释方差的比例。对于线性模型，决定系数可化简为 r²，即线性相关的平方；如果只涉及两个样本变量，则为 Pearson 相关的平方。更广义地说，Pearson 相关、Spearman 相关和决定系数都度量样本变量与某个描述特定数学关系的模型之间依赖性的强度。当预期两个样本变量之间存在线性关系时，通常使用 Pearson 相关来描述线性依赖的程度。当预期两个样本变量之间存在非线性单调关系时，使用 Spearman 相关来描述非线性单调依赖。当预期涉及一个或多个样本变量的特定数学模型，而这种关系不容易由前两种依赖性度量处理时，通常使用决定系数来描述变量相对于模型的依赖性。</p>
+<h4>合适的图形是数据集最具描述性的表示</h4>
+<p>图形（graphs）是简化的图示，用于展示数据集中一个或多个数据变量。在许多情况下，图形以视觉方式提供变量的概括性总览，突出数据的特定描述性统计量或分布性质（参见 Figure 18.4 中的视觉描述）。图形常常能够可视化变量之间的依赖性，使特定关系变得清楚。为以多种方式概括或突出变量集合甚至整个数据集，人们设计了许多不同类型的图形，例如典型电子表格软件中提供的多种图表。在大多数情况下，被共同组织、分析或可视化的样本变量和/或实验数量，即数据维度，限制了某一特定可视化任务可使用的图形类型。鉴于绝大多数图片是二维的，大多数以单一图形形式呈现的数据可视化很难直接表示超过两个维度的数据。不过，有时在需要具有说服力的数据可视化时，例如表示和比较体积，也会通过人为实现深度来可视化三维信息。</p>
+<p>最简单的描述性图形之一是直方图（histogram）（Figure 18.6），它可视化给定样本变量的取值分布。从统计学角度看，直方图可视化样本变量中一组有序统计事件发生的频率。多数情况下，每个统计事件，即一组可能结果，被表示为一段可能取值的数值范围；每个柱形的高度则表示该样本变量中所代表事件的发生频率。因此，如果使用了合适的有序范围集合，直方图通常能够清晰地可视化取值分布。然而，很多时候我们希望使用一种图形，使单个随机变量能够在多个实验之间进行视觉比较。箱线图（box-and-whisker plot，或 boxplot）正是为这一目的在 20 世纪 50 年代早期开发出来的，后来由数学家 William Tukey 在 20 世纪 60 年代后期推广普及（Spear 1952; McGill et al. 1978）。</p>
+<p><strong>Figure 18.6 黑樱桃树高度频率的示例直方图。</strong></p>
+<p>Source: <a href="https://commons.wikimedia.org/wiki/File:Black_cherry_tree_histogram.svg" target="_blank" rel="noopener noreferrer">commons.wikimedia.org/wiki/File:Black_cherry_tree_histogram.svg</a> CC BY 2.5, <a href="https://commons.wikimedia.org/w/index.php?curid=3483039." target="_blank" rel="noopener noreferrer">commons.wikimedia.org/w/index.php?curid=3483039.</a></p>
+<p>Figure 18.7a 展示了标准箱线图的组成部分，其中包括四分位距（interquartile range, IQR）。箱体底部定义第一四分位数（Q1 或第 25 百分位数，代表最低的 25% 数据），中间表示中位数（Q2 或第 50 百分位数），箱体顶部定义第三四分位数（Q3 或第 75 百分位数，代表最高的 25% 数据）。须线从箱体顶部和底部延伸，最大可达 1.5 倍 IQR。落在这些范围之外的任何值通常用离群点表示。箱线图常用于显示和比较数据分布，而不对分布作假设；它从秩顺序和频率角度提供底层数据的非参数视图，从而便于数据集之间的视觉比较。然而，箱线图真正巧妙之处在于，在计算机尚未广泛用于此类任务之前，它使人们能够有效地手绘描述性图形。不过，箱体和须线表示的简洁性也是一种缺点。Figure 18.7b 显示的箱线图看起来几乎完全相同（Choonpradub and McNeil 2005）。然而，将数据叠加到 Figure 18.7c 的箱线图上后，就能清楚看出每个样本实际上有多么不同。今天已有几种比原始、易绘制箱线图更具描述性的箱线图变体。小提琴图（violin plot）（Hintze and Nelson 1998）、SinaPlot（Sidiropoulos et al. 2018）及其组合（Figure 18.7d–f）能够在视觉上很好地描述不同取值分布，并能更好地比较四个样本。</p>
+<p><strong>Figure 18.7 示例箱线图及相关变体图。</strong></p>
+<p>(a) 箱线图示意图。</p>
+<p>(b) 四个测量样本的经典箱线图。</p>
+<p>(c) 带数据点的经典箱线图。</p>
+<p>(d) 小提琴图。</p>
+<p>(e) SinaPlot。</p>
+<p>(f) 叠加 SinaPlot 的小提琴图。</p>
+<p>(b)–(f) 中的图形使用 R 中的 ggplot2 生成。</p>
+<p>Source: Moseley, Hunter (2017): diagram of a box plot. figshare. <a href="https://doi.org/10.6084/m9.figshare.4993937.v1." target="_blank" rel="noopener noreferrer">doi.org/10.6084/m9.figshare.4993937.v1.</a> Moseley, Hunter; Flight, Robert M (2017): Standard Box Plot. figshare. <a href="https://doi.org/10.6084/m9.figshare.4968152.v1." target="_blank" rel="noopener noreferrer">doi.org/10.6084/m9.figshare.4968152.v1.</a> Moseley, Hunter; Flight, Robert M (2017): Boxplot with data points. figshare. <a href="https://doi.org/10.6084/m9.figshare.4968155.v1." target="_blank" rel="noopener noreferrer">doi.org/10.6084/m9.figshare.4968155.v1.</a> Moseley, Hunter; Flight, Robert M (2017): Example Violin Plot. figshare. <a href="https://doi.org/10.6084/m9.figshare.4968158.v1." target="_blank" rel="noopener noreferrer">doi.org/10.6084/m9.figshare.4968158.v1.</a> Moseley, Hunter; Flight, Robert M (2017): Example SinaPlot. figshare. <a href="https://doi.org/10.6084/m9.figshare.4968161.v1." target="_blank" rel="noopener noreferrer">doi.org/10.6084/m9.figshare.4968161.v1.</a> Moseley, Hunter; Flight, Robert M (2017): Example Violin plot plus SinaPlot. figshare. <a href="https://doi.org/10.6084/m9.figshare.4968164.v1." target="_blank" rel="noopener noreferrer">doi.org/10.6084/m9.figshare.4968164.v1.</a></p>
+<p>下一类主要描述性图形是散点图（scatter plot）。散点图表示多维数据点，用于可视化两个或多个样本变量之间的共同离散程度和依赖关系，而这些关系通常使用相关和协方差等描述性统计量来量化。图中的每个数据点表示一组有序的相互关联取值，对应不同样本变量；例如，(62.5 in., 101.3 kg) 表示一名男性人类受试者测得的身高和体重。通常，图中还会加入回归线或回归曲线，用于展示样本变量相对于某一特定数学模型或函数的依赖关系。Figure 18.8 用四个著名图形展示了散点图的有用性，这四个图形称为 Anscombe 四重奏（Anscombe’s quartet）（Anscombe 1973）。20 世纪 70 年代早期，Francis Anscombe 构造了四个数据集，每个数据集都包含两个变量，并且所有标准描述性统计量，包括线性回归线，都具有相同取值。然而，这些数据集的简单散点图揭示了这四个数据集实际上有多么不同。最令人不安的是，有两组点的线性相关 rxy 很高，但它们显然并不具有回归线所表示的线性关系。这四个图形提醒我们不要过度解释描述性统计量，尤其是在比较小数据集，并且不了解变量之间依赖性质的情况下。</p>
+<p><strong>Figure 18.8 Anscombe 四重奏。</strong></p>
+<p>四组著名数据点的散点图及回归线。这四组数据在视觉上差异很大，但给出完全相同的描述性统计值。</p>
+<p>散点图还被证明有助于可视化高维数据集的某些派生概括性性质或统计量。这类高维数据集包含数百甚至数千个相关样本变量。一般方法是，从大量相关样本变量中派生出一小组描述性潜变量（latent variables，即不能直接观察到的变量），然后用散点图可视化这组潜变量。用于这一方法的一种非常常见技术是主成分分析（principal component analysis, PCA）。PCA 从一组连续变量中派生出相关性的主成分，通常为线性相关。PCA 按照能够首先解释数据集中最大方差量的顺序派生各个相关性成分：第一主成分代表最大方差量，第二主成分代表第二大方差量，依此类推。该分析通常重复进行，直到获得用于可视化的期望成分数量，或直到所得主成分列表表示了数据集方差的预定义比例。因此，PCA 创建了一组最小的潜在连续变量，这些变量彼此之间不相关，同时代表原始高维数据集中存在的最大累积方差比例。</p>
+<p>Figure 18.9 显示了一个 PCA 散点图，其中两个线性相关主成分来自 RNA-seq 数据集。该数据集包括五组用人端粒酶逆转录酶永生化的人视网膜色素上皮细胞（human telomerase reverse transcriptase-immortalized human retinal pigmented epithelial cells, RPE-1），每组有三个重复。其中一组为对照，另外四组表示对三个不同基因的小干扰核糖核酸（small interfering ribonucleic acid, siRNA）敲低，其中一个基因以两种不同方式敲低。这两个主成分包含合并数据集中超过 50% 的方差；该合并数据集包括数千个表示单个 RNA 丰度的随机样本变量，而 RNA 丰度通常用于推断基因表达水平。前两个主成分突出显示了五组 RPE-1 细胞之间的分离，并表明这五组之间的差异体现在合并数据集最大的方差来源中。</p>
+<p><strong>Figure 18.9 主成分分析得到的前两个主成分（PCs）的散点图。</strong></p>
+<p>Source: Moseley, Hunter; Flight, Robert M; Wang, Qingjung (2017): PCA plot of RNAseq dataset of CLN3 knockdown. figshare. <a href="https://doi.org/10.6084/m9.figshare.4994204.v1." target="_blank" rel="noopener noreferrer">doi.org/10.6084/m9.figshare.4994204.v1.</a></p>
+<p>如前述图中的直方图、各种箱线图和散点图所示，图形可以提供非常具有描述性的数据表示。然而，必须谨慎处理，使图形具有最大描述性。以下几点为制作高描述性图形提供了有用指南：</p>
+<ul>
+<li>始终在图形中包含描述性标题，例如“Isocitrate dehydrogenase 1 activity”。此外，不要只是在标题中重复坐标轴标签。</li>
+<li>始终用描述性名称和测量单位标注坐标轴；例如，“Culture growth time (h)”、“μg/ml protein”或“Intensity (a.u.)”。</li>
+<li>只要可能且合理，就以视觉方式表示数据中的不确定性。</li>
+<li>使用误差棒和可视化底层分布，是以视觉方式表示不确定性的两种主要方式。</li>
+<li>使用有助于解释的误差棒。通常，较大的误差棒有助于防止对数据进行过度解释。</li>
+<li>始终说明误差棒的单位和大小，例如“Error bars represent two SE units”。</li>
+<li>当存在多个数据集、组别或数据类型，并且需要识别它们时，应包含图例。</li>
+<li>选择合适的图形，不要隐藏数据的关键描述性特征。这可能需要尝试多种图形和不同设置，才能找到恰到好处的图形。</li>
+<li>每幅图选择一个信息重点，并专注于传达这一信息。例如，一幅图可以传达一组结果及其相关结论。</li>
+</ul>
+<p>这些指南既有助于读者理解图形表示的内容，也有助于解释图形所表示的底层数据。Figure 18.10 说明了为什么这些指南很重要。例如，Figure 18.10a 缺少相当多的描述性元素，包括标题、坐标轴标题、图例和误差棒，这限制了图形的可解释性，并会使读者感到困惑。相比之下，Figure 18.10b 合理地包含了所有这些视觉特征，使观察者能够迅速判断该图表示什么，以及图中信息上重要的内容是什么；在这个例子中，重要信息是比较野生型小鼠与敲除小鼠在自发运动活动方面的差异。</p>
+<p><strong>Figure 18.10 如何使图形具有描述性的示例。</strong></p>
+<p>Source: Moseley, Hunter (2017): Bad and Good Graphing Examples. figshare. <a href="https://doi.org/10.6084/m9.figshare.4994207.v1" target="_blank" rel="noopener noreferrer">doi.org/10.6084/m9.figshare.4994207.v1</a></p>
+<h4>频率分布与概率分布</h4>
+<p>可视化数据的主要目的之一，是验证对描述性统计量的某些解释是否有效。当观察结果数量相对较少，即少于 100 个时，在多数图形类型中直接可视化数据相对简单，包括 Figure 18.7c,e,f 中使用箱线图及其变体可视化的数据，以及 Figure 18.10b 中的散点图。随着观察结果数量增加到 1000 以上，直接可视化数据变得更加困难。然而，仍然需要对观察结果的分布进行视觉描述，以验证一些关键假设；这些假设通常是对更具定量描述性的统计量作出特定解释所必需的。</p>
+<p>请记住，频率分布（frequency distribution）是给定取值集合中特定取值发生的频率；直方图（Figure 18.6）可以非常有效地可视化频率分布，用于概括单个有序型或数值型样本变量的数据，尤其是在被概括的数据量很大时。相关的概率分布（probability distribution）是特定取值发生的概率密度集合。在连续随机变量语境中，概率密度表示某一特定取值（结果）相对于无限多个其他可能取值（结果）发生的可能性。此外，概率是事件发生的可能性；在这一语境中，事件被定义为一个连续取值范围。进一步说，可以把概率密度看作相对频率，其在整个分布上的总概率加和为 1。</p>
+<p>Figure 18.11 展示了最著名且最常见的概率分布：标准正态分布（standard normal distribution），也称 Gaussian 分布（Gaussian distribution）。Gaussian 分布以 Carl Friedrich Gauss 命名，他在 1809 年首次对正态分布进行了具体描述（Gauss 1809）。在 Figure 18.11 中，x 轴用 z-score 来描述取值，其中：</p>
+<p>z = (x − μx) / σx</p>
+<p>这里，z-score 表示某个取值相对于均值 μx 的偏离，并由标准差 σx 归一化。因此，x 轴的单位是标准差。y 轴描述特定 z 值处的概率密度，通常用概率密度函数表示，即 y = pdf(z)；如果直接使用变量 x，则为 pdf(x)。现在，某些统计事件如 {z ≥ a} 的实际概率 P 可以定义为：</p>
+<p>P(z ≥ a) = ∫a∞ pdf(z) dz</p>
+<p>这就是从 z = a 开始的 pdf(z) 曲线下方的面积。同样，一组绝对 z 值小于或等于某一标准差单位数的概率可表示为：</p>
+<p>P(−a ≤ z ≤ a) = ∫−a^a pdf(z) dz</p>
+<p>对于正态分布，68.3% 的概率密度位于 ±1σ 以内，95.4% 位于 ±2σ 以内。然而，对于其他常见分布，这些概率期望是不同的。</p>
+<p><strong>Figure 18.11 标准正态分布。</strong></p>
+<p>Source: Moseley, Hunter (2017): Description of a normal distribution. figshare. <a href="https://doi.org/10.6084/m9.figshare.4994210.v1" target="_blank" rel="noopener noreferrer">doi.org/10.6084/m9.figshare.4994210.v1</a></p>
+<p>如 Figure 18.12 所示，在生物学和生物物理数据中可以看到许多不同的、特征明确的分布，例如对数正态分布（log-normal distribution）、Poisson 分布（Poisson distribution）以及二项分布（binomial distribution）的变体，尤其是负二项分布（negative binomial distribution）。然而，许多相关观察结果集合代表若干相似但独立分布的总和；这些总和往往近似于正态分布，即使这些分布本身并不是正态的。虽然每个独立分布在技术上代表不同现象，但在实际操作中，通常不可能在事先将它们作为独立随机变量分别收集。独立随机变量之和近似于正态分布的这种倾向，称为中心极限定理（central limit theorem），它是统计学和概率论的基础原则。中心极限定理也是许多生物学和生物物理数据集的“救星”，因为相关观察结果集合往往是若干分布的总和，而这些总和可以近似为或作为正态分布来处理。</p>
+<p><strong>Figure 18.12 生物学和生物物理数据集中常见或常用的其他特征明确的离散分布和连续分布。</strong></p>
+<p>Source: By Skbkekas – Own work, CC BY 3.0, <a href="https://commons.wikimedia.org/w/index.php?curid=9447142." target="_blank" rel="noopener noreferrer">commons.wikimedia.org/w/index.php?curid=9447142.</a> By Tayste – Own work, Public Domain, <a href="https://commons.wikimedia.org/w/index.php?curid=3646951." target="_blank" rel="noopener noreferrer">commons.wikimedia.org/w/index.php?curid=3646951.</a> By Krishnavedala – Own work, CC0, <a href="https://commons.wikimedia.org/w/index.php?curid=39170496." target="_blank" rel="noopener noreferrer">commons.wikimedia.org/w/index.php?curid=39170496.</a> By Geek3 – Own work, CC BY 3.0, <a href="https://commons.wikimedia.org/w/index.php?curid=9884213." target="_blank" rel="noopener noreferrer">commons.wikimedia.org/w/index.php?curid=9884213.</a></p>
+<p>然而，真实分布从来不会像理想统计模型中的分布那样漂亮。Figure 18.13 显示了一些图形，用于描述金属蛋白中某些键长和配位角的分布（Yao et al. 2017）。Figure 18.13a 展示了金属蛋白中特定金属离子与氧配体原子之间键长真实分布的几个重叠直方图。Figure 18.13b 显示了配位锌金属离子的最小配体–金属–配体角的几个重叠直方图。这些键长和配位角分布来自 Worldwide Protein Data Bank（wwPDB；见 Chapter 12）中条目所存储的金属蛋白结构的三维原子级表示（Berman et al. 2007）。其中几个分布表现出相对于理想正态分布的异常偏离。最显著的异常是存在多个众数，如 Figure 18.13b 中绿色的双峰分布所示，该分布涉及一个锌离子由五个配体原子配位的情形。</p>
+<p>模态性（modality），即存在的众数数量，是评估真实分布时一个非常重要的特征，因为多数集中趋势描述性统计量，如均值和中位数，以及离散程度描述性统计量，如方差，只有在分布为单峰分布（unimodal）时，才可以从概率角度进行定量解释。不过，多峰分布中分辨良好、即不重叠的众数，可以被分离、描述，并作为独立的单峰分布处理。此外，Figure 18.13a 中的蓝色分布由于右尾膨胀，即频率更高，而并不对称。这种围绕分布众数的对称性偏离称为偏度（skewness），右尾膨胀被定义为正偏（positive skew）。同样，Figure 18.13b 中的红色分布也不对称，其左尾膨胀，形成负偏（negative skew）。多峰性和高偏度都会使方差膨胀，并导致均值和中位数发生严重偏离，从而限制这些描述性统计量的定量可解释性。</p>
+<p>如前几幅图所示，直方图以及小提琴图等相关的分布描述性图形，对于视觉检查分布以及验证支撑特定数据解释的分布关键假设非常有用。然而，生成这些分布描述性图形需要最低限度的数据量。对于直方图，一个一般经验法则是，至少需要 30 个数据点才能表示单峰分布，如 Figure 18.6 中可视化的 31 个数据点所示。但是，若要从视觉上刻画分布的其他方面，例如模态性和偏度，尤其是在众数分离不佳时，则需要更多数据（Figure 18.13）。此外，也存在多维分布描述性图形，包括等高线图（contour plots），它们可以帮助评估多维分布。不过，这些类型的图形需要更多数据，才能真正具有分布描述能力。</p></div>
+</div>
+</div>
+
+
+</div>
+</article><article class="wiki-section" id="sec-155">
+<header class="wiki-section-head" onclick="toggleWikiSection(this)">
+<div class="num">155</div>
+<div><h2>Statistical Inference and Statistical Hypothesis Testing</h2><div class="badges"><span>PDF page 589-599；印刷页码 待核对</span></div></div>
+<div class="arrow">▶</div>
+</header>
+<div class="wiki-section-body collapsed">
+<button class="sec-export-btn" onclick="event.stopPropagation();openExport('sec-155')">导出本节</button>
+<div class="bilingual">
+<div class="bilingual-col bilingual-source">
+<div class="col-label">English Source<span class="note">PDF extracted</span></div>
+<div class="col-content"><p style="color:var(--muted);font-style:italic">源文暂缺。</p></div>
+</div>
+<div class="bilingual-col bilingual-translation">
+<div class="col-label">中文译文</div>
+<div class="col-content"><h2>Ch18 Statistical Methods for Biologists / Statistical Inference and Statistical Hypothesis Testing</h2>
+<h3>Statistical Inference and Statistical Hypothesis Testing</h3>
+<h4>Figure 18.13 金属蛋白中配位金属离子的键长和配位角直方图</h4>
+<p>(a) 金属蛋白中与氧配体结合的常见金属离子的键长直方图。</p>
+<p>(b) 金属蛋白中配位锌离子的最小配体–金属–配体角直方图。</p>
+<p>图中术语：</p>
+<ul>
+<li>Metal ion–oxygen ligand：金属离子–氧配体  </li>
+<li>Smallest ligand–metal–ligand angle for a coordinated Zn ion：配位 Zn 离子的最小配体–金属–配体角  </li>
+<li>Positively skewed：正偏态  </li>
+<li>Negatively skewed：负偏态  </li>
+<li>Bimodal：双峰分布  </li>
+<li>Bond length (Å)：键长（Å）  </li>
+<li>Angle (degrees)：角度（度）  </li>
+<li>Count：计数  </li>
+<li>metal：金属  </li>
+<li>numLig：配体数</li>
+</ul>
+<p>Source: Yao, S., Flight, R.M., Rouchka, E.C., and Moseley, H.N.B. (2017). Aberrant coordination geometries discovered in the most abundant metalloproteins. Proteins: Structure, Function, and Bioinformatics 85, 885–907. Reproduced with permission of Wiley.</p>
+<h3>Statistical Inference and Statistical Hypothesis Testing</h3>
+<h4>Statistical Inference</h4>
+<p>统计推断（statistical inference）是指对总体（population）的性质形成判断或“命题”（propositions）的过程，通常基于随机抽样（random sampling）进行。其总体目的在于获得新的信息和知识，和/或支持有依据的决策。Figure 18.14 展示了这一过程：从正在被分析的总体开始，对该总体进行随机抽样，用于某个实验，并在实验中获得观测值。这些观测值生成数据；数据可用于推导描述性统计量（descriptive statistics），进而推断刻画底层总体的特定参数（parameters）。随后，这些描述性统计量被解释为新的信息和知识。</p>
+<p>在这一过程中，至关重要的是：样本、实验、观测值和数据都必须经过充分检查、审查和评估，使得由此推导出的统计量能够用于推断准确刻画正确总体的参数，从而支持合理解释并提供新的信息和知识。</p>
+<p>例如，考虑一个实验室构建了一种基因敲除小鼠，其表型为毛发非常浓密，研究人员亲切地称之为 furball。这种多毛表型相当独特，因此该实验室繁育了 100 只 furball 小鼠，形成随机样本，以刻画其多毛表型。研究人员测量了这一小鼠样本背侧和腹侧的毛发斑块。所得毛发测量数据集用图形进行描述；这些图形显示样本分布近似于正态分布，同时均值和标准差这类描述性统计量似乎能够完整地再现该样本分布。基于这一抽样结果，研究人员推断 furball 总体具有一种呈正态分布的多毛表型，并且可由样本均值和样本标准差很好地描述。该实验室在 6 个月后重复随机抽样，得到关于 furball 总体非常相似的推断，从而进一步验证了该结果。</p>
+<p>对于公共科学数据库（public scientific repositories）中的数据集，在进行下游分析之前，通常只有数据及其相关元数据能够得到充分检查、审查和评估。对公开归档数据进行这种检查是绝对必要的，因为并非每一个提交到数据库的数据集都经历过相同程度的前期检查和质量控制；此外，许多数据库对数据提交只要求满足最低标准（Brazma et al. 2001）。这使得生物信息学领域的许多人认为，公共科学数据库虽然有用且常常必不可少，但在某种程度上是“脏的”（dirty）（Kim et al. 2003）。因此，许多生物信息学研究者认为，检查并移除不可用数据——也就是对数据集进行“清洗”（cleaning）——是他们工作中最大的一部分，且往往是最关键的步骤，通常约占其工作量的 80%（Zhang et al. 2003）。实际上，检查、审查和评估只是统计推断整体过程中的基础组成部分；这一过程可能需要修订，甚至重复其中任意一个步骤。</p>
+<h4>Figure 18.14 统计推断过程概览</h4>
+<p>FUV stands for the fraction of unexplained variance.</p>
+<p>图中术语：</p>
+<ul>
+<li>Population：总体  </li>
+<li>Sample：样本  </li>
+<li>Experiment：实验  </li>
+<li>Observations：观测值  </li>
+<li>Data：数据  </li>
+<li>Statistic：统计量  </li>
+<li>Parameter：参数  </li>
+<li>Information and knowledge：信息与知识  </li>
+<li>Inspect, review, and evaluate：检查、审查和评估  </li>
+<li>1. Sampled：抽样  </li>
+<li>2. Acquired：获得  </li>
+<li>3. Generates：生成  </li>
+<li>4. Derived：推导  </li>
+<li>5. Infers：推断  </li>
+<li>6. Characterizes：刻画  </li>
+<li>7. Interpreted：解释</li>
+</ul>
+<p>Source: Moseley, Hunter (2017): Overview of a statistical inference process. figshare. <a href="https://doi.org/10.6084/m9.figshare.4994213.v1." target="_blank" rel="noopener noreferrer">doi.org/10.6084/m9.figshare.4994213.v1.</a></p>
+<h4>Statistical Hypothesis Testing</h4>
+<p>统计推断最主要的直接目的，是形成命题或判断；统计假设检验（statistical hypothesis testing）是用于对数据形成这些判断的最常见统计方法之一。在大多数生物信息学分析的语境中，可以给出一个实用定义：假设检验是将一个数据集（样本）与另一个数据集（样本）或一个模型进行比较，并基于数据形成判断的过程。然而，从更一般的统计学定义来看，假设检验是基于对某一现象的观测，建立并检验一个可检验假设（testable hypothesis）的过程；该现象通过一组随机变量建模。</p>
+<p>从技术上讲，建立可检验假设可以被视为一个独立于统计假设检验的步骤；但很多时候，精确可检验假设的建立与实际检验该假设是相伴发生的，因为一个给定假设必须能够适配某种可用的检验方法。</p>
+<p>统计假设检验的标准实施通常包括三个主要步骤。</p>
+<p>第一步，是建立一个假设，其形式为：两个样本之间存在某种统计关系。这个假设称为备择假设（alternative hypothesis, Ha），通常直接基于从生物学和/或分析学角度提出的实验假设。然而，直接检验备择假设 Ha 往往非常困难。</p>
+<p>第二步，是建立一个逻辑上相反的假设，即零假设（null hypothesis, H0）。零假设通常更容易被直接检验；在此情形下，它表示两个样本之间不存在统计关系。</p>
+<p>第三步，是通过比较从每个样本推导出的某个统计量的取值，直接检验零假设 H0，也就是检验“统计关系不存在”这一命题。这种方法的基础在于：直接证伪一个假设或陈述，要比直接证明一个假设或陈述为真容易得多。因此，如果能够证伪一个与目标备择假设 Ha 逻辑相反的零假设 H0，就可以间接支持目标备择假设 Ha 为真。</p>
+<p>不过，为了理解被直接检验的零假设 H0，必须在描述性统计的语境中清楚定义什么是“统计关系”（statistical relationship），以避免混淆。当来自两个样本、针对某一给定随机变量所推导出的统计量在统计意义上并非“相同”（the same）时，这种情况被解释为：两个样本在该随机变量方面存在统计关系。因此，两个样本推导出的统计量“相同”，表示不存在统计关系。</p>
+<p>例如，考虑如下零假设 H0：两个呈正态分布的纯种马样本，其身高均值相同。这表示两个纯种马样本在身高方面不存在关系。若缺乏统计意义上的相同性，即存在统计差异，则表明零假设是错误的，并且两个纯种马样本的身高之间确实存在统计关系。因此，统计显著差异被用来证伪零假设 H0，即“关系不存在”（也就是认为两个样本的该统计量相同）的假设。</p>
+<p>需要牢记的核心思想是：统计显著差异用于证伪或拒绝零假设 H0，即两个样本的某个统计量在统计上相同；这样做的目的是确认备择假设 Ha，即两个样本的统计量在统计上不同，因此两个样本之间存在关系。</p>
+<p>统计学家和生物学家在感知、描述和定义世界的方式上存在差异，这是两类科学家相互交流时许多科学混淆的来源，常常导致合作低效甚至失败。因此，在建立跨学科合作时，非常重要的一点是保持充分耐心，并着重识别误沟通发生的位置；这些误沟通常常源自术语差异。</p>
+<p>现在将上述统计假设检验过程的前两步放入一个生物学实例中考虑。研究人员在培养皿中培养两组细胞培养物；一组接受某种药物处理，另一组不接受处理。经过 24 小时药物暴露后，从每个培养皿的培养基和细胞中取样，并通过一维 1H 核磁共振（nuclear magnetic resonance, NMR）实验测量乳酸的相对含量。实验人员首先希望检验如下实验假设：“病例组与对照组总体之间，培养基中归一化乳酸 NMR 强度观测值不同。”</p>
+<p>为了检验该实验假设，建立如下统计备择假设 Ha：来自样本 Sa 和 Sb 的两组观测值集合，其均值 xa 和 xb 不同。备择假设 Ha 提出，Sa 和 Sb 之间存在关系，即二者均值存在差异。</p>
+<p>接下来，建立逻辑上相反的零假设 H0：来自样本 Sa 和 Sb 的两组观测值集合，其均值 xa 和 xb 相同。零假设 H0 提出，Sa 和 Sb 之间不存在关系；在统计检验中拒绝零假设 H0 将验证备择假设 Ha，并支持如下解释：这两组细胞培养物代表两个不同总体。</p>
+<p>此时，研究小组中的统计学家要求描述每一个“样本”（sample）。实验人员开始描述从每个细胞培养物中取出的“样品”（sample）。双方都没有意识到，“sample”这个词对对方而言意味着不同的东西，于是误解开始产生，交流也随之变得紧张。</p>
+<h4>Type I and II Errors that Arise from Statistical Hypothesis Testing</h4>
+<p>在检验零假设 H0 时，需要判断检验结果是阳性还是阴性。拒绝零假设将支持备择假设，被视为检验的阳性结果。未能拒绝零假设则不支持备择假设，被视为检验的阴性结果。然而，根据零假设实际上为真还是为假，检验存在四种逻辑结果。这些结果由 Figure 18.15 中的真值表展示（更多信息见 Box 5.4）。</p>
+<p>从真值表左下角开始，拒绝一个实际上为假的零假设称为真阳性（true positive）。在这种情况下，拒绝错误的零假设正确地支持了备择假设。</p>
+<p>移动到真值表右上角，未拒绝一个实际上为真的零假设称为真阴性（true negative）。在这种情况下，未能拒绝真实的零假设，正确地没有支持备择假设。</p>
+<p>在真值表左上角，错误地拒绝一个实际上为真的零假设称为假阳性（false positive）。在这种情况下，拒绝真实的零假设错误地支持了备择假设。在统计学中，假阳性称为 I 类错误（type I error）。此时，检验结果会使人得出“存在统计关系”的结论，而事实上这种关系并不存在。Figure 18.15 左侧图像展示了一个 I 类错误：妊娠测试显示男性患者怀孕。</p>
+<p>最后，在真值表右下角，未能拒绝一个实际上为假的零假设称为假阴性（false negative）。在这种情况下，未能拒绝错误的零假设，错误地没有支持备择假设。在统计学中，假阴性称为 II 类错误（type II error）。此时，检验结果会使人得出“不存在统计关系”的结论，而事实上这种关系存在。Figure 18.15 最右侧图像展示了一个 II 类错误：妊娠测试显示明显怀孕的女性患者未怀孕。</p>
+<h4>Figure 18.15 带有 I 类错误和 II 类错误说明的真值表</h4>
+<p>图中术语：</p>
+<ul>
+<li>Truth table：真值表  </li>
+<li>Type I error (false positive)：I 类错误（假阳性）  </li>
+<li>Type II error (false negative)：II 类错误（假阴性）  </li>
+<li>FP (type I error)：FP（I 类错误）  </li>
+<li>TN：真阴性  </li>
+<li>TP：真阳性  </li>
+<li>FN (type II error)：FN（II 类错误）  </li>
+<li>Reject H0：拒绝 H0  </li>
+<li>Failure to reject H0：未能拒绝 H0  </li>
+<li>True H0：H0 为真  </li>
+<li>False H0：H0 为假  </li>
+<li>you’re not pregnant：你没有怀孕  </li>
+<li>you’re pregnant：你怀孕了</li>
+</ul>
+<h4>Statistical Significance</h4>
+<p>是否拒绝零假设 H0 并不是一个容易作出的决定，尤其是在并不知道零假设是真是假时。统计显著性（statistical significance）的概念有助于这一决策：它将判断框定为“拒绝一个真实零假设，也就是犯 I 类错误，是多么不可能”。犯 I 类错误的可能性越低，拒绝零假设的统计显著性就越强。</p>
+<p>Figure 18.16 以概率或 p 值（p value）的形式展示了统计显著性。p 值表示：当 H0 为真时，获得至少与当前零假设 H0 下的结果一样极端的结果的概率。对于给定的 H0，图中绿色的 p 值是基于检验统计量 t，在给定概率密度函数下一个或两个绿色尾部面积之和。具体使用哪个检验统计量，以及累加一个尾部还是两个尾部，取决于所执行的具体检验。</p>
+<p>Alpha，也称显著性水平（level of significance），是当 H0 为真时拒绝零假设 H0 的概率。图中的蓝色 alpha 是从蓝色临界值线开始的一个或两个尾部面积之和。临界值（critical value）只是对应于给定 alpha 的检验统计量取值。Alpha 根据与零假设对应的 p 值是否小于 alpha，建立是否接受或拒绝零假设 H0 的决策点。</p>
+<p>良好的统计实践要求在进行统计检验之前选择 alpha，以避免确认偏差（confirmation bias），或避免选择有助于确认实验预期结果的判定标准。在生物学和生物医学研究中，常用的 alpha 包括 0.001、0.01；当样本量较小时，甚至会选择 0.05。</p>
+<h4>Figure 18.16 概率密度分布、p 值和 alpha 之间关系的示意图</h4>
+<p>图中术语与公式：</p>
+<ul>
+<li>alpha – sum of the two tails starting at the blue critical value lines：alpha——从蓝色临界值线开始的两个尾部面积之和  </li>
+<li>P value – sum of the two tails：p 值——两个尾部面积之和  </li>
+<li>H0 is rejected when：当满足以下条件时拒绝 H0  </li>
+<li>P value ≤ alpha：p 值 ≤ alpha  </li>
+<li>ts prob density：ts 的概率密度  </li>
+</ul>
+<p>公式：</p>
+<pre><code>P(abs(ts) ≥ c) = ∫c∞ pdf(ts) dt + ∫−∞−c pdf(ts) dt</code></pre>
+<p>Source: Moseley, Hunter (2017): Relationships between pdf, p value, and alpha. figshare. <a href="https://doi.org/10.6084/m9.figshare.4994216.v1." target="_blank" rel="noopener noreferrer">doi.org/10.6084/m9.figshare.4994216.v1.</a></p>
+<h4>Testing the Null Hypothesis with a Two-Sample t-Test</h4>
+<p>一旦建立了零假设，就应尝试对其进行检验。这要求找到合适的统计检验或方法。对于涉及比较两个近似正态分布样本均值的零假设，双样本 Student’s t-test 是一种理想方法。</p>
+<p>Figure 18.17 第 1 步所示的 t 统计量，是两个样本均值之差，除以均值差异估计方差的平方根；换言之，是除以每个均值标准误最佳估计值平方和的平方根。也就是说，均值之间的分离程度，是相对于用于计算这些均值的底层数据的不确定性（方差）来评估的。</p>
+<p>这里并不是使用每个均值的标准误作为不确定性的估计，而是从两个样本方差 𝜎a² 和 𝜎b² 的加权平均中推导出一个新的方差估计 𝜎d²；这一做法假定这两个方差是同一总体方差的两个估计。t 统计量遵循一种称为 Student’s t-distribution 的概率密度分布。实际上，如 Figure 18.17 第 2 步所示，存在许多 t 分布，它们通过参数 v 相互关联；v 是 t-test 中的自由度（degrees of freedom）数量。在本例中，自由度等于两个样本量 na 和 nb 之和减 2。</p>
+<p>一般而言，自由度指影响系统可能状态范围及每种状态概率的变量数量。在统计学语境中，自由度指在计算某一给定统计量时“可以自由变化”的数值数量，这些数值会影响结果的范围和概率。在计算双样本 t 统计量的语境中，自由度指两个样本中独立抽样得到的观测值集合总数，减去正在被直接检验的两个均值；因为这两个均值是由同一组数值集合推导出来的。因此，自由度决定了与所计算的特定 t 统计量相关的具体 Student’s t-distribution。</p>
+<p>William Sealy Gosset 于 1908 年以笔名 Student 发表了对 Student’s t-distributions 及其统计用途的描述。之所以使用笔名，是因为其雇主对发表论文有公司限制；这也是 Student’s t-distribution 和 Student’s t-test 得名的原因（Student 1908）。</p>
+<p>Figure 18.17 展示了使用双样本 t-test 检验零假设的过程。该过程从在检验前选择显著性水平 alpha 开始。随后，在第 1 步中计算 t 统计量及相关统计量。第 2 步，根据自由度 v 选择合适的 Student’s t-distribution。第 3 步，根据 t 统计量和相应 Student’s t-distribution 的概率密度函数计算 p 值。最后，在第 4 步中，根据 p 值是否小于或等于 alpha，决定是否拒绝零假设 H0。</p>
+<p>通常，所有这些步骤都由统计 t-test 函数完成；许多电子表格程序以及几乎所有通用数据分析软件包中都能找到这种函数。使用者只需以合适格式提供两组数值样本即可；此时默认预期是：两个样本具有相同方差，并且来自近似正态分布的一个或多个总体。</p>
+<h4>Figure 18.17 使用 Student’s t-test 检验零假设</h4>
+<p>图中步骤与公式：</p>
+<ol>
+<li>Select an alpha (level of significance) for testing  </li>
+</ol>
+<p>选择用于检验的 alpha（显著性水平）</p>
+<ol>
+<li>Calculate the t-statistic  </li>
+</ol>
+<p>计算 t 统计量</p>
+<pre><code>t = (x̄a − x̄b) / sqrt((σd² / na) + (σd² / nb))</code></pre>
+<p>其中：</p>
+<pre><code>σd² = [(na − 1)σa² + (nb − 1)σb²] / (na + nb − 2)
+
+na = |Sa|
+nb = |Sb|
+v = na + nb − 2</code></pre>
+<ol>
+<li>Select the appropriate Student’s t-distribution  </li>
+</ol>
+<p>选择合适的 Student’s t-distribution</p>
+<ol>
+<li>Calculate p value and compare to alpha  </li>
+</ol>
+<p>计算 p 值并与 alpha 比较</p>
+<ol>
+<li>Reject H0 if P-value ≤ alpha  </li>
+</ol>
+<p>若 p 值 ≤ alpha，则拒绝 H0</p>
+<p>图中术语：</p>
+<ul>
+<li>t probability density：t 概率密度  </li>
+<li>The sum of two tail areas is the p value：两个尾部面积之和即为 p 值  </li>
+</ul>
+<p>公式：</p>
+<pre><code>P(abs(t) ≥ c) = ∫c∞ pdf(t) dt + ∫−∞−c pdf(t) dt</code></pre>
+<p>Source: Moseley, Hunter (2017): Overview of using a t-test to test a null hypothesis. figshare. <a href="https://doi.org/10.6084/m9.figshare.4994219.v1." target="_blank" rel="noopener noreferrer">doi.org/10.6084/m9.figshare.4994219.v1.</a></p>
+<p>为了更好地理解双样本 t-test 实际上在做什么，需要理解总体分布与可能样本均值分布之间的关系；后者由对总体进行多次随机抽样而形成。Figure 18.18 展示了这种关系：较大的浅蓝色和红色分布表示总体分布，而较深、且小得多的分布表示样本均值分布。</p>
+<p>由于中心极限定理（central limit theorem），当随机抽样的样本量足够大时，无论总体分布本身是什么形状，较小的样本均值分布都会近似于正态分布。这是因为每一个样本值都代表一个独立随机变量，而这些变量会被求和以计算均值统计量；根据中心极限定理，所得变量，也就是这里的均值，应当近似服从正态分布。</p>
+<p>也就是说，给定样本的均值和标准误能在多大程度上合理估计样本均值分布的均值和标准差，取决于原始总体分布在多大程度上近似正态分布。因此，在双样本 t-test 的语境中，原始总体分布确实重要，因为样本均值分布的均值和标准差估计值只来自两个样本。</p>
+<p>现在，可以使用 t 统计量中对两个样本均值的比较，来比较两个均值分布中成对的均值。由此得到的 t 统计量概率密度分布就是相应的 Student’s t-distribution。随后，该 t 分布可用于单尾或双尾比较，以计算 p 值，并决定是否拒绝零假设 H0。</p>
+<p>单尾比较与双尾比较的区别在于：检验的是单一方向的偏离，还是任一方向的偏离。例如，如果要检验药物是否在病例–对照实验的观测值中产生正向反应，可以使用单尾 t-test。然而，如果要检验两个样本均值之间任一方向上的显著偏离，则使用双尾检验。关于如何正确选择统计假设检验的其他考虑，将在本章后面的“Common Statistical Tests Used in a Typical Statistical Inference Process”部分讨论。</p>
+<h4>Figure 18.18 总体分布与样本均值分布之间的关系</h4>
+<p>图中术语：</p>
+<ul>
+<li>Population A distribution：总体 A 分布  </li>
+<li>Sample mean A distribution：样本均值 A 分布  </li>
+<li>Population B distribution：总体 B 分布  </li>
+<li>Sample mean B distribution：样本均值 B 分布  </li>
+<li>Compare mean distributions：比较均值分布  </li>
+<li>Student’s t-distribution：Student’s t-distribution  </li>
+<li>One-tailed comparison：单尾比较  </li>
+<li>Two-tailed comparison：双尾比较  </li>
+<li>Calculate p value：计算 p 值  </li>
+<li>alpha：alpha  </li>
+<li>± σp：± 总体标准差  </li>
+<li>± SE = σs/√n：± 标准误 = σs/√n  </li>
+</ul>
+<p>公式：</p>
+<pre><code>t = (x̄a − x̄b) / sqrt((σd² / na) + (σd² / nb))
+
+P(t ≥ c) = ∫c∞ pdf(t) dt
+
+P(abs(t) ≥ c) = ∫c∞ pdf(t) dt + ∫−∞−c pdf(t) dt</code></pre>
+<p>Source: Moseley, Hunter (2017): Relationships between population and sample mean distributions. figshare. <a href="https://doi.org/10.6084/m9.figshare.4994222.v1." target="_blank" rel="noopener noreferrer">doi.org/10.6084/m9.figshare.4994222.v1.</a></p>
+<h4>Statistical Power</h4>
+<p>如前所述，统计显著性关注的是 alpha，即 I 类错误（假阳性）的概率。那么 II 类错误（假阴性）的概率又如何表示？统计术语 beta 表示 II 类错误的概率；1 − beta 则表示统计功效（statistical power）的概念，即正确拒绝零假设 H0 的概率。</p>
+<p>具有较强统计功效的实验，有较高概率拒绝那些实际上为假的零假设。这也解释了为什么大多数生物医学和临床研究基金申请的评审，都会包括对拟议实验统计功效的评估：目的是评估拟议研究成功的可能性。对统计功效的评估需要估计统计功效，而这种估计来自基于已知或估计统计量的统计功效分析（power analysis）。</p>
+<p>功效分析在某一特定统计检验的语境中关联四个相互依赖的因素：alpha、beta（或 1 − beta）、样本量（sample size）和效应量（effect size）。效应量是对某一现象强度的定量度量。给定这四个因素中的任意三个，第四个因素即可通过功效分析推导出来。在许多情况下，某些因素，尤其是效应量，并不知道，只能估计；这意味着推导出的第四个因素也只是一个估计值。</p>
+<p>Figure 18.19 在 Student’s t-test 的语境中，用一个近似图展示了功效分析中这四个因素之间的关系；该图在小样本量情况下会存在偏差。如图所示，效应量是样本均值分布的均值之差，通常根据等价实验中的两个样本均值之差估计，或根据类似实验或预实验“合理近似”得到。</p>
+<p>效应量根据均值差异的方差进行评估；而均值差异的方差又来自两个样本均值分布的方差。样本均值分布的方差通过标准误的平方进行估计，而标准误依赖于样本量。Alpha 和 beta 围绕一个特定的 t 统计量临界值相互关联；该临界值依赖于均值差异的方差，而这一方差最终依赖于样本量。因此，当其中一个因素发生变化时，其他因素也会随之变化。</p>
+<p>通常，功效分析用于估计样本量或统计功效。在估计所需最小样本量时，需要给定期望的统计功效，例如 0.9（90% 功效）、给定的 alpha，例如 0.01，以及对效应量的合理估计。同样，在估计某一拟议实验的统计功效时，需要给定预期样本量、某个 alpha，例如 0.01，以及对效应量的合理估计。</p>
+<h4>Figure 18.19 Student’s t-test 的近似功效分析图</h4>
+<p>图中术语：</p>
+<ul>
+<li>effect size：效应量  </li>
+<li>beta：beta  </li>
+<li>Power：功效  </li>
+<li>alpha：alpha  </li>
+<li>critical value：临界值  </li>
+<li>Retain H0：保留 H0  </li>
+<li>Reject H0：拒绝 H0  </li>
+<li>SEa：样本 A 的标准误  </li>
+<li>SEb：样本 B 的标准误  </li>
+</ul>
+<p>公式：</p>
+<pre><code>t = (x̄a − x̄b) / sqrt((σd² / na) + (σd² / nb))
+
+SEa = σa / √na
+SEb = σb / √nb</code></pre>
+<p>Source: Moseley, Hunter (2017): Approximate power analysis diagram for a Student’s t-test. figshare. <a href="https://doi.org/10.6084/m9.figshare.4994228.v1." target="_blank" rel="noopener noreferrer">doi.org/10.6084/m9.figshare.4994228.v1.</a></p>
+<h4>Correcting for False Discovery due to Multiple Testing</h4>
+<p>生物信息学中一个常见且日益突出的挑战，是处理包含大量不同观测随机变量的实验；这些观测值常常由高通量分析仪器生成，例如 next generation sequencers。所得数据集虽然存在各种与数据存储和管理有关的后勤问题，但也对统计检验和分析提出了独特挑战。可能影响最大的问题是：如果检验大量随机变量，而不采取措施降低错误发现（false discovery），就会产生错误发现。</p>
+<p>例如，考虑一个 RNA-seq 实验。该实验使用人类癌细胞培养样本，其中一部分接受抗癌药物处理，另一部分未接受处理；研究人员测量了细胞培养物统计样本中 7500 个独特转录本的丰度。熟悉这类数据集的数据分析人员会明智地先探索数据，验证其行为是否符合预期，然后再进入解释阶段。他们通过绘制代表性随机变量的分布图，验证这些变量看起来是否近似于对数正态分布。随后，他们对原始基因表达观测值进行对数转换，并再次绘图，以观察转换后的分布是否近似正态。</p>
+<p>接下来，数据分析人员选择 alpha = 0.01，并使用病例样本和对照样本，对每一个基因表达随机变量执行双样本 t-test。检验结果显示，150 个转录本通过检验，但这里存在一个问题。基于 alpha = 0.01 且共执行 7500 个独立检验，可以预期其中 75 个结果，即 0.01 × 7500 个结果，是假阳性（I 类错误）。然而，只有 150 个转录本通过检验。因此，约 75/150，即 50% 的结果是假阳性，这意味着错误发现率为 50%。会有人信任一个估计有 50% 错误的结果集吗？这个例子展示了对包含大量随机变量的数据集进行多重检验时的根本问题。</p>
+<p>多重检验问题的解决方法，是对所执行的一组检验产生的 p 值进行校正。这个统计过程称为多重检验校正（multiple testing correction），其目的是限制错误发现率（false discovery rate, FDR；见 Box 5.4）。FDR 根据假阳性（FP）和真阳性（TP）由下式计算：</p>
+<pre><code>FDR = FP / (TP + FP)</code></pre>
+<p>在该过程中，会基于一个 p 值或一组 p 值计算 q 值（q value），即经过 FDR 调整的 p 值（见 Chapter 10）。最简单的多重检验校正方法是 Bonferroni correction；该方法将给定 p 值乘以执行检验的数量，从而生成调整后的 p 值。对于少量检验，Bonferroni correction 快速且合理，能够最小化 I 类错误。然而，Bonferroni correction 是一种非常严格的校正，往往在预防 I 类错误和降低 FDR 方面过度补偿，同时会严重提高 II 类错误的概率（McIntyre et al. 2000）。</p>
+<p>这是因为 Bonferroni correction 实际上控制的是所谓 family-wise error rate（FWER），即在给定 alpha 下，在一组检验中至少犯一次 I 类错误的概率。因此，Bonferroni 调整后的 p 值从技术上讲并不是 q 值。对于许多涉及高维数据集的统计分析而言，Bonferroni correction 并不是一种可行的多重校正方法；原因在于，当检验数量达到数百个或更多时，对 FWER 的校正会造成 II 类错误大幅增加，并可能抹去所得 q 值中的所有统计显著性。</p>
+<p>还有其他更复杂的多重检验校正方法，能够在限制 I 类错误和 II 类错误之间提供更好的平衡，同时达到给定 FDR；不过这些方法并不那么容易使用。最常用的多重校正方法之一是 Benjamini–Hochberg correction。该方法基于目标 FDR，以及由一组相关统计检验生成的有序 p 值集合，对每个 p 值进行调整，从而计算 q 值（Hochberg and Benjamini 1990）。</p>
+<h4>The Global Problem with the Use of p Values</h4>
+<p>即使进行了多重检验校正，并且研究者足够谨慎、细致且认真，p 值的使用仍然存在一个全局性问题。</p>
+<p>首先，即使在一般科学共同体中，p 值也常常被误解和误用。p 值经常被混同于效应量。某一现象可测量的强度或大小，并不等同于通过统计检验检测到该现象时的统计显著性。在许多情况下，一旦某一特定现象的存在已经建立，由该现象造成的效应量，在评估该现象潜在应用价值时往往更为重要。</p>
+<p>例如，在大型 genome-wide association studies（GWAS）中，许多与疾病相关且具有统计显著性的核苷酸变异，其 p 值低于 10−8；然而，这些核苷酸变异中的大多数，其疾病风险 odds ratio 低于 1.5（Ku et al. 2010）。在这一语境中，odds ratio 是一种效应量，代表疾病风险相对较小的增加，即使检测到的疾病关联极有可能存在，也就是具有统计显著性。</p>
+<p>同样，其他统计量也常被与 p 值混淆。例如，BLAST 搜索中的 E values 表示：对于给定序列数据库，在随机机会下预期出现相同相似性水平搜索命中的数量（见 Chapter 3）。E values 经常被误认为 p values。虽然 p 值的计算是一致的，但 E values 依赖于其计算所使用的数据库，因此限制了其解释范围。</p>
+<p>其次，对 p 值显著性的误解使科学文献中充斥着显著的错误发现。许多已发表科学研究使用较弱的 alpha，例如 0.05，来定义“显著”p 值。考虑到世界各地每个科学实验室都在进行大量检验，基于 alpha = 0.05 选择显著性，会在整个科学文献中产生大量已发表的错误发现。当许多人试图复现他们在已发表科学文献中看到的同一个错误发现时，这种已发表的错误发现还可能被进一步强化。</p>
+<p>解决这一全球性 p 值问题并不容易。甚至有一个期刊采取了禁止在其发表文章中使用 p 值的政策（Woolston 2015）。此外，某些科学共同体也共同制定了尽量减少错误发现的指南。例如，物理学共同体通常会等到达到 five sigmas of significance 后，才接受重大结果。这相当于双尾 p 值为 6 × 10−7。对于人类 GWAS，p 值小于 5 × 10−8 是接受结果的标准；这一标准基于对 alpha = 0.05 的 Bonferroni correction，并假定人类基因组中存在 100 万个可检验的独立变异（Risch and Merikangas 1996）。</p>
+<p>数据科学领域试图更好地理解这一现象，并对其进行建模，以创建一种更稳健的显著性度量，同时又不限制发现。一个良好的起点，是报告 q 值或其他调整后的 p 值，以防止已发表结果中的错误发现；这对于涉及高通量分析技术和其他生成高维数据实验的发表结果尤其重要。</p>
+<h4>Common Statistical Tests Used in a Typical Statistical Inference Process</h4>
+<p>有若干广泛使用的统计检验适用于范围很广的实验结果。大多数统计检验可分为两类：参数检验（parametric tests）和非参数检验（non-parametric tests）。</p>
+<p>参数检验假定样本数据来自一个总体，而该总体服从由固定参数集合定义的某种概率分布。最常见的参数检验假定总体服从或近似正态分布。非参数检验不对总体或样本的概率分布作出假设。许多非参数检验，例如 Wilcoxon–Mann–Whitney test（Wilcoxon 1945; Mann and Whitney 1947），通过比较样本的秩序（rank order）进行检验，而不对总体或样本的底层分布作出假设。</p>
+<p>Table 18.1 列出了常见参数检验、其对应的非参数等价检验，以及它们在单个连续随机变量上的具体统计使用情境。必须谨慎选择适用于给定统计推断的统计检验。为了帮助选择，可以提出以下四个情境性问题：</p>
+<ol>
+<li>总体或样本是否近似服从正态分布？  </li>
+<li>有多少个样本，即观测值或数值集合，正在被直接比较？  </li>
+<li>样本方差或样本量是否显著不相等？  </li>
+<li>样本之间的观测值或数值是否以某种方式重复或相互关联？</li>
+</ol>
+<p>这四个问题的答案将有助于确定特定统计情境，以及适用于单个连续随机变量的统计检验。</p>
+<p>对于第一个问题，如果相关总体或样本看起来服从正态分布，则参数检验更合适，并能提供更强的统计功效和性能。然而，如果总体或样本明显偏离正态分布，则假设更少的非参数检验最为合适，并能提供更好的显著性估计。当样本包含 30 个以上数值时，用直方图绘制每个样本，是回答这一问题的一种良好且相对快速的方法。此外，如果分布看起来呈对数正态分布，那么对数值进行简单的对数转换可能允许使用参数检验，并且可以通过绘制转换后的样本数据来验证正态性假设。</p>
+<p>对于第二个问题，正在检验的是一个样本、两个样本，还是两个以上样本，将决定统计检验的具体类型。对于正态分布数据，当样本为一个或两个时，使用 t-test 及其变体。当样本超过两个时，使用 analysis of variance（ANOVA）及其变体，检验是否至少有一个样本与其他样本显著不同。同样，对于明显非正态分布的数据，Wilcoxon–Mann–Whitney test 及其变体用于检验一个或两个样本。Kruskal–Wallis test（Kruskal and Wallis 1952）适用于检验两个以上样本，并且其中一个样本明显偏离正态性的情形。</p>
+<h5>Table 18.1 常见参数统计检验及其非参数等价检验</h5>
+<div class="table-wrap"><table><thead><tr><th>Statistical situation</th><th>Parametric</th><th>Non-parametric</th></tr></thead><tbody><tr><td>1 sample</td><td>1-sample t-test</td><td>1-sample Wilcoxon rank sum</td></tr><tr><td>2 samples</td><td>2-sample t-test</td><td>Wilcoxon–Mann–Whitney test</td></tr><tr><td>2 samples, unequal 𝝈², n</td><td>Welch unequal 𝝈² t-test</td><td>Wilcoxon–Mann–Whitney test</td></tr><tr><td>Matched pair of samples</td><td>Paired t-test</td><td>Wilcoxon signed rank test</td></tr><tr><td>&gt;2 samples</td><td>One-way ANOVA</td><td>Kruskal–Wallis test</td></tr><tr><td>&gt;2 samples, unequal 𝝈², n</td><td>Welch ANOVA</td><td>Kruskal–Wallis test</td></tr><tr><td>Matched, &gt;2 samples</td><td>Repeated measures ANOVA</td><td>Friedman test</td></tr></tbody></table></div>
+<p>表下注：红色标出的两个参数检验适用于 repeated measures 和 matched experimental designs，并提供最强的统计功效。</p>
+<p>对于第三个问题，当两个样本均服从正态分布，但其方差或样本量相差超过两倍时，Welch unequal variance t-test（Welch 1947）非常合适（Delacre et al. 2017）。这种双样本 Student’s t-test 的改良版本可以补偿由方差和样本量不成比例所造成的问题，并提供稳健的统计性能。当比较两个以上正态分布样本时，Welch ANOVA 是 ANOVA test 的 Welch 等价方法。</p>
+<p>第四个问题用于识别样本之间的特定观测值是否以统计上有意义的方式相互关联。最强类型的关联来自 repeated measures experimental designs。在这种设计中，同一生物学单位或受试对象被用于测量每个样本的观测值，包括对照样本。所得数据集在样本之间具有相互关联的观测值，因此可以使用最有力的统计检验；这些检验直接检验关联观测值之间差异的汇总统计量，而不是检验样本之间汇总统计量的差异。从生物学角度看，由于只比较来自同一生物学单位的测量值，生物学单位之间的方差被忽略。</p>
+<p>例如，比较小鼠在治疗前后的体能表现时，只允许检验来自同一只小鼠的测量样本之间的差异，从而减少在不同小鼠之间进行比较时固有的生物学方差的引入。</p>
+<p>当两个样本具有相互关联的观测值时，如果样本服从正态分布，paired t-test 最为合适；如果至少一个样本明显偏离正态分布，则 Wilcoxon signed rank test 最为合适。当三个或更多样本具有相互关联的观测值时，如果样本服从正态分布，repeated measures ANOVA 最为合适；如果至少一个样本明显偏离正态分布，则 Friedman test 最为合适。</p>
+<p>除 repeated measurements 外，样本之间观测值较弱形式的关联，有时来自 matched experimental designs；然而，这类实验设计存在必须处理的统计问题，并且曾被批评为具有偏倚。相关的 randomized block experimental design 通常被认为更稳健，但要求根据特定潜在混杂因素对生物学单位进行分组（blocking）并在组块之间随机测量，例如年龄、性别、遗传因素，甚至吸烟状态等环境因素。</p>
+<p>这些实验设计会生成复杂的样本集合，需要更复杂的统计检验，例如 multiple factor（multi-way）ANOVA。在这些情况下，通常需要统计学家的建议，既用于建立良好的实验设计和相关实验流程，也用于选择合适的统计检验。应当在尝试实验之前寻求这种建议；否则，可能会浪费大量时间、精力和资源，生成不足以回答所提问题的数据集。</p>
+<p>同样，当需要对离散随机变量或有序随机变量进行统计检验时，也应咨询统计学家，因为对于给定情境中哪些统计检验合适，并不存在普遍共识，而且当前已发表建议的解释需要专家知识（Fagerland et al. 2011）。</p>
+<p>此外，同时检验多个随机变量需要多变量统计分析方法。chi-squared test 是其中一种方法，但它假定随机变量集合彼此独立且服从正态分布。若要同时分析大量随机变量，则需要 PCA、discriminant analysis 以及更新的 machine learning methods 等专门方法。由于每种技术对数据有不同的假设，适当使用和解释这些方法需要专家知识。再次强调，在盲目使用这些方法之前，应寻求统计学和计算专家的建议。当实验问题出现时，还应再次寻求进一步建议。</p>
+<p>将合适统计检验或方法的选择置于整体语境中，以下步骤描述了一个使用统计假设检验的典型统计推断过程：</p>
+<ol>
+<li>用可检验、可拒绝的假设形式说明正在检验什么。  </li>
+</ol>
+<ul>
+<li>同时说明零假设 H0 和备择假设 Ha。  </li>
+</ul>
+<ol>
+<li>推导适当的描述性统计量，并构建样本数据的描述性可视化表示。  </li>
+<li>评估数据及其相关元数据的质量。</li>
+</ol></div>
+</div>
+</div>
+
+
+</div>
+</article><article class="wiki-section" id="sec-156">
+<header class="wiki-section-head" onclick="toggleWikiSection(this)">
+<div class="num">156</div>
+<div><h2>Summary + Acknowledgments + Internet Resources + Further Reading + References</h2><div class="badges"><span>PDF page 600-602；印刷页码 待核对</span></div></div>
+<div class="arrow">▶</div>
+</header>
+<div class="wiki-section-body collapsed">
+<button class="sec-export-btn" onclick="event.stopPropagation();openExport('sec-156')">导出本节</button>
+<div class="bilingual">
+<div class="bilingual-col bilingual-source">
+<div class="col-label">English Source<span class="note">PDF extracted</span></div>
+<div class="col-content"><p style="color:var(--muted);font-style:italic">源文暂缺。</p></div>
+</div>
+<div class="bilingual-col bilingual-translation">
+<div class="col-label">中文译文</div>
+<div class="col-content"><h2>Ch18 Statistical Methods for Biologists / Summary + Acknowledgments + Internet Resources + Further Reading + References</h2>
+<h3>Summary</h3>
+<p>现代生物学与生物医学研究环境已变得数据丰富且数据密集，这要求每一位科研人员都具备数据分析与统计技能，以便在全球科学知识库和数据仓储的背景下，有效分析、利用并解释自己生成的数据。本章旨在作为这些技能的入门指南，重点放在数据解释中最重要的方面：真正努力理解所分析的数据集，使用数据的描述性表征来把握其含义，并在提出、检验和解释统计假设时保持方法上的严谨与谨慎。本章应被视为获取统计知识与直觉的起点，而不是终点。对数据的有效审视需要专业知识与经验的共同支撑，才能避免误读。掌握生物学、统计学与计算相关的综合知识及相应经验需要时间。同样重要的是，要能识别某一特定数据集已经超出自己当前的知识与专长范围，并以耐心沟通的方式寻求统计、计算或分析建议。此外，也应主动参与协作，阅读同事所处学科的相关内容，以提升成功开展多学科合作所必需的有效沟通能力。</p>
+<h3>Acknowledgments</h3>
+<p>作者感谢 Robert M. Flight 在创建 Figure 18.7 和 Figure 18.9 过程中提供帮助。作者还感谢 Qingjun Wang 提供 Figure 18.9 所示数据。</p>
+<h3>Internet Resources</h3>
+<ul>
+<li>直方图的说明、用途，以及如何创建直方图  </li>
+</ul>
+<p><a href="https://www.cqeacademy.com/cqe-body-of-knowledge/continuous-improvement/quality-control-tools/histograms" target="_blank" rel="noopener noreferrer">www.cqeacademy.com/cqe-body-of-knowledge/continuous-improvement/quality-control-tools/histograms</a></p>
+<ul>
+<li>不同实验设计的优缺点说明  </li>
+</ul>
+<p><a href="https://www.simplypsychology.org/experimental-designs.html" target="_blank" rel="noopener noreferrer">www.simplypsychology.org/experimental-designs.html</a></p>
+<ul>
+<li>描述统计量几乎相同但图形不同的示例  </li>
+</ul>
+<p><a href="https://www.autodeskresearch.com/publications/samestats" target="_blank" rel="noopener noreferrer">www.autodeskresearch.com/publications/samestats</a></p>
+<ul>
+<li>关于 boxplots 和多峰分布的讨论  </li>
+</ul>
+<p><a href="https://stats.stackexchange.com/questions/137965/box-and-whisker-plot-for-multimodal-distribution/137982#137982" target="_blank" rel="noopener noreferrer">stats.stackexchange.com/questions/137965/box-and-whisker-plot-for-multimodal-distribution/137982#137982</a></p>
+<ul>
+<li>ggplot —— 基于 Grammar of Graphics 的 R 和 Python 库  </li>
+</ul>
+<p class="asset-link"><a href="pypi.python.org/pypi/ggplot%3B%20cran.r-project.org/web/packages/ggplot2/index.html" target="_blank" rel="noopener noreferrer">pypi.python.org/pypi/ggplot%3B%20cran.r-project.org/web/packages/ggplot2/index.html</a></p>
+<ul>
+<li>plotly —— 基于网页和脚本的数据分析与可视化平台  </li>
+</ul>
+<p>plot.ly</p>
+<ul>
+<li>R 基础统计与绘图教程  </li>
+</ul>
+<p><a href="https://www.statmethods.net" target="_blank" rel="noopener noreferrer">www.statmethods.net</a></p>
+<ul>
+<li>转录组分析的 R 与 Bioconductor 两天入门课程  </li>
+</ul>
+<p><a href="https://www.bioconductor.org/help/course-materials/2016/BiocIntro-May" target="_blank" rel="noopener noreferrer">www.bioconductor.org/help/course-materials/2016/BiocIntro-May</a></p>
+<ul>
+<li>Hadley Wickham 和 Garrett Grolemund 的《R for Data Science》网站  </li>
+</ul>
+<p>r4ds.had.co.nz</p>
+<h3>Further Reading</h3>
+<p>Daniel, W.W. and Wayne, W.D. (1995). Biostatistics: A Foundation for Analysis in the Health Sciences. New York, NY: Wiley. 适用于卫生科学中常用统计方法的参考手册。</p>
+<p>Van Belle, G. (2011). Statistical Rules of Thumb, vol. 699. Hoboken, NJ: Wiley. 提供在统计分析或解释数据时可遵循的常识性规则与指导原则。</p>
+<p>Wickham, H. (2016). ggplot2: Elegant Graphics for Data Analysis. Dordrecht, Netherlands: Springer. 这是在 R 中使用 Grammar of Graphics 绘图库的参考手册与指南。</p>
+<p>Wickham, H. and Grolemund, G. (2016). R for Data Science. Sebastopol, CA: O’Reilly Media. 介绍如何使用 R 对数据进行结构化、转换、可视化与建模。</p>
+<h3>References</h3>
+<p>Anscombe, F.J. (1973). Graphs in statistical analysis. Am. Stat. 27 (1): 17–21.</p>
+<p>Berman, H., Henrick, K., Nakamura, H., and Markley, J.L. (2007). The worldwide Protein Data Bank (wwPDB): ensuring a single, uniform archive of PDB data. Nucleic Acids Res. 35 (Database issue): D301–D303.</p>
+<p>Brazma, A., Hingamp, P., Quackenbush, J. et al. (2001). Minimum information about a microarray experiment (MIAME)—toward standards for microarray data. Nat. Genet. 29 (4): 365–371.</p>
+<p>Choonpradub, C. and McNeil, D. (2005). Can the box plot be improved? Songklanakarin J. Sci. Technol. 27 (3): 649–657.</p>
+<p>Daniel, W.W. and Wayne, W.D. (1995). Biostatistics: a Foundation for Analysis in the Health Sciences. New York, NY: Wiley.</p>
+<p>Delacre, M., Lakens, D., and Leys, C. (2017). Why psychologists should by default use Welch’s t-test instead of Student’s t-test. Int. Rev. Soc. Psychol. 30 (1): 92–101.</p>
+<p>Fagerland, M.W., Sandvik, L., and Mowinckel, P. (2011). Parametric methods outperformed non-parametric methods in comparisons of discrete numerical variables. BMC Med. Res. Methodol. 11 (1): 44.</p>
+<p>Galton, F. (1886). Regression towards mediocrity in hereditary stature. J. R. Anthropol. Inst. 15: 246–263.</p>
+<p>Gauss, C.F. (1809). Theoria motus corporum coelestium in sectionibus conicis solem ambientium auctore Carolo Friderico Gauss. Hamburg, Germany: Sumtibus Frid. Perthes et I.H. Besser.</p>
+<p>Hintze, J.L. and Nelson, R.D. (1998). Violin plots: a box plot-density trace synergism. Am. Stat. 52 (2): 181–184.</p>
+<p>Hochberg, Y. and Benjamini, Y. (1990). More powerful procedures for multiple significance testing. Stat. Med. 9 (7): 811–818.</p>
+<p>Kim, W., Choi, B.-J., Hong, E.-K. et al. (2003). A taxonomy of dirty data. Data Min. Knowl. Disc. 7 (1): 81–99.</p>
+<p>Kruskal, W.H. and Wallis, W.A. (1952). Use of ranks in one-criterion variance analysis. J. Am. Stat. Assoc. 47 (260): 583–621.</p>
+<p>Ku, C.S., Loy, E.Y., Pawitan, Y., and Chia, K.S. (2010). The pursuit of genome-wide association studies: where are we now? J. Hum. Genet. 55(4), 195–206.</p>
+<p>Mann, H.B. and Whitney, D.R. (1947). On a test of whether one of two random variables is stochastically larger than the other. Ann. Math. Stat. 18: 50–60.</p>
+<p>McGill, R., Tukey, J.W., and Larsen, W.A. (1978). Variations of box plots. Am. Stat. 32 (1): 12–16.</p>
+<p>McIntyre, L.M., Martin, E.R., Simonsen, K.L., and Kaplan, N.L. (2000). Circumventing multiple testing. Genet. Epidemiol. 19 (1): 18–29.</p>
+<p>Pearson, K. (1895). Note on regression and inheritance in the case of two parents. Proc. R. Soc. Lond. 58: 240–242.</p>
+<p>Risch, N. and Merikangas, K. (1996). The future of genetic studies of complex human diseases. Science 273 (5281): 1516–1517.</p>
+<p>Sidiropoulos, N., Sohi, S.H., Pedersen, T.L. et al. (2018). SinaPlot: an enhanced chart for simple and truthful representation of single observations over multiple classes. J. Comput. Graph. Stat. 27 (3): 673–676.</p>
+<p>Spear, M.E. (1952). Charting Statistics. New York, NY: McGraw-Hill.</p>
+<p>Spearman, C. (1904). The proof and measurement of association between two things. Am. J. Psychol. 15 (1): 72–101.</p>
+<p>Student (1908). The probable error of a mean. Biometrika 6 (1): 1–25.</p>
+<p>Welch, B.L. (1947). The generalization of ‘Student’s’ problem when several different population variances are involved. Biometrika 34 (1/2): 28–35.</p>
+<p>Wilcoxon, F. (1945). Individual comparisons by ranking methods. Biom. Bull. 1 (6): 80–83.</p>
+<p>Woolston, C. (2015). Psychology journal bans P values. Nature 519: 9.</p>
+<p>Yao, S., Flight, R.M., Rouchka, E.C., and Moseley, H.N. (2017). Aberrant coordination geometries discovered in the most abundant metalloproteins. Proteins 85 (5): 885–907.</p>
+<p>Zhang, S., Zhang, C., and Yang, Q. (2003). Data preparation for data mining. Appl. Artif. Intell. 17 (5–6): 375–381.</p></div>
+</div>
+</div>
+
+
+</div>
+</article>
+<nav class="chapter-nav">
+<a class="prev" href="ch17.html">&larr; Ch17 Translational Bioinformatics</a>
+<a class="center" href="index.html">Wiki 目录</a>
+<span class="next"></span>
+</nav>
+</main>
+</div>
+<div id="export-panel" class="export-panel" onclick="if(event.target===this)closeExport()">
+<div class="export-dialog">
+<h3>导出</h3>
+<label>格式</label>
+<select id="ex-fmt">
+<option value="html">HTML</option>
+<option value="md">Markdown</option>
+<option value="txt">纯文本 TXT</option>
+<option value="doc">Word (DOC)</option>
+</select>
+<label>内容语言</label>
+<div class="radio-group">
+<label><input type="radio" name="ex-lang" value="both" checked> 双语对照</label>
+<label><input type="radio" name="ex-lang" value="zh"> 仅中文</label>
+<label><input type="radio" name="ex-lang" value="en"> 仅英文</label>
+</div>
+<div class="dialog-actions">
+<button class="cancel" onclick="closeExport()">取消</button>
+<button class="confirm" onclick="doExport()">导出</button>
+</div>
+</div>
+</div>
+<script>window.__sectionData=[{"id": "sec-153", "title": "Introduction", "source_md": "", "trans_md": "# Ch18 Statistical Methods for Biologists / Introduction\n\n## Introduction\n\n二十世纪以来，生物学和生物医学数据的生成与积累出现了显著增长，这使二十一世纪的研究环境发生了根本性变化：研究者置身于一个数据丰富、知识密集的环境之中。为了在这一环境中有效开展工作，生物学家必须能够在日常研究中利用大量数据和已经积累的知识。这些数据集通常包含成千上万、数百万，甚至数十亿个独立数据项，其规模已经远远超出人工分析所能处理的范围。因此，生物学家理解这些大型数据集所派生出的概括性表示（summative representations）至关重要。\n\n例如，均值（mean，或 average）这样的统计量，就是对一组数据进行派生表示的常用方式；而统计学（statistics）则是从数据集中推导并应用有用统计量的科学。在 bioinformatics 的语境中，来自多种 “-omics” 技术的大型数据集，或知识库（knowledge bases）中汇集的信息，都必须通过描述性、概括性的表示加以总结，以便促进对数据集的评估，并支持其在其他分析中的使用。很多时候，这些进一步分析会从数据集中产生新的信息和知识。\n\n然而，要形成准确的解释，并由此生成新的信息和知识，研究者必须对数据集本身、产生该数据集的实验，以及用于分析该数据集的方法具有基本理解。统计学为建立这种基础理解提供了关键视角和一整套概念，使研究者能够理解数据集，并判断如何有效地使用它。", "source_html": "<p style=\"color:var(--muted);font-style:italic\">源文暂缺。</p>", "trans_html": "<h2>Ch18 Statistical Methods for Biologists / Introduction</h2>\n<h3>Introduction</h3>\n<p>二十世纪以来，生物学和生物医学数据的生成与积累出现了显著增长，这使二十一世纪的研究环境发生了根本性变化：研究者置身于一个数据丰富、知识密集的环境之中。为了在这一环境中有效开展工作，生物学家必须能够在日常研究中利用大量数据和已经积累的知识。这些数据集通常包含成千上万、数百万，甚至数十亿个独立数据项，其规模已经远远超出人工分析所能处理的范围。因此，生物学家理解这些大型数据集所派生出的概括性表示（summative representations）至关重要。</p>\n<p>例如，均值（mean，或 average）这样的统计量，就是对一组数据进行派生表示的常用方式；而统计学（statistics）则是从数据集中推导并应用有用统计量的科学。在 bioinformatics 的语境中，来自多种 “-omics” 技术的大型数据集，或知识库（knowledge bases）中汇集的信息，都必须通过描述性、概括性的表示加以总结，以便促进对数据集的评估，并支持其在其他分析中的使用。很多时候，这些进一步分析会从数据集中产生新的信息和知识。</p>\n<p>然而，要形成准确的解释，并由此生成新的信息和知识，研究者必须对数据集本身、产生该数据集的实验，以及用于分析该数据集的方法具有基本理解。统计学为建立这种基础理解提供了关键视角和一整套概念，使研究者能够理解数据集，并判断如何有效地使用它。</p>", "terms": []}, {"id": "sec-154", "title": "Descriptive Representations of Data", "source_md": "", "trans_md": "# Ch18 Statistical Methods for Biologists / Descriptive Representations of Data\n\n## 数据的描述性表示\n\n### 数据、信息与知识\n\n数据（data）、信息（information）和知识（knowledge）彼此相关，但它们是相互分离且各不相同的概念。这些术语常常被互换使用，从而导致人们对到底收集、提供或分析的是什么产生混淆。具体而言，数据是简单事实和观察结果的无组织集合。这个关于数据的定义进一步引出了一个问题：“什么是观察结果？”观察结果（observation）是对某种现象获得的测量值。对于统计学家而言，这种现象就是一个统计实验。在科学研究语境中，观察结果是对某个特定物理实体或事件的某种性质或特征的数量或程度的测定。因此，数据就是这类测量值的无组织集合。信息则是经过组织、分析和解释，并转化为有用形式的数据，通常用于决策。最后，知识是在某一特定领域或研究方向中，通过教育和经验获得的信息、理解与技能。如 Figure 18.1 所示，单个观察结果被收集形成数据，数据经过解释转化为有用信息，信息进一步被提炼为新的知识。\n\nBioinformatics, Fourth Edition. Edited by Andreas D. Baxevanis, Gary D. Bader, and David S. Wishart.  \n© 2020 John Wiley & Sons, Inc. Published 2020 by John Wiley & Sons, Inc.  \nCompanion Website: www.wiley.com/go/baxevanis/Bioinformatics_4e\n\n**Figure 18.1 观察结果、数据、信息与知识之间的关系。**  \nSource: Reproduced with permission of Hunter Moseley, https://doi.org/10.6084/m9.figshare.4968125.v1. Licensed under CC By 4.0.\n\n从数据的角度看，表示同一或相似现象的一组相关观察结果称为随机变量（random variable）。在统计学中，这一术语具有更抽象的定义：随机变量被表示为一个数学函数，它把统计实验（现象）的可能结果映射到一个由可能取值（观察结果）组成的可测空间。根据所测量的性质或特征不同，随机变量可以是数值型（numerical）或类别型（categorical），如 Figure 18.2 所示。数值型随机变量是一组可能的可测数量范围。如果该范围用实数或类似的无限数集来定义，那么这个数值型随机变量就是连续型（continuous）。在这一语境中，连续性是表示随机变量的数学函数 f(x) 的一个性质，即当 x 趋近于 c 时，f(x) 的极限趋近于 f(c)。例如，使用荧光共振能量转移（fluorescence resonance energy transfer, FRET）测量供体与受体发色团之间的距离，就是一个连续型随机变量，因为可能观察到的是一个连续的实数范围，即由代表 FRET 分析实验所产生的一组观察结果的统计实验映射而来的结果。连续型随机变量的另一个例子是小鼠在 Morris 水迷宫测试中寻找平台所用的时间。\n\n如果取值范围用整数来定义，即正数和/或负数的计数值，那么这个数值型随机变量就是离散型（discrete）。在流式细胞仪中计数得到的细胞数量，就是一个在自然数，即非负整数，离散范围内的离散型随机变量。另一个例子是在给定观察站、给定时间段内看到或听到的某类鸟的“点计数”（point count）或数量。\n\n类别型随机变量是一组可能的定性测量观察结果，用于描述某种特征或相对性质。如果这些取值具有相对顺序、逻辑顺序或等级，那么该类别变量被认为是有序型（ordinal）。在特定核苷酸序列中观察到的核苷酸相对顺序，就是一个有序型随机变量。另一个例子是，在某种操作过程中，让患者以 1（经历最严重疼痛）到 5（无疼痛）的量表报告其疼痛相对水平。如果这些取值没有逻辑顺序，那么该类别变量被认为是名义型（nominal）。动物的性别就是一个名义型随机变量，在大多数情况下限于雄性和雌性。另一个例子是带有或不带有特定 CRISPR-Cas9 基因敲除的人类细胞系。\n\n**Figure 18.2 变量类型及其层级关系。**  \nSource: Reproduced with permission of Hunter Moseley, https://doi.org/10.6084/m9.figshare.4968143.v1. Licensed under CC By 4.0.\n\nFigure 18.2 中的主要内容可概括如下：\n\n| 变量类型 | 定义 | 示例问题或取值 |\n| --- | --- | --- |\n| 数值型：连续型 | 位于实数或复数取值范围内 | How many? How much?；[0.0, 10.0]；{1.50, 4.58, 9.45} |\n| 数值型：离散型 | 位于可计数的整数取值范围内 | 定量测量的观察结果；[0, 10]；{0, 3, 4, 7, 9, 10} |\n| 类别型：有序型 | 具有逻辑顺序或等级 | What relative quality?；{1st, 2nd, 3rd}；{low, med, high} |\n| 类别型：名义型 | 没有逻辑顺序 | What type? What category?；{male, female}；{blue, green, red} |\n\n### 数据集与数据模式\n\ndataset 及其较早被接受的拼写形式 data set，简单来说就是一组相关数据和信息的集合。但 dataset 的规范定义，是指一组相关的数据和信息集合，它们按照可观察现象（变量）以及把不同现象之间的观察结果联系起来的实体来组织，即涉及多个统计实验。这种组织方式通常表示为二维矩阵或关系表，其中列或字段表示不同的数据变量，行表示不同的实体。\n\n例如，可以为一组经过适当知情同意的人类受试者收集年龄、性别、种族、体重、身高、疾病状态、治疗方式以及其他结局变量，并将其组织为一个二维表。在这个表中，特定随机变量的取值，即第 2 列及之后的列，与某个特定人类个体，即第 1 列中去标识化的受试者 ID 相关联，用于临床试验（Figure 18.3a）。在这一语境中，来自单个临床、生物医学、生物学和/或分析实验的一组相互关联的观察结果，被组织成这类二维数据集。然而，数据集也可以指规范数据集的集合，其中单个生物学和/或分析实验代表第三个维度。因此，为了分析和解释数据集，需要对数据集的组织方式进行描述，这种描述称为数据模式（data schema）（Figure 18.3b,c）。此外，根据使用语境不同，data schema 也常被称为数据字典（data dictionary）、数据库模式（database schema）或元数据（metadata）。随着数据集在规模和复杂度上持续增长，数据组织和数据模式的质量常常成为数据集可用性的限制因素。\n\n**Figure 18.3 示例数据集的组织方式。**  \n(a) 一个二维（2D）关系表的一部分，将去标识化的人类受试者（行）与特定样本变量（列）相关联。  \n(b) 一个 2D 数据模式，显示数据集的组织方式和变量类型。  \n(c) 一个三维（3D）数据模式，显示受试者与生物学/分析实验之间的额外关系（维度）。  \nSource: Reproduced with permission of Hunter Moseley, https://doi.org/10.6084/m9.figshare.4968146.v1. Licensed under CC By 4.0.\n\n如前所述，数据集通常过大，无法通过人工检查来全面审视和理解。因此，需要用概括性的、描述性的数据表示来对其进行评估和解释。描述性数据表示主要有三大类型：数据模式、描述性统计量和图形。作为起点，数据模式可以很好地提供数据集的描述性总览。通过描述良好的数据模式，可以容易地确定变量的数量和具体类型。同时，变量相对于实体——即受试者——的组织方式也会变得清晰（Figure 18.3b），进而可以推断出跨生物学实验和分析实验关联变量和/或受试者的更高阶组织方式（Figure 18.3c）。\n\n### 描述性统计量\n\n描述性统计量（descriptive statistic）是一个单一的可测量特征，它以定量方式描述或概括一组相关数据（Daniel and Wayne 1995）。然而，在严格的统计学定义中，有两个相关概念：统计量（statistic）和参数（parameter）。统计量是某个样本变量或可测样本属性的单一度量，其中样本是总体中实体的一个子集。参数一词则保留用于指总体的某种特征或属性，而这种特征或属性通常无法被直接测量。多数数据集只包含代表某个总体子集的数据，这个子集称为样本。例如，1000 名女性网球运动员的平均身高，代表这 1000 名网球运动员样本的平均身高统计量；这个统计量可用于推断所有女性网球运动员这一总体的平均身高参数。\n\n但是，一个数据集也可能包含某个有限总体的全部数据，例如“某个企业的全部人类员工”。在这种情况下，该有限总体的某个参数可以直接从数据集中测量出来，而不只是由样本统计量估计得到。不过，这类狭义定义的总体也可以被看作更大总体的样本，例如“地球上所有人类”，甚至“曾经生活过或可能生活的所有人类”。因此，将给定数据集变量的某个可测描述性特征归类为统计量还是参数，是一个视角问题。\n\nFigure 18.4 列出了用于表示样本变量数据集合的最常用描述性统计量。浅蓝色行中的第一个描述性统计量是数据集合的大小（size）或基数（cardinality）。大小的重要性怎么强调都不为过，因为它是对一组相关数据——即变量——中所包含数据数量的最直接度量。反过来，数据数量通常限制了该变量的信息含量。\n\nFigure 18.4 中浅绿色行显示的下一类最常用描述性统计量，称为集中趋势统计量（statistics of central tendency）。在统计学中，集中趋势是指一组取值或一个可能取值范围的典型值、中心值或期望值。最著名的集中趋势统计量是一组数值的算术平均数（arithmetic mean）或平均值（average）。例如，{3.2, 4.1, 4.1, 4.2, 4.4, 5.1, 5.1, 5.4, 5.4, 5.5, 5.8, 5.8, 6.2, 7.0, 7.5} 的平均值是 5.25，它代表这组数值中相当典型的一个值。在这一语境中，中心值或典型值表示某个分布中最频繁出现的值或值集；分布（distribution）是所有可能出现取值的频率集合。这个最高频取值或典型值，常被用于表示某种变量的一组较大取值中某个取值分布的位置。\n\n算术平均数或平均值是最常用的集中趋势统计量，因为在对分布作出某些假设，尤其是对称性假设时，它能够为期望值提供最准确的估计，并且在结果的准确性和精确性方面所需的数据量最少。然而，对于许多真实世界的数据集合，其他精确性较低的统计量，尤其是中位数（median）和众数（mode），反而能为给定取值分布的期望值提供更准确的估计。特别是，中位数常用于避免数据集合中极端离群值的影响，因为它对少数极端离群值的存在不敏感，而且易于可靠计算。众数对常见期望取值分布中的多种异常偏离非常不敏感，但通常精确性较低；它需要更大的数据量才能可靠计算，因此更难以用可预测的方式计算。\n\n**Figure 18.4 样本变量常用描述性统计量。**  \n浅蓝色行为数据数量统计量。浅绿色行为集中趋势统计量。浅橙色行为期望区间统计量。浅黄色行为依赖性统计量。  \nSource: Reproduced with permission of Cmglee, https://commons.wikimedia.org/wiki/File:Visualisation_mode_median_mean.svg. Licensed under CC By 3.0.\n\nFigure 18.4 中浅橙色行的下一类描述性统计量，用期望区间和离散程度来概括观察到的取值。其中最简单的是范围（range）。从数学上讲，范围是由全部观察结果（数据）或全部可能观察结果组成的非重复取值集合；这里的集合在数学上定义为“不同”对象的集合，而在此情境中就是非重复取值。不过，range 有多种不同但相关的含义，包括经典统计学定义，即在一组数值型或有序型取值中最大值与最小值之间的差。然而，在名义型变量语境中，数学定义——非重复取值集合——最有用。对于数值型或有序型变量，范围最常被描述为同时包含最小值和最大值的区间，并表示为用方括号括起来、以逗号分隔的这两个值，例如对于观察结果集合 {2, 4, 5, 5, 5, 6, 6, 8, 11}，其范围为 [2, 11]（Galton 1886; Pearson 1895）。可以在任一端使用圆括号表示直到边界值但不包括该边界值；例如，记号 [0, 10) 表示该范围可以包含从 0 到小于 10 的所有值。这个范围定义最能体现期望取值区间的概念。\n\n样本方差（sample variance）是下一个期望区间描述性统计量，它表示测量值围绕样本均值的分散程度。与均值一样，方差对于期望取值区间的描述准确性依赖于对底层取值分布的某些假设，尤其是对称性。方差的平方根是标准差（standard deviation，常缩写为 SD 或 StdDev），这是一个更容易与样本均值联系起来的度量。均值标准误（standard error of the mean，常缩写为 SE 或 SEM）是对样本均值相对于总体均值的精确性的概率性描述。在对底层取值分布作出某些假设，尤其是对称性假设时，样本均值的准确性或置信度可以用标准误单位来定义。最后一个期望区间描述性统计量是置信区间（confidence interval, CI），它确定一个在某一置信水平下包含期望值的范围。这是对期望区间的一种很好描述，因为它不对分布作假设，并且像样本众数一样，对常见期望分布的多种异常偏离相当不敏感。另一种基于样本均值和标准误计算 CI 的公式为：\n\nCIx,z = [x − zSEx, x + zSEx]\n\n其中 z ≈ 2 等价于 95% CI，z ≈ 3 等价于 99% CI。\n\nFigure 18.4 中浅黄色行的最后一类描述性统计量，用于描述两个样本变量之间的依赖性（dependence）。样本协方差（sample covariance）描述两个样本变量如何共同变化，其计算方式类似于样本方差。换言之，样本协方差描述两个样本变量的测量值如何以线性依赖的方式围绕各自样本均值共同分散。从一种视觉角度看，协方差描述的是以样本均值为中心的共同离散区域，其取值范围为 (−∞, ∞)。\n\n接下来，Pearson 相关系数（Pearson’s correlation coefficient），简称 Pearson 相关（Pearson’s correlation），描述两个样本变量之间的线性依赖关系（Pearson 1895）。它与协方差的关系涉及两个样本变量标准差的倒数，因此常被看作是由每个样本变量的标准差归一化后的协方差。这种归一化会将 Pearson 相关限制在 [−1, 1] 的范围内，这通常更容易解释为两个样本变量之间依赖强度的大小。Figure 18.5 展示了相关相对于协方差在可解释性上的优势：两组样本中 x 与 y 之间的协方差相同，但蓝色样本和红色样本的 Pearson 相关不同。红色样本中较高的方差代表 x 与 y 之间较低的依赖性，尽管这种依赖的性质，即黑色回归线的斜率，是相同的。这个例子说明，协方差和相关不能彼此进行定量比较，即使它们在符号上可以进行定性比较：正协方差会对应正相关，负协方差和零协方差也分别对应负相关和零相关。\n\n**Figure 18.5 协方差与相关。**  \n红色样本比蓝色样本具有更高的样本方差，因此对应更低的相关，尽管样本变量之间的协方差相同。  \nSource: Moseley, Hunter (2017): Example of covariance-correlation differences. figshare. doi.org/10.6084/m9.figshare.4968149.v1.\n\nSpearman 秩相关系数（Spearman’s rank correlation coefficient），简称 Spearman 相关（Spearman’s correlation），描述两个样本变量之间的单调、非线性依赖关系（Spearman 1904）。两个样本变量之间的单调关系意味着这两个样本变量取值的秩顺序得以保持。从视觉上看，单调关系意味着任意给定的水平线或垂直线只会与函数 y = f(x) 所描述的曲线相交一次，其中 x 和 y 是两个样本变量。Spearman 相关描述两个样本变量之间这种单调或秩顺序依赖的强度，其方式类似于 Pearson 相关描述两个样本变量之间线性依赖的方式。具体而言，Spearman 相关根据两个样本变量之间秩顺序或反向秩顺序的保持程度计算，取值范围为 [−1, 1]。\n\n最后一个常见的依赖性描述性统计量是决定系数（coefficient of determination），它度量一个或多个样本变量对某个给定数学模型的拟合程度。不过，从另一个角度看，决定系数描述的是一组样本变量基于模型的依赖性。该统计量的计算方式为：1 减去残差平方和与观察值相对于样本均值的总差异平方和之比。决定系数的取值范围为 [0, 1]，常被描述为模型与数据之间未解释方差的比例。对于线性模型，决定系数可化简为 r²，即线性相关的平方；如果只涉及两个样本变量，则为 Pearson 相关的平方。更广义地说，Pearson 相关、Spearman 相关和决定系数都度量样本变量与某个描述特定数学关系的模型之间依赖性的强度。当预期两个样本变量之间存在线性关系时，通常使用 Pearson 相关来描述线性依赖的程度。当预期两个样本变量之间存在非线性单调关系时，使用 Spearman 相关来描述非线性单调依赖。当预期涉及一个或多个样本变量的特定数学模型，而这种关系不容易由前两种依赖性度量处理时，通常使用决定系数来描述变量相对于模型的依赖性。\n\n### 合适的图形是数据集最具描述性的表示\n\n图形（graphs）是简化的图示，用于展示数据集中一个或多个数据变量。在许多情况下，图形以视觉方式提供变量的概括性总览，突出数据的特定描述性统计量或分布性质（参见 Figure 18.4 中的视觉描述）。图形常常能够可视化变量之间的依赖性，使特定关系变得清楚。为以多种方式概括或突出变量集合甚至整个数据集，人们设计了许多不同类型的图形，例如典型电子表格软件中提供的多种图表。在大多数情况下，被共同组织、分析或可视化的样本变量和/或实验数量，即数据维度，限制了某一特定可视化任务可使用的图形类型。鉴于绝大多数图片是二维的，大多数以单一图形形式呈现的数据可视化很难直接表示超过两个维度的数据。不过，有时在需要具有说服力的数据可视化时，例如表示和比较体积，也会通过人为实现深度来可视化三维信息。\n\n最简单的描述性图形之一是直方图（histogram）（Figure 18.6），它可视化给定样本变量的取值分布。从统计学角度看，直方图可视化样本变量中一组有序统计事件发生的频率。多数情况下，每个统计事件，即一组可能结果，被表示为一段可能取值的数值范围；每个柱形的高度则表示该样本变量中所代表事件的发生频率。因此，如果使用了合适的有序范围集合，直方图通常能够清晰地可视化取值分布。然而，很多时候我们希望使用一种图形，使单个随机变量能够在多个实验之间进行视觉比较。箱线图（box-and-whisker plot，或 boxplot）正是为这一目的在 20 世纪 50 年代早期开发出来的，后来由数学家 William Tukey 在 20 世纪 60 年代后期推广普及（Spear 1952; McGill et al. 1978）。\n\n**Figure 18.6 黑樱桃树高度频率的示例直方图。**  \nSource: commons.wikimedia.org/wiki/File:Black_cherry_tree_histogram.svg CC BY 2.5, commons.wikimedia.org/w/index.php?curid=3483039.\n\nFigure 18.7a 展示了标准箱线图的组成部分，其中包括四分位距（interquartile range, IQR）。箱体底部定义第一四分位数（Q1 或第 25 百分位数，代表最低的 25% 数据），中间表示中位数（Q2 或第 50 百分位数），箱体顶部定义第三四分位数（Q3 或第 75 百分位数，代表最高的 25% 数据）。须线从箱体顶部和底部延伸，最大可达 1.5 倍 IQR。落在这些范围之外的任何值通常用离群点表示。箱线图常用于显示和比较数据分布，而不对分布作假设；它从秩顺序和频率角度提供底层数据的非参数视图，从而便于数据集之间的视觉比较。然而，箱线图真正巧妙之处在于，在计算机尚未广泛用于此类任务之前，它使人们能够有效地手绘描述性图形。不过，箱体和须线表示的简洁性也是一种缺点。Figure 18.7b 显示的箱线图看起来几乎完全相同（Choonpradub and McNeil 2005）。然而，将数据叠加到 Figure 18.7c 的箱线图上后，就能清楚看出每个样本实际上有多么不同。今天已有几种比原始、易绘制箱线图更具描述性的箱线图变体。小提琴图（violin plot）（Hintze and Nelson 1998）、SinaPlot（Sidiropoulos et al. 2018）及其组合（Figure 18.7d–f）能够在视觉上很好地描述不同取值分布，并能更好地比较四个样本。\n\n**Figure 18.7 示例箱线图及相关变体图。**  \n(a) 箱线图示意图。  \n(b) 四个测量样本的经典箱线图。  \n(c) 带数据点的经典箱线图。  \n(d) 小提琴图。  \n(e) SinaPlot。  \n(f) 叠加 SinaPlot 的小提琴图。  \n(b)–(f) 中的图形使用 R 中的 ggplot2 生成。  \nSource: Moseley, Hunter (2017): diagram of a box plot. figshare. doi.org/10.6084/m9.figshare.4993937.v1. Moseley, Hunter; Flight, Robert M (2017): Standard Box Plot. figshare. doi.org/10.6084/m9.figshare.4968152.v1. Moseley, Hunter; Flight, Robert M (2017): Boxplot with data points. figshare. doi.org/10.6084/m9.figshare.4968155.v1. Moseley, Hunter; Flight, Robert M (2017): Example Violin Plot. figshare. doi.org/10.6084/m9.figshare.4968158.v1. Moseley, Hunter; Flight, Robert M (2017): Example SinaPlot. figshare. doi.org/10.6084/m9.figshare.4968161.v1. Moseley, Hunter; Flight, Robert M (2017): Example Violin plot plus SinaPlot. figshare. doi.org/10.6084/m9.figshare.4968164.v1.\n\n下一类主要描述性图形是散点图（scatter plot）。散点图表示多维数据点，用于可视化两个或多个样本变量之间的共同离散程度和依赖关系，而这些关系通常使用相关和协方差等描述性统计量来量化。图中的每个数据点表示一组有序的相互关联取值，对应不同样本变量；例如，(62.5 in., 101.3 kg) 表示一名男性人类受试者测得的身高和体重。通常，图中还会加入回归线或回归曲线，用于展示样本变量相对于某一特定数学模型或函数的依赖关系。Figure 18.8 用四个著名图形展示了散点图的有用性，这四个图形称为 Anscombe 四重奏（Anscombe’s quartet）（Anscombe 1973）。20 世纪 70 年代早期，Francis Anscombe 构造了四个数据集，每个数据集都包含两个变量，并且所有标准描述性统计量，包括线性回归线，都具有相同取值。然而，这些数据集的简单散点图揭示了这四个数据集实际上有多么不同。最令人不安的是，有两组点的线性相关 rxy 很高，但它们显然并不具有回归线所表示的线性关系。这四个图形提醒我们不要过度解释描述性统计量，尤其是在比较小数据集，并且不了解变量之间依赖性质的情况下。\n\n**Figure 18.8 Anscombe 四重奏。**  \n四组著名数据点的散点图及回归线。这四组数据在视觉上差异很大，但给出完全相同的描述性统计值。\n\n散点图还被证明有助于可视化高维数据集的某些派生概括性性质或统计量。这类高维数据集包含数百甚至数千个相关样本变量。一般方法是，从大量相关样本变量中派生出一小组描述性潜变量（latent variables，即不能直接观察到的变量），然后用散点图可视化这组潜变量。用于这一方法的一种非常常见技术是主成分分析（principal component analysis, PCA）。PCA 从一组连续变量中派生出相关性的主成分，通常为线性相关。PCA 按照能够首先解释数据集中最大方差量的顺序派生各个相关性成分：第一主成分代表最大方差量，第二主成分代表第二大方差量，依此类推。该分析通常重复进行，直到获得用于可视化的期望成分数量，或直到所得主成分列表表示了数据集方差的预定义比例。因此，PCA 创建了一组最小的潜在连续变量，这些变量彼此之间不相关，同时代表原始高维数据集中存在的最大累积方差比例。\n\nFigure 18.9 显示了一个 PCA 散点图，其中两个线性相关主成分来自 RNA-seq 数据集。该数据集包括五组用人端粒酶逆转录酶永生化的人视网膜色素上皮细胞（human telomerase reverse transcriptase-immortalized human retinal pigmented epithelial cells, RPE-1），每组有三个重复。其中一组为对照，另外四组表示对三个不同基因的小干扰核糖核酸（small interfering ribonucleic acid, siRNA）敲低，其中一个基因以两种不同方式敲低。这两个主成分包含合并数据集中超过 50% 的方差；该合并数据集包括数千个表示单个 RNA 丰度的随机样本变量，而 RNA 丰度通常用于推断基因表达水平。前两个主成分突出显示了五组 RPE-1 细胞之间的分离，并表明这五组之间的差异体现在合并数据集最大的方差来源中。\n\n**Figure 18.9 主成分分析得到的前两个主成分（PCs）的散点图。**  \nSource: Moseley, Hunter; Flight, Robert M; Wang, Qingjung (2017): PCA plot of RNAseq dataset of CLN3 knockdown. figshare. doi.org/10.6084/m9.figshare.4994204.v1.\n\n如前述图中的直方图、各种箱线图和散点图所示，图形可以提供非常具有描述性的数据表示。然而，必须谨慎处理，使图形具有最大描述性。以下几点为制作高描述性图形提供了有用指南：\n\n- 始终在图形中包含描述性标题，例如“Isocitrate dehydrogenase 1 activity”。此外，不要只是在标题中重复坐标轴标签。\n- 始终用描述性名称和测量单位标注坐标轴；例如，“Culture growth time (h)”、“μg/ml protein”或“Intensity (a.u.)”。\n- 只要可能且合理，就以视觉方式表示数据中的不确定性。\n- 使用误差棒和可视化底层分布，是以视觉方式表示不确定性的两种主要方式。\n- 使用有助于解释的误差棒。通常，较大的误差棒有助于防止对数据进行过度解释。\n- 始终说明误差棒的单位和大小，例如“Error bars represent two SE units”。\n- 当存在多个数据集、组别或数据类型，并且需要识别它们时，应包含图例。\n- 选择合适的图形，不要隐藏数据的关键描述性特征。这可能需要尝试多种图形和不同设置，才能找到恰到好处的图形。\n- 每幅图选择一个信息重点，并专注于传达这一信息。例如，一幅图可以传达一组结果及其相关结论。\n\n这些指南既有助于读者理解图形表示的内容，也有助于解释图形所表示的底层数据。Figure 18.10 说明了为什么这些指南很重要。例如，Figure 18.10a 缺少相当多的描述性元素，包括标题、坐标轴标题、图例和误差棒，这限制了图形的可解释性，并会使读者感到困惑。相比之下，Figure 18.10b 合理地包含了所有这些视觉特征，使观察者能够迅速判断该图表示什么，以及图中信息上重要的内容是什么；在这个例子中，重要信息是比较野生型小鼠与敲除小鼠在自发运动活动方面的差异。\n\n**Figure 18.10 如何使图形具有描述性的示例。**  \nSource: Moseley, Hunter (2017): Bad and Good Graphing Examples. figshare. doi.org/10.6084/m9.figshare.4994207.v1\n\n### 频率分布与概率分布\n\n可视化数据的主要目的之一，是验证对描述性统计量的某些解释是否有效。当观察结果数量相对较少，即少于 100 个时，在多数图形类型中直接可视化数据相对简单，包括 Figure 18.7c,e,f 中使用箱线图及其变体可视化的数据，以及 Figure 18.10b 中的散点图。随着观察结果数量增加到 1000 以上，直接可视化数据变得更加困难。然而，仍然需要对观察结果的分布进行视觉描述，以验证一些关键假设；这些假设通常是对更具定量描述性的统计量作出特定解释所必需的。\n\n请记住，频率分布（frequency distribution）是给定取值集合中特定取值发生的频率；直方图（Figure 18.6）可以非常有效地可视化频率分布，用于概括单个有序型或数值型样本变量的数据，尤其是在被概括的数据量很大时。相关的概率分布（probability distribution）是特定取值发生的概率密度集合。在连续随机变量语境中，概率密度表示某一特定取值（结果）相对于无限多个其他可能取值（结果）发生的可能性。此外，概率是事件发生的可能性；在这一语境中，事件被定义为一个连续取值范围。进一步说，可以把概率密度看作相对频率，其在整个分布上的总概率加和为 1。\n\nFigure 18.11 展示了最著名且最常见的概率分布：标准正态分布（standard normal distribution），也称 Gaussian 分布（Gaussian distribution）。Gaussian 分布以 Carl Friedrich Gauss 命名，他在 1809 年首次对正态分布进行了具体描述（Gauss 1809）。在 Figure 18.11 中，x 轴用 z-score 来描述取值，其中：\n\nz = (x − μx) / σx\n\n这里，z-score 表示某个取值相对于均值 μx 的偏离，并由标准差 σx 归一化。因此，x 轴的单位是标准差。y 轴描述特定 z 值处的概率密度，通常用概率密度函数表示，即 y = pdf(z)；如果直接使用变量 x，则为 pdf(x)。现在，某些统计事件如 {z ≥ a} 的实际概率 P 可以定义为：\n\nP(z ≥ a) = ∫a∞ pdf(z) dz\n\n这就是从 z = a 开始的 pdf(z) 曲线下方的面积。同样，一组绝对 z 值小于或等于某一标准差单位数的概率可表示为：\n\nP(−a ≤ z ≤ a) = ∫−a^a pdf(z) dz\n\n对于正态分布，68.3% 的概率密度位于 ±1σ 以内，95.4% 位于 ±2σ 以内。然而，对于其他常见分布，这些概率期望是不同的。\n\n**Figure 18.11 标准正态分布。**  \nSource: Moseley, Hunter (2017): Description of a normal distribution. figshare. doi.org/10.6084/m9.figshare.4994210.v1\n\n如 Figure 18.12 所示，在生物学和生物物理数据中可以看到许多不同的、特征明确的分布，例如对数正态分布（log-normal distribution）、Poisson 分布（Poisson distribution）以及二项分布（binomial distribution）的变体，尤其是负二项分布（negative binomial distribution）。然而，许多相关观察结果集合代表若干相似但独立分布的总和；这些总和往往近似于正态分布，即使这些分布本身并不是正态的。虽然每个独立分布在技术上代表不同现象，但在实际操作中，通常不可能在事先将它们作为独立随机变量分别收集。独立随机变量之和近似于正态分布的这种倾向，称为中心极限定理（central limit theorem），它是统计学和概率论的基础原则。中心极限定理也是许多生物学和生物物理数据集的“救星”，因为相关观察结果集合往往是若干分布的总和，而这些总和可以近似为或作为正态分布来处理。\n\n**Figure 18.12 生物学和生物物理数据集中常见或常用的其他特征明确的离散分布和连续分布。**  \nSource: By Skbkekas – Own work, CC BY 3.0, commons.wikimedia.org/w/index.php?curid=9447142. By Tayste – Own work, Public Domain, commons.wikimedia.org/w/index.php?curid=3646951. By Krishnavedala – Own work, CC0, commons.wikimedia.org/w/index.php?curid=39170496. By Geek3 – Own work, CC BY 3.0, commons.wikimedia.org/w/index.php?curid=9884213.\n\n然而，真实分布从来不会像理想统计模型中的分布那样漂亮。Figure 18.13 显示了一些图形，用于描述金属蛋白中某些键长和配位角的分布（Yao et al. 2017）。Figure 18.13a 展示了金属蛋白中特定金属离子与氧配体原子之间键长真实分布的几个重叠直方图。Figure 18.13b 显示了配位锌金属离子的最小配体–金属–配体角的几个重叠直方图。这些键长和配位角分布来自 Worldwide Protein Data Bank（wwPDB；见 Chapter 12）中条目所存储的金属蛋白结构的三维原子级表示（Berman et al. 2007）。其中几个分布表现出相对于理想正态分布的异常偏离。最显著的异常是存在多个众数，如 Figure 18.13b 中绿色的双峰分布所示，该分布涉及一个锌离子由五个配体原子配位的情形。\n\n模态性（modality），即存在的众数数量，是评估真实分布时一个非常重要的特征，因为多数集中趋势描述性统计量，如均值和中位数，以及离散程度描述性统计量，如方差，只有在分布为单峰分布（unimodal）时，才可以从概率角度进行定量解释。不过，多峰分布中分辨良好、即不重叠的众数，可以被分离、描述，并作为独立的单峰分布处理。此外，Figure 18.13a 中的蓝色分布由于右尾膨胀，即频率更高，而并不对称。这种围绕分布众数的对称性偏离称为偏度（skewness），右尾膨胀被定义为正偏（positive skew）。同样，Figure 18.13b 中的红色分布也不对称，其左尾膨胀，形成负偏（negative skew）。多峰性和高偏度都会使方差膨胀，并导致均值和中位数发生严重偏离，从而限制这些描述性统计量的定量可解释性。\n\n如前几幅图所示，直方图以及小提琴图等相关的分布描述性图形，对于视觉检查分布以及验证支撑特定数据解释的分布关键假设非常有用。然而，生成这些分布描述性图形需要最低限度的数据量。对于直方图，一个一般经验法则是，至少需要 30 个数据点才能表示单峰分布，如 Figure 18.6 中可视化的 31 个数据点所示。但是，若要从视觉上刻画分布的其他方面，例如模态性和偏度，尤其是在众数分离不佳时，则需要更多数据（Figure 18.13）。此外，也存在多维分布描述性图形，包括等高线图（contour plots），它们可以帮助评估多维分布。不过，这些类型的图形需要更多数据，才能真正具有分布描述能力。", "source_html": "<p style=\"color:var(--muted);font-style:italic\">源文暂缺。</p>", "trans_html": "<h2>Ch18 Statistical Methods for Biologists / Descriptive Representations of Data</h2>\n<h3>数据的描述性表示</h3>\n<h4>数据、信息与知识</h4>\n<p>数据（data）、信息（information）和知识（knowledge）彼此相关，但它们是相互分离且各不相同的概念。这些术语常常被互换使用，从而导致人们对到底收集、提供或分析的是什么产生混淆。具体而言，数据是简单事实和观察结果的无组织集合。这个关于数据的定义进一步引出了一个问题：“什么是观察结果？”观察结果（observation）是对某种现象获得的测量值。对于统计学家而言，这种现象就是一个统计实验。在科学研究语境中，观察结果是对某个特定物理实体或事件的某种性质或特征的数量或程度的测定。因此，数据就是这类测量值的无组织集合。信息则是经过组织、分析和解释，并转化为有用形式的数据，通常用于决策。最后，知识是在某一特定领域或研究方向中，通过教育和经验获得的信息、理解与技能。如 Figure 18.1 所示，单个观察结果被收集形成数据，数据经过解释转化为有用信息，信息进一步被提炼为新的知识。</p>\n<p>Bioinformatics, Fourth Edition. Edited by Andreas D. Baxevanis, Gary D. Bader, and David S. Wishart.</p>\n<p>© 2020 John Wiley &amp; Sons, Inc. Published 2020 by John Wiley &amp; Sons, Inc.</p>\n<p>Companion Website: <a href=\"https://www.wiley.com/go/baxevanis/Bioinformatics_4e\" target=\"_blank\" rel=\"noopener noreferrer\">www.wiley.com/go/baxevanis/Bioinformatics_4e</a></p>\n<p><strong>Figure 18.1 观察结果、数据、信息与知识之间的关系。</strong></p>\n<p>Source: Reproduced with permission of Hunter Moseley, <a href=\"https://doi.org/10.6084/m9.figshare.4968125.v1.\" target=\"_blank\" rel=\"noopener noreferrer\">https://doi.org/10.6084/m9.figshare.4968125.v1.</a> Licensed under CC By 4.0.</p>\n<p>从数据的角度看，表示同一或相似现象的一组相关观察结果称为随机变量（random variable）。在统计学中，这一术语具有更抽象的定义：随机变量被表示为一个数学函数，它把统计实验（现象）的可能结果映射到一个由可能取值（观察结果）组成的可测空间。根据所测量的性质或特征不同，随机变量可以是数值型（numerical）或类别型（categorical），如 Figure 18.2 所示。数值型随机变量是一组可能的可测数量范围。如果该范围用实数或类似的无限数集来定义，那么这个数值型随机变量就是连续型（continuous）。在这一语境中，连续性是表示随机变量的数学函数 f(x) 的一个性质，即当 x 趋近于 c 时，f(x) 的极限趋近于 f(c)。例如，使用荧光共振能量转移（fluorescence resonance energy transfer, FRET）测量供体与受体发色团之间的距离，就是一个连续型随机变量，因为可能观察到的是一个连续的实数范围，即由代表 FRET 分析实验所产生的一组观察结果的统计实验映射而来的结果。连续型随机变量的另一个例子是小鼠在 Morris 水迷宫测试中寻找平台所用的时间。</p>\n<p>如果取值范围用整数来定义，即正数和/或负数的计数值，那么这个数值型随机变量就是离散型（discrete）。在流式细胞仪中计数得到的细胞数量，就是一个在自然数，即非负整数，离散范围内的离散型随机变量。另一个例子是在给定观察站、给定时间段内看到或听到的某类鸟的“点计数”（point count）或数量。</p>\n<p>类别型随机变量是一组可能的定性测量观察结果，用于描述某种特征或相对性质。如果这些取值具有相对顺序、逻辑顺序或等级，那么该类别变量被认为是有序型（ordinal）。在特定核苷酸序列中观察到的核苷酸相对顺序，就是一个有序型随机变量。另一个例子是，在某种操作过程中，让患者以 1（经历最严重疼痛）到 5（无疼痛）的量表报告其疼痛相对水平。如果这些取值没有逻辑顺序，那么该类别变量被认为是名义型（nominal）。动物的性别就是一个名义型随机变量，在大多数情况下限于雄性和雌性。另一个例子是带有或不带有特定 CRISPR-Cas9 基因敲除的人类细胞系。</p>\n<p><strong>Figure 18.2 变量类型及其层级关系。</strong></p>\n<p>Source: Reproduced with permission of Hunter Moseley, <a href=\"https://doi.org/10.6084/m9.figshare.4968143.v1.\" target=\"_blank\" rel=\"noopener noreferrer\">https://doi.org/10.6084/m9.figshare.4968143.v1.</a> Licensed under CC By 4.0.</p>\n<p>Figure 18.2 中的主要内容可概括如下：</p>\n<div class=\"table-wrap\"><table><thead><tr><th>变量类型</th><th>定义</th><th>示例问题或取值</th></tr></thead><tbody><tr><td>数值型：连续型</td><td>位于实数或复数取值范围内</td><td>How many? How much?；[0.0, 10.0]；{1.50, 4.58, 9.45}</td></tr><tr><td>数值型：离散型</td><td>位于可计数的整数取值范围内</td><td>定量测量的观察结果；[0, 10]；{0, 3, 4, 7, 9, 10}</td></tr><tr><td>类别型：有序型</td><td>具有逻辑顺序或等级</td><td>What relative quality?；{1st, 2nd, 3rd}；{low, med, high}</td></tr><tr><td>类别型：名义型</td><td>没有逻辑顺序</td><td>What type? What category?；{male, female}；{blue, green, red}</td></tr></tbody></table></div>\n<h4>数据集与数据模式</h4>\n<p>dataset 及其较早被接受的拼写形式 data set，简单来说就是一组相关数据和信息的集合。但 dataset 的规范定义，是指一组相关的数据和信息集合，它们按照可观察现象（变量）以及把不同现象之间的观察结果联系起来的实体来组织，即涉及多个统计实验。这种组织方式通常表示为二维矩阵或关系表，其中列或字段表示不同的数据变量，行表示不同的实体。</p>\n<p>例如，可以为一组经过适当知情同意的人类受试者收集年龄、性别、种族、体重、身高、疾病状态、治疗方式以及其他结局变量，并将其组织为一个二维表。在这个表中，特定随机变量的取值，即第 2 列及之后的列，与某个特定人类个体，即第 1 列中去标识化的受试者 ID 相关联，用于临床试验（Figure 18.3a）。在这一语境中，来自单个临床、生物医学、生物学和/或分析实验的一组相互关联的观察结果，被组织成这类二维数据集。然而，数据集也可以指规范数据集的集合，其中单个生物学和/或分析实验代表第三个维度。因此，为了分析和解释数据集，需要对数据集的组织方式进行描述，这种描述称为数据模式（data schema）（Figure 18.3b,c）。此外，根据使用语境不同，data schema 也常被称为数据字典（data dictionary）、数据库模式（database schema）或元数据（metadata）。随着数据集在规模和复杂度上持续增长，数据组织和数据模式的质量常常成为数据集可用性的限制因素。</p>\n<p><strong>Figure 18.3 示例数据集的组织方式。</strong></p>\n<p>(a) 一个二维（2D）关系表的一部分，将去标识化的人类受试者（行）与特定样本变量（列）相关联。</p>\n<p>(b) 一个 2D 数据模式，显示数据集的组织方式和变量类型。</p>\n<p>(c) 一个三维（3D）数据模式，显示受试者与生物学/分析实验之间的额外关系（维度）。</p>\n<p>Source: Reproduced with permission of Hunter Moseley, <a href=\"https://doi.org/10.6084/m9.figshare.4968146.v1.\" target=\"_blank\" rel=\"noopener noreferrer\">https://doi.org/10.6084/m9.figshare.4968146.v1.</a> Licensed under CC By 4.0.</p>\n<p>如前所述，数据集通常过大，无法通过人工检查来全面审视和理解。因此，需要用概括性的、描述性的数据表示来对其进行评估和解释。描述性数据表示主要有三大类型：数据模式、描述性统计量和图形。作为起点，数据模式可以很好地提供数据集的描述性总览。通过描述良好的数据模式，可以容易地确定变量的数量和具体类型。同时，变量相对于实体——即受试者——的组织方式也会变得清晰（Figure 18.3b），进而可以推断出跨生物学实验和分析实验关联变量和/或受试者的更高阶组织方式（Figure 18.3c）。</p>\n<h4>描述性统计量</h4>\n<p>描述性统计量（descriptive statistic）是一个单一的可测量特征，它以定量方式描述或概括一组相关数据（Daniel and Wayne 1995）。然而，在严格的统计学定义中，有两个相关概念：统计量（statistic）和参数（parameter）。统计量是某个样本变量或可测样本属性的单一度量，其中样本是总体中实体的一个子集。参数一词则保留用于指总体的某种特征或属性，而这种特征或属性通常无法被直接测量。多数数据集只包含代表某个总体子集的数据，这个子集称为样本。例如，1000 名女性网球运动员的平均身高，代表这 1000 名网球运动员样本的平均身高统计量；这个统计量可用于推断所有女性网球运动员这一总体的平均身高参数。</p>\n<p>但是，一个数据集也可能包含某个有限总体的全部数据，例如“某个企业的全部人类员工”。在这种情况下，该有限总体的某个参数可以直接从数据集中测量出来，而不只是由样本统计量估计得到。不过，这类狭义定义的总体也可以被看作更大总体的样本，例如“地球上所有人类”，甚至“曾经生活过或可能生活的所有人类”。因此，将给定数据集变量的某个可测描述性特征归类为统计量还是参数，是一个视角问题。</p>\n<p>Figure 18.4 列出了用于表示样本变量数据集合的最常用描述性统计量。浅蓝色行中的第一个描述性统计量是数据集合的大小（size）或基数（cardinality）。大小的重要性怎么强调都不为过，因为它是对一组相关数据——即变量——中所包含数据数量的最直接度量。反过来，数据数量通常限制了该变量的信息含量。</p>\n<p>Figure 18.4 中浅绿色行显示的下一类最常用描述性统计量，称为集中趋势统计量（statistics of central tendency）。在统计学中，集中趋势是指一组取值或一个可能取值范围的典型值、中心值或期望值。最著名的集中趋势统计量是一组数值的算术平均数（arithmetic mean）或平均值（average）。例如，{3.2, 4.1, 4.1, 4.2, 4.4, 5.1, 5.1, 5.4, 5.4, 5.5, 5.8, 5.8, 6.2, 7.0, 7.5} 的平均值是 5.25，它代表这组数值中相当典型的一个值。在这一语境中，中心值或典型值表示某个分布中最频繁出现的值或值集；分布（distribution）是所有可能出现取值的频率集合。这个最高频取值或典型值，常被用于表示某种变量的一组较大取值中某个取值分布的位置。</p>\n<p>算术平均数或平均值是最常用的集中趋势统计量，因为在对分布作出某些假设，尤其是对称性假设时，它能够为期望值提供最准确的估计，并且在结果的准确性和精确性方面所需的数据量最少。然而，对于许多真实世界的数据集合，其他精确性较低的统计量，尤其是中位数（median）和众数（mode），反而能为给定取值分布的期望值提供更准确的估计。特别是，中位数常用于避免数据集合中极端离群值的影响，因为它对少数极端离群值的存在不敏感，而且易于可靠计算。众数对常见期望取值分布中的多种异常偏离非常不敏感，但通常精确性较低；它需要更大的数据量才能可靠计算，因此更难以用可预测的方式计算。</p>\n<p><strong>Figure 18.4 样本变量常用描述性统计量。</strong></p>\n<p>浅蓝色行为数据数量统计量。浅绿色行为集中趋势统计量。浅橙色行为期望区间统计量。浅黄色行为依赖性统计量。</p>\n<p>Source: Reproduced with permission of Cmglee, <a href=\"https://commons.wikimedia.org/wiki/File:Visualisation_mode_median_mean.svg.\" target=\"_blank\" rel=\"noopener noreferrer\">https://commons.wikimedia.org/wiki/File:Visualisation_mode_median_mean.svg.</a> Licensed under CC By 3.0.</p>\n<p>Figure 18.4 中浅橙色行的下一类描述性统计量，用期望区间和离散程度来概括观察到的取值。其中最简单的是范围（range）。从数学上讲，范围是由全部观察结果（数据）或全部可能观察结果组成的非重复取值集合；这里的集合在数学上定义为“不同”对象的集合，而在此情境中就是非重复取值。不过，range 有多种不同但相关的含义，包括经典统计学定义，即在一组数值型或有序型取值中最大值与最小值之间的差。然而，在名义型变量语境中，数学定义——非重复取值集合——最有用。对于数值型或有序型变量，范围最常被描述为同时包含最小值和最大值的区间，并表示为用方括号括起来、以逗号分隔的这两个值，例如对于观察结果集合 {2, 4, 5, 5, 5, 6, 6, 8, 11}，其范围为 [2, 11]（Galton 1886; Pearson 1895）。可以在任一端使用圆括号表示直到边界值但不包括该边界值；例如，记号 [0, 10) 表示该范围可以包含从 0 到小于 10 的所有值。这个范围定义最能体现期望取值区间的概念。</p>\n<p>样本方差（sample variance）是下一个期望区间描述性统计量，它表示测量值围绕样本均值的分散程度。与均值一样，方差对于期望取值区间的描述准确性依赖于对底层取值分布的某些假设，尤其是对称性。方差的平方根是标准差（standard deviation，常缩写为 SD 或 StdDev），这是一个更容易与样本均值联系起来的度量。均值标准误（standard error of the mean，常缩写为 SE 或 SEM）是对样本均值相对于总体均值的精确性的概率性描述。在对底层取值分布作出某些假设，尤其是对称性假设时，样本均值的准确性或置信度可以用标准误单位来定义。最后一个期望区间描述性统计量是置信区间（confidence interval, CI），它确定一个在某一置信水平下包含期望值的范围。这是对期望区间的一种很好描述，因为它不对分布作假设，并且像样本众数一样，对常见期望分布的多种异常偏离相当不敏感。另一种基于样本均值和标准误计算 CI 的公式为：</p>\n<p>CIx,z = [x − zSEx, x + zSEx]</p>\n<p>其中 z ≈ 2 等价于 95% CI，z ≈ 3 等价于 99% CI。</p>\n<p>Figure 18.4 中浅黄色行的最后一类描述性统计量，用于描述两个样本变量之间的依赖性（dependence）。样本协方差（sample covariance）描述两个样本变量如何共同变化，其计算方式类似于样本方差。换言之，样本协方差描述两个样本变量的测量值如何以线性依赖的方式围绕各自样本均值共同分散。从一种视觉角度看，协方差描述的是以样本均值为中心的共同离散区域，其取值范围为 (−∞, ∞)。</p>\n<p>接下来，Pearson 相关系数（Pearson’s correlation coefficient），简称 Pearson 相关（Pearson’s correlation），描述两个样本变量之间的线性依赖关系（Pearson 1895）。它与协方差的关系涉及两个样本变量标准差的倒数，因此常被看作是由每个样本变量的标准差归一化后的协方差。这种归一化会将 Pearson 相关限制在 [−1, 1] 的范围内，这通常更容易解释为两个样本变量之间依赖强度的大小。Figure 18.5 展示了相关相对于协方差在可解释性上的优势：两组样本中 x 与 y 之间的协方差相同，但蓝色样本和红色样本的 Pearson 相关不同。红色样本中较高的方差代表 x 与 y 之间较低的依赖性，尽管这种依赖的性质，即黑色回归线的斜率，是相同的。这个例子说明，协方差和相关不能彼此进行定量比较，即使它们在符号上可以进行定性比较：正协方差会对应正相关，负协方差和零协方差也分别对应负相关和零相关。</p>\n<p><strong>Figure 18.5 协方差与相关。</strong></p>\n<p>红色样本比蓝色样本具有更高的样本方差，因此对应更低的相关，尽管样本变量之间的协方差相同。</p>\n<p>Source: Moseley, Hunter (2017): Example of covariance-correlation differences. figshare. <a href=\"https://doi.org/10.6084/m9.figshare.4968149.v1.\" target=\"_blank\" rel=\"noopener noreferrer\">doi.org/10.6084/m9.figshare.4968149.v1.</a></p>\n<p>Spearman 秩相关系数（Spearman’s rank correlation coefficient），简称 Spearman 相关（Spearman’s correlation），描述两个样本变量之间的单调、非线性依赖关系（Spearman 1904）。两个样本变量之间的单调关系意味着这两个样本变量取值的秩顺序得以保持。从视觉上看，单调关系意味着任意给定的水平线或垂直线只会与函数 y = f(x) 所描述的曲线相交一次，其中 x 和 y 是两个样本变量。Spearman 相关描述两个样本变量之间这种单调或秩顺序依赖的强度，其方式类似于 Pearson 相关描述两个样本变量之间线性依赖的方式。具体而言，Spearman 相关根据两个样本变量之间秩顺序或反向秩顺序的保持程度计算，取值范围为 [−1, 1]。</p>\n<p>最后一个常见的依赖性描述性统计量是决定系数（coefficient of determination），它度量一个或多个样本变量对某个给定数学模型的拟合程度。不过，从另一个角度看，决定系数描述的是一组样本变量基于模型的依赖性。该统计量的计算方式为：1 减去残差平方和与观察值相对于样本均值的总差异平方和之比。决定系数的取值范围为 [0, 1]，常被描述为模型与数据之间未解释方差的比例。对于线性模型，决定系数可化简为 r²，即线性相关的平方；如果只涉及两个样本变量，则为 Pearson 相关的平方。更广义地说，Pearson 相关、Spearman 相关和决定系数都度量样本变量与某个描述特定数学关系的模型之间依赖性的强度。当预期两个样本变量之间存在线性关系时，通常使用 Pearson 相关来描述线性依赖的程度。当预期两个样本变量之间存在非线性单调关系时，使用 Spearman 相关来描述非线性单调依赖。当预期涉及一个或多个样本变量的特定数学模型，而这种关系不容易由前两种依赖性度量处理时，通常使用决定系数来描述变量相对于模型的依赖性。</p>\n<h4>合适的图形是数据集最具描述性的表示</h4>\n<p>图形（graphs）是简化的图示，用于展示数据集中一个或多个数据变量。在许多情况下，图形以视觉方式提供变量的概括性总览，突出数据的特定描述性统计量或分布性质（参见 Figure 18.4 中的视觉描述）。图形常常能够可视化变量之间的依赖性，使特定关系变得清楚。为以多种方式概括或突出变量集合甚至整个数据集，人们设计了许多不同类型的图形，例如典型电子表格软件中提供的多种图表。在大多数情况下，被共同组织、分析或可视化的样本变量和/或实验数量，即数据维度，限制了某一特定可视化任务可使用的图形类型。鉴于绝大多数图片是二维的，大多数以单一图形形式呈现的数据可视化很难直接表示超过两个维度的数据。不过，有时在需要具有说服力的数据可视化时，例如表示和比较体积，也会通过人为实现深度来可视化三维信息。</p>\n<p>最简单的描述性图形之一是直方图（histogram）（Figure 18.6），它可视化给定样本变量的取值分布。从统计学角度看，直方图可视化样本变量中一组有序统计事件发生的频率。多数情况下，每个统计事件，即一组可能结果，被表示为一段可能取值的数值范围；每个柱形的高度则表示该样本变量中所代表事件的发生频率。因此，如果使用了合适的有序范围集合，直方图通常能够清晰地可视化取值分布。然而，很多时候我们希望使用一种图形，使单个随机变量能够在多个实验之间进行视觉比较。箱线图（box-and-whisker plot，或 boxplot）正是为这一目的在 20 世纪 50 年代早期开发出来的，后来由数学家 William Tukey 在 20 世纪 60 年代后期推广普及（Spear 1952; McGill et al. 1978）。</p>\n<p><strong>Figure 18.6 黑樱桃树高度频率的示例直方图。</strong></p>\n<p>Source: <a href=\"https://commons.wikimedia.org/wiki/File:Black_cherry_tree_histogram.svg\" target=\"_blank\" rel=\"noopener noreferrer\">commons.wikimedia.org/wiki/File:Black_cherry_tree_histogram.svg</a> CC BY 2.5, <a href=\"https://commons.wikimedia.org/w/index.php?curid=3483039.\" target=\"_blank\" rel=\"noopener noreferrer\">commons.wikimedia.org/w/index.php?curid=3483039.</a></p>\n<p>Figure 18.7a 展示了标准箱线图的组成部分，其中包括四分位距（interquartile range, IQR）。箱体底部定义第一四分位数（Q1 或第 25 百分位数，代表最低的 25% 数据），中间表示中位数（Q2 或第 50 百分位数），箱体顶部定义第三四分位数（Q3 或第 75 百分位数，代表最高的 25% 数据）。须线从箱体顶部和底部延伸，最大可达 1.5 倍 IQR。落在这些范围之外的任何值通常用离群点表示。箱线图常用于显示和比较数据分布，而不对分布作假设；它从秩顺序和频率角度提供底层数据的非参数视图，从而便于数据集之间的视觉比较。然而，箱线图真正巧妙之处在于，在计算机尚未广泛用于此类任务之前，它使人们能够有效地手绘描述性图形。不过，箱体和须线表示的简洁性也是一种缺点。Figure 18.7b 显示的箱线图看起来几乎完全相同（Choonpradub and McNeil 2005）。然而，将数据叠加到 Figure 18.7c 的箱线图上后，就能清楚看出每个样本实际上有多么不同。今天已有几种比原始、易绘制箱线图更具描述性的箱线图变体。小提琴图（violin plot）（Hintze and Nelson 1998）、SinaPlot（Sidiropoulos et al. 2018）及其组合（Figure 18.7d–f）能够在视觉上很好地描述不同取值分布，并能更好地比较四个样本。</p>\n<p><strong>Figure 18.7 示例箱线图及相关变体图。</strong></p>\n<p>(a) 箱线图示意图。</p>\n<p>(b) 四个测量样本的经典箱线图。</p>\n<p>(c) 带数据点的经典箱线图。</p>\n<p>(d) 小提琴图。</p>\n<p>(e) SinaPlot。</p>\n<p>(f) 叠加 SinaPlot 的小提琴图。</p>\n<p>(b)–(f) 中的图形使用 R 中的 ggplot2 生成。</p>\n<p>Source: Moseley, Hunter (2017): diagram of a box plot. figshare. <a href=\"https://doi.org/10.6084/m9.figshare.4993937.v1.\" target=\"_blank\" rel=\"noopener noreferrer\">doi.org/10.6084/m9.figshare.4993937.v1.</a> Moseley, Hunter; Flight, Robert M (2017): Standard Box Plot. figshare. <a href=\"https://doi.org/10.6084/m9.figshare.4968152.v1.\" target=\"_blank\" rel=\"noopener noreferrer\">doi.org/10.6084/m9.figshare.4968152.v1.</a> Moseley, Hunter; Flight, Robert M (2017): Boxplot with data points. figshare. <a href=\"https://doi.org/10.6084/m9.figshare.4968155.v1.\" target=\"_blank\" rel=\"noopener noreferrer\">doi.org/10.6084/m9.figshare.4968155.v1.</a> Moseley, Hunter; Flight, Robert M (2017): Example Violin Plot. figshare. <a href=\"https://doi.org/10.6084/m9.figshare.4968158.v1.\" target=\"_blank\" rel=\"noopener noreferrer\">doi.org/10.6084/m9.figshare.4968158.v1.</a> Moseley, Hunter; Flight, Robert M (2017): Example SinaPlot. figshare. <a href=\"https://doi.org/10.6084/m9.figshare.4968161.v1.\" target=\"_blank\" rel=\"noopener noreferrer\">doi.org/10.6084/m9.figshare.4968161.v1.</a> Moseley, Hunter; Flight, Robert M (2017): Example Violin plot plus SinaPlot. figshare. <a href=\"https://doi.org/10.6084/m9.figshare.4968164.v1.\" target=\"_blank\" rel=\"noopener noreferrer\">doi.org/10.6084/m9.figshare.4968164.v1.</a></p>\n<p>下一类主要描述性图形是散点图（scatter plot）。散点图表示多维数据点，用于可视化两个或多个样本变量之间的共同离散程度和依赖关系，而这些关系通常使用相关和协方差等描述性统计量来量化。图中的每个数据点表示一组有序的相互关联取值，对应不同样本变量；例如，(62.5 in., 101.3 kg) 表示一名男性人类受试者测得的身高和体重。通常，图中还会加入回归线或回归曲线，用于展示样本变量相对于某一特定数学模型或函数的依赖关系。Figure 18.8 用四个著名图形展示了散点图的有用性，这四个图形称为 Anscombe 四重奏（Anscombe’s quartet）（Anscombe 1973）。20 世纪 70 年代早期，Francis Anscombe 构造了四个数据集，每个数据集都包含两个变量，并且所有标准描述性统计量，包括线性回归线，都具有相同取值。然而，这些数据集的简单散点图揭示了这四个数据集实际上有多么不同。最令人不安的是，有两组点的线性相关 rxy 很高，但它们显然并不具有回归线所表示的线性关系。这四个图形提醒我们不要过度解释描述性统计量，尤其是在比较小数据集，并且不了解变量之间依赖性质的情况下。</p>\n<p><strong>Figure 18.8 Anscombe 四重奏。</strong></p>\n<p>四组著名数据点的散点图及回归线。这四组数据在视觉上差异很大，但给出完全相同的描述性统计值。</p>\n<p>散点图还被证明有助于可视化高维数据集的某些派生概括性性质或统计量。这类高维数据集包含数百甚至数千个相关样本变量。一般方法是，从大量相关样本变量中派生出一小组描述性潜变量（latent variables，即不能直接观察到的变量），然后用散点图可视化这组潜变量。用于这一方法的一种非常常见技术是主成分分析（principal component analysis, PCA）。PCA 从一组连续变量中派生出相关性的主成分，通常为线性相关。PCA 按照能够首先解释数据集中最大方差量的顺序派生各个相关性成分：第一主成分代表最大方差量，第二主成分代表第二大方差量，依此类推。该分析通常重复进行，直到获得用于可视化的期望成分数量，或直到所得主成分列表表示了数据集方差的预定义比例。因此，PCA 创建了一组最小的潜在连续变量，这些变量彼此之间不相关，同时代表原始高维数据集中存在的最大累积方差比例。</p>\n<p>Figure 18.9 显示了一个 PCA 散点图，其中两个线性相关主成分来自 RNA-seq 数据集。该数据集包括五组用人端粒酶逆转录酶永生化的人视网膜色素上皮细胞（human telomerase reverse transcriptase-immortalized human retinal pigmented epithelial cells, RPE-1），每组有三个重复。其中一组为对照，另外四组表示对三个不同基因的小干扰核糖核酸（small interfering ribonucleic acid, siRNA）敲低，其中一个基因以两种不同方式敲低。这两个主成分包含合并数据集中超过 50% 的方差；该合并数据集包括数千个表示单个 RNA 丰度的随机样本变量，而 RNA 丰度通常用于推断基因表达水平。前两个主成分突出显示了五组 RPE-1 细胞之间的分离，并表明这五组之间的差异体现在合并数据集最大的方差来源中。</p>\n<p><strong>Figure 18.9 主成分分析得到的前两个主成分（PCs）的散点图。</strong></p>\n<p>Source: Moseley, Hunter; Flight, Robert M; Wang, Qingjung (2017): PCA plot of RNAseq dataset of CLN3 knockdown. figshare. <a href=\"https://doi.org/10.6084/m9.figshare.4994204.v1.\" target=\"_blank\" rel=\"noopener noreferrer\">doi.org/10.6084/m9.figshare.4994204.v1.</a></p>\n<p>如前述图中的直方图、各种箱线图和散点图所示，图形可以提供非常具有描述性的数据表示。然而，必须谨慎处理，使图形具有最大描述性。以下几点为制作高描述性图形提供了有用指南：</p>\n<ul>\n<li>始终在图形中包含描述性标题，例如“Isocitrate dehydrogenase 1 activity”。此外，不要只是在标题中重复坐标轴标签。</li>\n<li>始终用描述性名称和测量单位标注坐标轴；例如，“Culture growth time (h)”、“μg/ml protein”或“Intensity (a.u.)”。</li>\n<li>只要可能且合理，就以视觉方式表示数据中的不确定性。</li>\n<li>使用误差棒和可视化底层分布，是以视觉方式表示不确定性的两种主要方式。</li>\n<li>使用有助于解释的误差棒。通常，较大的误差棒有助于防止对数据进行过度解释。</li>\n<li>始终说明误差棒的单位和大小，例如“Error bars represent two SE units”。</li>\n<li>当存在多个数据集、组别或数据类型，并且需要识别它们时，应包含图例。</li>\n<li>选择合适的图形，不要隐藏数据的关键描述性特征。这可能需要尝试多种图形和不同设置，才能找到恰到好处的图形。</li>\n<li>每幅图选择一个信息重点，并专注于传达这一信息。例如，一幅图可以传达一组结果及其相关结论。</li>\n</ul>\n<p>这些指南既有助于读者理解图形表示的内容，也有助于解释图形所表示的底层数据。Figure 18.10 说明了为什么这些指南很重要。例如，Figure 18.10a 缺少相当多的描述性元素，包括标题、坐标轴标题、图例和误差棒，这限制了图形的可解释性，并会使读者感到困惑。相比之下，Figure 18.10b 合理地包含了所有这些视觉特征，使观察者能够迅速判断该图表示什么，以及图中信息上重要的内容是什么；在这个例子中，重要信息是比较野生型小鼠与敲除小鼠在自发运动活动方面的差异。</p>\n<p><strong>Figure 18.10 如何使图形具有描述性的示例。</strong></p>\n<p>Source: Moseley, Hunter (2017): Bad and Good Graphing Examples. figshare. <a href=\"https://doi.org/10.6084/m9.figshare.4994207.v1\" target=\"_blank\" rel=\"noopener noreferrer\">doi.org/10.6084/m9.figshare.4994207.v1</a></p>\n<h4>频率分布与概率分布</h4>\n<p>可视化数据的主要目的之一，是验证对描述性统计量的某些解释是否有效。当观察结果数量相对较少，即少于 100 个时，在多数图形类型中直接可视化数据相对简单，包括 Figure 18.7c,e,f 中使用箱线图及其变体可视化的数据，以及 Figure 18.10b 中的散点图。随着观察结果数量增加到 1000 以上，直接可视化数据变得更加困难。然而，仍然需要对观察结果的分布进行视觉描述，以验证一些关键假设；这些假设通常是对更具定量描述性的统计量作出特定解释所必需的。</p>\n<p>请记住，频率分布（frequency distribution）是给定取值集合中特定取值发生的频率；直方图（Figure 18.6）可以非常有效地可视化频率分布，用于概括单个有序型或数值型样本变量的数据，尤其是在被概括的数据量很大时。相关的概率分布（probability distribution）是特定取值发生的概率密度集合。在连续随机变量语境中，概率密度表示某一特定取值（结果）相对于无限多个其他可能取值（结果）发生的可能性。此外，概率是事件发生的可能性；在这一语境中，事件被定义为一个连续取值范围。进一步说，可以把概率密度看作相对频率，其在整个分布上的总概率加和为 1。</p>\n<p>Figure 18.11 展示了最著名且最常见的概率分布：标准正态分布（standard normal distribution），也称 Gaussian 分布（Gaussian distribution）。Gaussian 分布以 Carl Friedrich Gauss 命名，他在 1809 年首次对正态分布进行了具体描述（Gauss 1809）。在 Figure 18.11 中，x 轴用 z-score 来描述取值，其中：</p>\n<p>z = (x − μx) / σx</p>\n<p>这里，z-score 表示某个取值相对于均值 μx 的偏离，并由标准差 σx 归一化。因此，x 轴的单位是标准差。y 轴描述特定 z 值处的概率密度，通常用概率密度函数表示，即 y = pdf(z)；如果直接使用变量 x，则为 pdf(x)。现在，某些统计事件如 {z ≥ a} 的实际概率 P 可以定义为：</p>\n<p>P(z ≥ a) = ∫a∞ pdf(z) dz</p>\n<p>这就是从 z = a 开始的 pdf(z) 曲线下方的面积。同样，一组绝对 z 值小于或等于某一标准差单位数的概率可表示为：</p>\n<p>P(−a ≤ z ≤ a) = ∫−a^a pdf(z) dz</p>\n<p>对于正态分布，68.3% 的概率密度位于 ±1σ 以内，95.4% 位于 ±2σ 以内。然而，对于其他常见分布，这些概率期望是不同的。</p>\n<p><strong>Figure 18.11 标准正态分布。</strong></p>\n<p>Source: Moseley, Hunter (2017): Description of a normal distribution. figshare. <a href=\"https://doi.org/10.6084/m9.figshare.4994210.v1\" target=\"_blank\" rel=\"noopener noreferrer\">doi.org/10.6084/m9.figshare.4994210.v1</a></p>\n<p>如 Figure 18.12 所示，在生物学和生物物理数据中可以看到许多不同的、特征明确的分布，例如对数正态分布（log-normal distribution）、Poisson 分布（Poisson distribution）以及二项分布（binomial distribution）的变体，尤其是负二项分布（negative binomial distribution）。然而，许多相关观察结果集合代表若干相似但独立分布的总和；这些总和往往近似于正态分布，即使这些分布本身并不是正态的。虽然每个独立分布在技术上代表不同现象，但在实际操作中，通常不可能在事先将它们作为独立随机变量分别收集。独立随机变量之和近似于正态分布的这种倾向，称为中心极限定理（central limit theorem），它是统计学和概率论的基础原则。中心极限定理也是许多生物学和生物物理数据集的“救星”，因为相关观察结果集合往往是若干分布的总和，而这些总和可以近似为或作为正态分布来处理。</p>\n<p><strong>Figure 18.12 生物学和生物物理数据集中常见或常用的其他特征明确的离散分布和连续分布。</strong></p>\n<p>Source: By Skbkekas – Own work, CC BY 3.0, <a href=\"https://commons.wikimedia.org/w/index.php?curid=9447142.\" target=\"_blank\" rel=\"noopener noreferrer\">commons.wikimedia.org/w/index.php?curid=9447142.</a> By Tayste – Own work, Public Domain, <a href=\"https://commons.wikimedia.org/w/index.php?curid=3646951.\" target=\"_blank\" rel=\"noopener noreferrer\">commons.wikimedia.org/w/index.php?curid=3646951.</a> By Krishnavedala – Own work, CC0, <a href=\"https://commons.wikimedia.org/w/index.php?curid=39170496.\" target=\"_blank\" rel=\"noopener noreferrer\">commons.wikimedia.org/w/index.php?curid=39170496.</a> By Geek3 – Own work, CC BY 3.0, <a href=\"https://commons.wikimedia.org/w/index.php?curid=9884213.\" target=\"_blank\" rel=\"noopener noreferrer\">commons.wikimedia.org/w/index.php?curid=9884213.</a></p>\n<p>然而，真实分布从来不会像理想统计模型中的分布那样漂亮。Figure 18.13 显示了一些图形，用于描述金属蛋白中某些键长和配位角的分布（Yao et al. 2017）。Figure 18.13a 展示了金属蛋白中特定金属离子与氧配体原子之间键长真实分布的几个重叠直方图。Figure 18.13b 显示了配位锌金属离子的最小配体–金属–配体角的几个重叠直方图。这些键长和配位角分布来自 Worldwide Protein Data Bank（wwPDB；见 Chapter 12）中条目所存储的金属蛋白结构的三维原子级表示（Berman et al. 2007）。其中几个分布表现出相对于理想正态分布的异常偏离。最显著的异常是存在多个众数，如 Figure 18.13b 中绿色的双峰分布所示，该分布涉及一个锌离子由五个配体原子配位的情形。</p>\n<p>模态性（modality），即存在的众数数量，是评估真实分布时一个非常重要的特征，因为多数集中趋势描述性统计量，如均值和中位数，以及离散程度描述性统计量，如方差，只有在分布为单峰分布（unimodal）时，才可以从概率角度进行定量解释。不过，多峰分布中分辨良好、即不重叠的众数，可以被分离、描述，并作为独立的单峰分布处理。此外，Figure 18.13a 中的蓝色分布由于右尾膨胀，即频率更高，而并不对称。这种围绕分布众数的对称性偏离称为偏度（skewness），右尾膨胀被定义为正偏（positive skew）。同样，Figure 18.13b 中的红色分布也不对称，其左尾膨胀，形成负偏（negative skew）。多峰性和高偏度都会使方差膨胀，并导致均值和中位数发生严重偏离，从而限制这些描述性统计量的定量可解释性。</p>\n<p>如前几幅图所示，直方图以及小提琴图等相关的分布描述性图形，对于视觉检查分布以及验证支撑特定数据解释的分布关键假设非常有用。然而，生成这些分布描述性图形需要最低限度的数据量。对于直方图，一个一般经验法则是，至少需要 30 个数据点才能表示单峰分布，如 Figure 18.6 中可视化的 31 个数据点所示。但是，若要从视觉上刻画分布的其他方面，例如模态性和偏度，尤其是在众数分离不佳时，则需要更多数据（Figure 18.13）。此外，也存在多维分布描述性图形，包括等高线图（contour plots），它们可以帮助评估多维分布。不过，这些类型的图形需要更多数据，才能真正具有分布描述能力。</p>", "terms": []}, {"id": "sec-155", "title": "Statistical Inference and Statistical Hypothesis Testing", "source_md": "", "trans_md": "# Ch18 Statistical Methods for Biologists / Statistical Inference and Statistical Hypothesis Testing\n\n## Statistical Inference and Statistical Hypothesis Testing\n\n### Figure 18.13 金属蛋白中配位金属离子的键长和配位角直方图\n\n(a) 金属蛋白中与氧配体结合的常见金属离子的键长直方图。  \n(b) 金属蛋白中配位锌离子的最小配体–金属–配体角直方图。\n\n图中术语：  \n- Metal ion–oxygen ligand：金属离子–氧配体  \n- Smallest ligand–metal–ligand angle for a coordinated Zn ion：配位 Zn 离子的最小配体–金属–配体角  \n- Positively skewed：正偏态  \n- Negatively skewed：负偏态  \n- Bimodal：双峰分布  \n- Bond length (Å)：键长（Å）  \n- Angle (degrees)：角度（度）  \n- Count：计数  \n- metal：金属  \n- numLig：配体数\n\nSource: Yao, S., Flight, R.M., Rouchka, E.C., and Moseley, H.N.B. (2017). Aberrant coordination geometries discovered in the most abundant metalloproteins. Proteins: Structure, Function, and Bioinformatics 85, 885–907. Reproduced with permission of Wiley.\n\n## Statistical Inference and Statistical Hypothesis Testing\n\n### Statistical Inference\n\n统计推断（statistical inference）是指对总体（population）的性质形成判断或“命题”（propositions）的过程，通常基于随机抽样（random sampling）进行。其总体目的在于获得新的信息和知识，和/或支持有依据的决策。Figure 18.14 展示了这一过程：从正在被分析的总体开始，对该总体进行随机抽样，用于某个实验，并在实验中获得观测值。这些观测值生成数据；数据可用于推导描述性统计量（descriptive statistics），进而推断刻画底层总体的特定参数（parameters）。随后，这些描述性统计量被解释为新的信息和知识。\n\n在这一过程中，至关重要的是：样本、实验、观测值和数据都必须经过充分检查、审查和评估，使得由此推导出的统计量能够用于推断准确刻画正确总体的参数，从而支持合理解释并提供新的信息和知识。\n\n例如，考虑一个实验室构建了一种基因敲除小鼠，其表型为毛发非常浓密，研究人员亲切地称之为 furball。这种多毛表型相当独特，因此该实验室繁育了 100 只 furball 小鼠，形成随机样本，以刻画其多毛表型。研究人员测量了这一小鼠样本背侧和腹侧的毛发斑块。所得毛发测量数据集用图形进行描述；这些图形显示样本分布近似于正态分布，同时均值和标准差这类描述性统计量似乎能够完整地再现该样本分布。基于这一抽样结果，研究人员推断 furball 总体具有一种呈正态分布的多毛表型，并且可由样本均值和样本标准差很好地描述。该实验室在 6 个月后重复随机抽样，得到关于 furball 总体非常相似的推断，从而进一步验证了该结果。\n\n对于公共科学数据库（public scientific repositories）中的数据集，在进行下游分析之前，通常只有数据及其相关元数据能够得到充分检查、审查和评估。对公开归档数据进行这种检查是绝对必要的，因为并非每一个提交到数据库的数据集都经历过相同程度的前期检查和质量控制；此外，许多数据库对数据提交只要求满足最低标准（Brazma et al. 2001）。这使得生物信息学领域的许多人认为，公共科学数据库虽然有用且常常必不可少，但在某种程度上是“脏的”（dirty）（Kim et al. 2003）。因此，许多生物信息学研究者认为，检查并移除不可用数据——也就是对数据集进行“清洗”（cleaning）——是他们工作中最大的一部分，且往往是最关键的步骤，通常约占其工作量的 80%（Zhang et al. 2003）。实际上，检查、审查和评估只是统计推断整体过程中的基础组成部分；这一过程可能需要修订，甚至重复其中任意一个步骤。\n\n### Figure 18.14 统计推断过程概览\n\nFUV stands for the fraction of unexplained variance.\n\n图中术语：  \n- Population：总体  \n- Sample：样本  \n- Experiment：实验  \n- Observations：观测值  \n- Data：数据  \n- Statistic：统计量  \n- Parameter：参数  \n- Information and knowledge：信息与知识  \n- Inspect, review, and evaluate：检查、审查和评估  \n- 1. Sampled：抽样  \n- 2. Acquired：获得  \n- 3. Generates：生成  \n- 4. Derived：推导  \n- 5. Infers：推断  \n- 6. Characterizes：刻画  \n- 7. Interpreted：解释\n\nSource: Moseley, Hunter (2017): Overview of a statistical inference process. figshare. doi.org/10.6084/m9.figshare.4994213.v1.\n\n### Statistical Hypothesis Testing\n\n统计推断最主要的直接目的，是形成命题或判断；统计假设检验（statistical hypothesis testing）是用于对数据形成这些判断的最常见统计方法之一。在大多数生物信息学分析的语境中，可以给出一个实用定义：假设检验是将一个数据集（样本）与另一个数据集（样本）或一个模型进行比较，并基于数据形成判断的过程。然而，从更一般的统计学定义来看，假设检验是基于对某一现象的观测，建立并检验一个可检验假设（testable hypothesis）的过程；该现象通过一组随机变量建模。\n\n从技术上讲，建立可检验假设可以被视为一个独立于统计假设检验的步骤；但很多时候，精确可检验假设的建立与实际检验该假设是相伴发生的，因为一个给定假设必须能够适配某种可用的检验方法。\n\n统计假设检验的标准实施通常包括三个主要步骤。\n\n第一步，是建立一个假设，其形式为：两个样本之间存在某种统计关系。这个假设称为备择假设（alternative hypothesis, Ha），通常直接基于从生物学和/或分析学角度提出的实验假设。然而，直接检验备择假设 Ha 往往非常困难。\n\n第二步，是建立一个逻辑上相反的假设，即零假设（null hypothesis, H0）。零假设通常更容易被直接检验；在此情形下，它表示两个样本之间不存在统计关系。\n\n第三步，是通过比较从每个样本推导出的某个统计量的取值，直接检验零假设 H0，也就是检验“统计关系不存在”这一命题。这种方法的基础在于：直接证伪一个假设或陈述，要比直接证明一个假设或陈述为真容易得多。因此，如果能够证伪一个与目标备择假设 Ha 逻辑相反的零假设 H0，就可以间接支持目标备择假设 Ha 为真。\n\n不过，为了理解被直接检验的零假设 H0，必须在描述性统计的语境中清楚定义什么是“统计关系”（statistical relationship），以避免混淆。当来自两个样本、针对某一给定随机变量所推导出的统计量在统计意义上并非“相同”（the same）时，这种情况被解释为：两个样本在该随机变量方面存在统计关系。因此，两个样本推导出的统计量“相同”，表示不存在统计关系。\n\n例如，考虑如下零假设 H0：两个呈正态分布的纯种马样本，其身高均值相同。这表示两个纯种马样本在身高方面不存在关系。若缺乏统计意义上的相同性，即存在统计差异，则表明零假设是错误的，并且两个纯种马样本的身高之间确实存在统计关系。因此，统计显著差异被用来证伪零假设 H0，即“关系不存在”（也就是认为两个样本的该统计量相同）的假设。\n\n需要牢记的核心思想是：统计显著差异用于证伪或拒绝零假设 H0，即两个样本的某个统计量在统计上相同；这样做的目的是确认备择假设 Ha，即两个样本的统计量在统计上不同，因此两个样本之间存在关系。\n\n统计学家和生物学家在感知、描述和定义世界的方式上存在差异，这是两类科学家相互交流时许多科学混淆的来源，常常导致合作低效甚至失败。因此，在建立跨学科合作时，非常重要的一点是保持充分耐心，并着重识别误沟通发生的位置；这些误沟通常常源自术语差异。\n\n现在将上述统计假设检验过程的前两步放入一个生物学实例中考虑。研究人员在培养皿中培养两组细胞培养物；一组接受某种药物处理，另一组不接受处理。经过 24 小时药物暴露后，从每个培养皿的培养基和细胞中取样，并通过一维 1H 核磁共振（nuclear magnetic resonance, NMR）实验测量乳酸的相对含量。实验人员首先希望检验如下实验假设：“病例组与对照组总体之间，培养基中归一化乳酸 NMR 强度观测值不同。”\n\n为了检验该实验假设，建立如下统计备择假设 Ha：来自样本 Sa 和 Sb 的两组观测值集合，其均值 xa 和 xb 不同。备择假设 Ha 提出，Sa 和 Sb 之间存在关系，即二者均值存在差异。\n\n接下来，建立逻辑上相反的零假设 H0：来自样本 Sa 和 Sb 的两组观测值集合，其均值 xa 和 xb 相同。零假设 H0 提出，Sa 和 Sb 之间不存在关系；在统计检验中拒绝零假设 H0 将验证备择假设 Ha，并支持如下解释：这两组细胞培养物代表两个不同总体。\n\n此时，研究小组中的统计学家要求描述每一个“样本”（sample）。实验人员开始描述从每个细胞培养物中取出的“样品”（sample）。双方都没有意识到，“sample”这个词对对方而言意味着不同的东西，于是误解开始产生，交流也随之变得紧张。\n\n### Type I and II Errors that Arise from Statistical Hypothesis Testing\n\n在检验零假设 H0 时，需要判断检验结果是阳性还是阴性。拒绝零假设将支持备择假设，被视为检验的阳性结果。未能拒绝零假设则不支持备择假设，被视为检验的阴性结果。然而，根据零假设实际上为真还是为假，检验存在四种逻辑结果。这些结果由 Figure 18.15 中的真值表展示（更多信息见 Box 5.4）。\n\n从真值表左下角开始，拒绝一个实际上为假的零假设称为真阳性（true positive）。在这种情况下，拒绝错误的零假设正确地支持了备择假设。\n\n移动到真值表右上角，未拒绝一个实际上为真的零假设称为真阴性（true negative）。在这种情况下，未能拒绝真实的零假设，正确地没有支持备择假设。\n\n在真值表左上角，错误地拒绝一个实际上为真的零假设称为假阳性（false positive）。在这种情况下，拒绝真实的零假设错误地支持了备择假设。在统计学中，假阳性称为 I 类错误（type I error）。此时，检验结果会使人得出“存在统计关系”的结论，而事实上这种关系并不存在。Figure 18.15 左侧图像展示了一个 I 类错误：妊娠测试显示男性患者怀孕。\n\n最后，在真值表右下角，未能拒绝一个实际上为假的零假设称为假阴性（false negative）。在这种情况下，未能拒绝错误的零假设，错误地没有支持备择假设。在统计学中，假阴性称为 II 类错误（type II error）。此时，检验结果会使人得出“不存在统计关系”的结论，而事实上这种关系存在。Figure 18.15 最右侧图像展示了一个 II 类错误：妊娠测试显示明显怀孕的女性患者未怀孕。\n\n### Figure 18.15 带有 I 类错误和 II 类错误说明的真值表\n\n图中术语：  \n- Truth table：真值表  \n- Type I error (false positive)：I 类错误（假阳性）  \n- Type II error (false negative)：II 类错误（假阴性）  \n- FP (type I error)：FP（I 类错误）  \n- TN：真阴性  \n- TP：真阳性  \n- FN (type II error)：FN（II 类错误）  \n- Reject H0：拒绝 H0  \n- Failure to reject H0：未能拒绝 H0  \n- True H0：H0 为真  \n- False H0：H0 为假  \n- you’re not pregnant：你没有怀孕  \n- you’re pregnant：你怀孕了\n\n### Statistical Significance\n\n是否拒绝零假设 H0 并不是一个容易作出的决定，尤其是在并不知道零假设是真是假时。统计显著性（statistical significance）的概念有助于这一决策：它将判断框定为“拒绝一个真实零假设，也就是犯 I 类错误，是多么不可能”。犯 I 类错误的可能性越低，拒绝零假设的统计显著性就越强。\n\nFigure 18.16 以概率或 p 值（p value）的形式展示了统计显著性。p 值表示：当 H0 为真时，获得至少与当前零假设 H0 下的结果一样极端的结果的概率。对于给定的 H0，图中绿色的 p 值是基于检验统计量 t，在给定概率密度函数下一个或两个绿色尾部面积之和。具体使用哪个检验统计量，以及累加一个尾部还是两个尾部，取决于所执行的具体检验。\n\nAlpha，也称显著性水平（level of significance），是当 H0 为真时拒绝零假设 H0 的概率。图中的蓝色 alpha 是从蓝色临界值线开始的一个或两个尾部面积之和。临界值（critical value）只是对应于给定 alpha 的检验统计量取值。Alpha 根据与零假设对应的 p 值是否小于 alpha，建立是否接受或拒绝零假设 H0 的决策点。\n\n良好的统计实践要求在进行统计检验之前选择 alpha，以避免确认偏差（confirmation bias），或避免选择有助于确认实验预期结果的判定标准。在生物学和生物医学研究中，常用的 alpha 包括 0.001、0.01；当样本量较小时，甚至会选择 0.05。\n\n### Figure 18.16 概率密度分布、p 值和 alpha 之间关系的示意图\n\n图中术语与公式：  \n- alpha – sum of the two tails starting at the blue critical value lines：alpha——从蓝色临界值线开始的两个尾部面积之和  \n- P value – sum of the two tails：p 值——两个尾部面积之和  \n- H0 is rejected when：当满足以下条件时拒绝 H0  \n- P value ≤ alpha：p 值 ≤ alpha  \n- ts prob density：ts 的概率密度  \n\n公式：\n\n```text\nP(abs(ts) ≥ c) = ∫c∞ pdf(ts) dt + ∫−∞−c pdf(ts) dt\n```\n\nSource: Moseley, Hunter (2017): Relationships between pdf, p value, and alpha. figshare. doi.org/10.6084/m9.figshare.4994216.v1.\n\n### Testing the Null Hypothesis with a Two-Sample t-Test\n\n一旦建立了零假设，就应尝试对其进行检验。这要求找到合适的统计检验或方法。对于涉及比较两个近似正态分布样本均值的零假设，双样本 Student’s t-test 是一种理想方法。\n\nFigure 18.17 第 1 步所示的 t 统计量，是两个样本均值之差，除以均值差异估计方差的平方根；换言之，是除以每个均值标准误最佳估计值平方和的平方根。也就是说，均值之间的分离程度，是相对于用于计算这些均值的底层数据的不确定性（方差）来评估的。\n\n这里并不是使用每个均值的标准误作为不确定性的估计，而是从两个样本方差 𝜎a² 和 𝜎b² 的加权平均中推导出一个新的方差估计 𝜎d²；这一做法假定这两个方差是同一总体方差的两个估计。t 统计量遵循一种称为 Student’s t-distribution 的概率密度分布。实际上，如 Figure 18.17 第 2 步所示，存在许多 t 分布，它们通过参数 v 相互关联；v 是 t-test 中的自由度（degrees of freedom）数量。在本例中，自由度等于两个样本量 na 和 nb 之和减 2。\n\n一般而言，自由度指影响系统可能状态范围及每种状态概率的变量数量。在统计学语境中，自由度指在计算某一给定统计量时“可以自由变化”的数值数量，这些数值会影响结果的范围和概率。在计算双样本 t 统计量的语境中，自由度指两个样本中独立抽样得到的观测值集合总数，减去正在被直接检验的两个均值；因为这两个均值是由同一组数值集合推导出来的。因此，自由度决定了与所计算的特定 t 统计量相关的具体 Student’s t-distribution。\n\nWilliam Sealy Gosset 于 1908 年以笔名 Student 发表了对 Student’s t-distributions 及其统计用途的描述。之所以使用笔名，是因为其雇主对发表论文有公司限制；这也是 Student’s t-distribution 和 Student’s t-test 得名的原因（Student 1908）。\n\nFigure 18.17 展示了使用双样本 t-test 检验零假设的过程。该过程从在检验前选择显著性水平 alpha 开始。随后，在第 1 步中计算 t 统计量及相关统计量。第 2 步，根据自由度 v 选择合适的 Student’s t-distribution。第 3 步，根据 t 统计量和相应 Student’s t-distribution 的概率密度函数计算 p 值。最后，在第 4 步中，根据 p 值是否小于或等于 alpha，决定是否拒绝零假设 H0。\n\n通常，所有这些步骤都由统计 t-test 函数完成；许多电子表格程序以及几乎所有通用数据分析软件包中都能找到这种函数。使用者只需以合适格式提供两组数值样本即可；此时默认预期是：两个样本具有相同方差，并且来自近似正态分布的一个或多个总体。\n\n### Figure 18.17 使用 Student’s t-test 检验零假设\n\n图中步骤与公式：  \n\n0. Select an alpha (level of significance) for testing  \n选择用于检验的 alpha（显著性水平）\n\n1. Calculate the t-statistic  \n计算 t 统计量\n\n```text\nt = (x̄a − x̄b) / sqrt((σd² / na) + (σd² / nb))\n```\n\n其中：\n\n```text\nσd² = [(na − 1)σa² + (nb − 1)σb²] / (na + nb − 2)\n\nna = |Sa|\nnb = |Sb|\nv = na + nb − 2\n```\n\n2. Select the appropriate Student’s t-distribution  \n选择合适的 Student’s t-distribution\n\n3. Calculate p value and compare to alpha  \n计算 p 值并与 alpha 比较\n\n4. Reject H0 if P-value ≤ alpha  \n若 p 值 ≤ alpha，则拒绝 H0\n\n图中术语：  \n- t probability density：t 概率密度  \n- The sum of two tail areas is the p value：两个尾部面积之和即为 p 值  \n\n公式：\n\n```text\nP(abs(t) ≥ c) = ∫c∞ pdf(t) dt + ∫−∞−c pdf(t) dt\n```\n\nSource: Moseley, Hunter (2017): Overview of using a t-test to test a null hypothesis. figshare. doi.org/10.6084/m9.figshare.4994219.v1.\n\n为了更好地理解双样本 t-test 实际上在做什么，需要理解总体分布与可能样本均值分布之间的关系；后者由对总体进行多次随机抽样而形成。Figure 18.18 展示了这种关系：较大的浅蓝色和红色分布表示总体分布，而较深、且小得多的分布表示样本均值分布。\n\n由于中心极限定理（central limit theorem），当随机抽样的样本量足够大时，无论总体分布本身是什么形状，较小的样本均值分布都会近似于正态分布。这是因为每一个样本值都代表一个独立随机变量，而这些变量会被求和以计算均值统计量；根据中心极限定理，所得变量，也就是这里的均值，应当近似服从正态分布。\n\n也就是说，给定样本的均值和标准误能在多大程度上合理估计样本均值分布的均值和标准差，取决于原始总体分布在多大程度上近似正态分布。因此，在双样本 t-test 的语境中，原始总体分布确实重要，因为样本均值分布的均值和标准差估计值只来自两个样本。\n\n现在，可以使用 t 统计量中对两个样本均值的比较，来比较两个均值分布中成对的均值。由此得到的 t 统计量概率密度分布就是相应的 Student’s t-distribution。随后，该 t 分布可用于单尾或双尾比较，以计算 p 值，并决定是否拒绝零假设 H0。\n\n单尾比较与双尾比较的区别在于：检验的是单一方向的偏离，还是任一方向的偏离。例如，如果要检验药物是否在病例–对照实验的观测值中产生正向反应，可以使用单尾 t-test。然而，如果要检验两个样本均值之间任一方向上的显著偏离，则使用双尾检验。关于如何正确选择统计假设检验的其他考虑，将在本章后面的“Common Statistical Tests Used in a Typical Statistical Inference Process”部分讨论。\n\n### Figure 18.18 总体分布与样本均值分布之间的关系\n\n图中术语：  \n- Population A distribution：总体 A 分布  \n- Sample mean A distribution：样本均值 A 分布  \n- Population B distribution：总体 B 分布  \n- Sample mean B distribution：样本均值 B 分布  \n- Compare mean distributions：比较均值分布  \n- Student’s t-distribution：Student’s t-distribution  \n- One-tailed comparison：单尾比较  \n- Two-tailed comparison：双尾比较  \n- Calculate p value：计算 p 值  \n- alpha：alpha  \n- ± σp：± 总体标准差  \n- ± SE = σs/√n：± 标准误 = σs/√n  \n\n公式：\n\n```text\nt = (x̄a − x̄b) / sqrt((σd² / na) + (σd² / nb))\n\nP(t ≥ c) = ∫c∞ pdf(t) dt\n\nP(abs(t) ≥ c) = ∫c∞ pdf(t) dt + ∫−∞−c pdf(t) dt\n```\n\nSource: Moseley, Hunter (2017): Relationships between population and sample mean distributions. figshare. doi.org/10.6084/m9.figshare.4994222.v1.\n\n### Statistical Power\n\n如前所述，统计显著性关注的是 alpha，即 I 类错误（假阳性）的概率。那么 II 类错误（假阴性）的概率又如何表示？统计术语 beta 表示 II 类错误的概率；1 − beta 则表示统计功效（statistical power）的概念，即正确拒绝零假设 H0 的概率。\n\n具有较强统计功效的实验，有较高概率拒绝那些实际上为假的零假设。这也解释了为什么大多数生物医学和临床研究基金申请的评审，都会包括对拟议实验统计功效的评估：目的是评估拟议研究成功的可能性。对统计功效的评估需要估计统计功效，而这种估计来自基于已知或估计统计量的统计功效分析（power analysis）。\n\n功效分析在某一特定统计检验的语境中关联四个相互依赖的因素：alpha、beta（或 1 − beta）、样本量（sample size）和效应量（effect size）。效应量是对某一现象强度的定量度量。给定这四个因素中的任意三个，第四个因素即可通过功效分析推导出来。在许多情况下，某些因素，尤其是效应量，并不知道，只能估计；这意味着推导出的第四个因素也只是一个估计值。\n\nFigure 18.19 在 Student’s t-test 的语境中，用一个近似图展示了功效分析中这四个因素之间的关系；该图在小样本量情况下会存在偏差。如图所示，效应量是样本均值分布的均值之差，通常根据等价实验中的两个样本均值之差估计，或根据类似实验或预实验“合理近似”得到。\n\n效应量根据均值差异的方差进行评估；而均值差异的方差又来自两个样本均值分布的方差。样本均值分布的方差通过标准误的平方进行估计，而标准误依赖于样本量。Alpha 和 beta 围绕一个特定的 t 统计量临界值相互关联；该临界值依赖于均值差异的方差，而这一方差最终依赖于样本量。因此，当其中一个因素发生变化时，其他因素也会随之变化。\n\n通常，功效分析用于估计样本量或统计功效。在估计所需最小样本量时，需要给定期望的统计功效，例如 0.9（90% 功效）、给定的 alpha，例如 0.01，以及对效应量的合理估计。同样，在估计某一拟议实验的统计功效时，需要给定预期样本量、某个 alpha，例如 0.01，以及对效应量的合理估计。\n\n### Figure 18.19 Student’s t-test 的近似功效分析图\n\n图中术语：  \n- effect size：效应量  \n- beta：beta  \n- Power：功效  \n- alpha：alpha  \n- critical value：临界值  \n- Retain H0：保留 H0  \n- Reject H0：拒绝 H0  \n- SEa：样本 A 的标准误  \n- SEb：样本 B 的标准误  \n\n公式：\n\n```text\nt = (x̄a − x̄b) / sqrt((σd² / na) + (σd² / nb))\n\nSEa = σa / √na\nSEb = σb / √nb\n```\n\nSource: Moseley, Hunter (2017): Approximate power analysis diagram for a Student’s t-test. figshare. doi.org/10.6084/m9.figshare.4994228.v1.\n\n### Correcting for False Discovery due to Multiple Testing\n\n生物信息学中一个常见且日益突出的挑战，是处理包含大量不同观测随机变量的实验；这些观测值常常由高通量分析仪器生成，例如 next generation sequencers。所得数据集虽然存在各种与数据存储和管理有关的后勤问题，但也对统计检验和分析提出了独特挑战。可能影响最大的问题是：如果检验大量随机变量，而不采取措施降低错误发现（false discovery），就会产生错误发现。\n\n例如，考虑一个 RNA-seq 实验。该实验使用人类癌细胞培养样本，其中一部分接受抗癌药物处理，另一部分未接受处理；研究人员测量了细胞培养物统计样本中 7500 个独特转录本的丰度。熟悉这类数据集的数据分析人员会明智地先探索数据，验证其行为是否符合预期，然后再进入解释阶段。他们通过绘制代表性随机变量的分布图，验证这些变量看起来是否近似于对数正态分布。随后，他们对原始基因表达观测值进行对数转换，并再次绘图，以观察转换后的分布是否近似正态。\n\n接下来，数据分析人员选择 alpha = 0.01，并使用病例样本和对照样本，对每一个基因表达随机变量执行双样本 t-test。检验结果显示，150 个转录本通过检验，但这里存在一个问题。基于 alpha = 0.01 且共执行 7500 个独立检验，可以预期其中 75 个结果，即 0.01 × 7500 个结果，是假阳性（I 类错误）。然而，只有 150 个转录本通过检验。因此，约 75/150，即 50% 的结果是假阳性，这意味着错误发现率为 50%。会有人信任一个估计有 50% 错误的结果集吗？这个例子展示了对包含大量随机变量的数据集进行多重检验时的根本问题。\n\n多重检验问题的解决方法，是对所执行的一组检验产生的 p 值进行校正。这个统计过程称为多重检验校正（multiple testing correction），其目的是限制错误发现率（false discovery rate, FDR；见 Box 5.4）。FDR 根据假阳性（FP）和真阳性（TP）由下式计算：\n\n```text\nFDR = FP / (TP + FP)\n```\n\n在该过程中，会基于一个 p 值或一组 p 值计算 q 值（q value），即经过 FDR 调整的 p 值（见 Chapter 10）。最简单的多重检验校正方法是 Bonferroni correction；该方法将给定 p 值乘以执行检验的数量，从而生成调整后的 p 值。对于少量检验，Bonferroni correction 快速且合理，能够最小化 I 类错误。然而，Bonferroni correction 是一种非常严格的校正，往往在预防 I 类错误和降低 FDR 方面过度补偿，同时会严重提高 II 类错误的概率（McIntyre et al. 2000）。\n\n这是因为 Bonferroni correction 实际上控制的是所谓 family-wise error rate（FWER），即在给定 alpha 下，在一组检验中至少犯一次 I 类错误的概率。因此，Bonferroni 调整后的 p 值从技术上讲并不是 q 值。对于许多涉及高维数据集的统计分析而言，Bonferroni correction 并不是一种可行的多重校正方法；原因在于，当检验数量达到数百个或更多时，对 FWER 的校正会造成 II 类错误大幅增加，并可能抹去所得 q 值中的所有统计显著性。\n\n还有其他更复杂的多重检验校正方法，能够在限制 I 类错误和 II 类错误之间提供更好的平衡，同时达到给定 FDR；不过这些方法并不那么容易使用。最常用的多重校正方法之一是 Benjamini–Hochberg correction。该方法基于目标 FDR，以及由一组相关统计检验生成的有序 p 值集合，对每个 p 值进行调整，从而计算 q 值（Hochberg and Benjamini 1990）。\n\n### The Global Problem with the Use of p Values\n\n即使进行了多重检验校正，并且研究者足够谨慎、细致且认真，p 值的使用仍然存在一个全局性问题。\n\n首先，即使在一般科学共同体中，p 值也常常被误解和误用。p 值经常被混同于效应量。某一现象可测量的强度或大小，并不等同于通过统计检验检测到该现象时的统计显著性。在许多情况下，一旦某一特定现象的存在已经建立，由该现象造成的效应量，在评估该现象潜在应用价值时往往更为重要。\n\n例如，在大型 genome-wide association studies（GWAS）中，许多与疾病相关且具有统计显著性的核苷酸变异，其 p 值低于 10−8；然而，这些核苷酸变异中的大多数，其疾病风险 odds ratio 低于 1.5（Ku et al. 2010）。在这一语境中，odds ratio 是一种效应量，代表疾病风险相对较小的增加，即使检测到的疾病关联极有可能存在，也就是具有统计显著性。\n\n同样，其他统计量也常被与 p 值混淆。例如，BLAST 搜索中的 E values 表示：对于给定序列数据库，在随机机会下预期出现相同相似性水平搜索命中的数量（见 Chapter 3）。E values 经常被误认为 p values。虽然 p 值的计算是一致的，但 E values 依赖于其计算所使用的数据库，因此限制了其解释范围。\n\n其次，对 p 值显著性的误解使科学文献中充斥着显著的错误发现。许多已发表科学研究使用较弱的 alpha，例如 0.05，来定义“显著”p 值。考虑到世界各地每个科学实验室都在进行大量检验，基于 alpha = 0.05 选择显著性，会在整个科学文献中产生大量已发表的错误发现。当许多人试图复现他们在已发表科学文献中看到的同一个错误发现时，这种已发表的错误发现还可能被进一步强化。\n\n解决这一全球性 p 值问题并不容易。甚至有一个期刊采取了禁止在其发表文章中使用 p 值的政策（Woolston 2015）。此外，某些科学共同体也共同制定了尽量减少错误发现的指南。例如，物理学共同体通常会等到达到 five sigmas of significance 后，才接受重大结果。这相当于双尾 p 值为 6 × 10−7。对于人类 GWAS，p 值小于 5 × 10−8 是接受结果的标准；这一标准基于对 alpha = 0.05 的 Bonferroni correction，并假定人类基因组中存在 100 万个可检验的独立变异（Risch and Merikangas 1996）。\n\n数据科学领域试图更好地理解这一现象，并对其进行建模，以创建一种更稳健的显著性度量，同时又不限制发现。一个良好的起点，是报告 q 值或其他调整后的 p 值，以防止已发表结果中的错误发现；这对于涉及高通量分析技术和其他生成高维数据实验的发表结果尤其重要。\n\n### Common Statistical Tests Used in a Typical Statistical Inference Process\n\n有若干广泛使用的统计检验适用于范围很广的实验结果。大多数统计检验可分为两类：参数检验（parametric tests）和非参数检验（non-parametric tests）。\n\n参数检验假定样本数据来自一个总体，而该总体服从由固定参数集合定义的某种概率分布。最常见的参数检验假定总体服从或近似正态分布。非参数检验不对总体或样本的概率分布作出假设。许多非参数检验，例如 Wilcoxon–Mann–Whitney test（Wilcoxon 1945; Mann and Whitney 1947），通过比较样本的秩序（rank order）进行检验，而不对总体或样本的底层分布作出假设。\n\nTable 18.1 列出了常见参数检验、其对应的非参数等价检验，以及它们在单个连续随机变量上的具体统计使用情境。必须谨慎选择适用于给定统计推断的统计检验。为了帮助选择，可以提出以下四个情境性问题：\n\n1. 总体或样本是否近似服从正态分布？  \n2. 有多少个样本，即观测值或数值集合，正在被直接比较？  \n3. 样本方差或样本量是否显著不相等？  \n4. 样本之间的观测值或数值是否以某种方式重复或相互关联？\n\n这四个问题的答案将有助于确定特定统计情境，以及适用于单个连续随机变量的统计检验。\n\n对于第一个问题，如果相关总体或样本看起来服从正态分布，则参数检验更合适，并能提供更强的统计功效和性能。然而，如果总体或样本明显偏离正态分布，则假设更少的非参数检验最为合适，并能提供更好的显著性估计。当样本包含 30 个以上数值时，用直方图绘制每个样本，是回答这一问题的一种良好且相对快速的方法。此外，如果分布看起来呈对数正态分布，那么对数值进行简单的对数转换可能允许使用参数检验，并且可以通过绘制转换后的样本数据来验证正态性假设。\n\n对于第二个问题，正在检验的是一个样本、两个样本，还是两个以上样本，将决定统计检验的具体类型。对于正态分布数据，当样本为一个或两个时，使用 t-test 及其变体。当样本超过两个时，使用 analysis of variance（ANOVA）及其变体，检验是否至少有一个样本与其他样本显著不同。同样，对于明显非正态分布的数据，Wilcoxon–Mann–Whitney test 及其变体用于检验一个或两个样本。Kruskal–Wallis test（Kruskal and Wallis 1952）适用于检验两个以上样本，并且其中一个样本明显偏离正态性的情形。\n\n#### Table 18.1 常见参数统计检验及其非参数等价检验\n\n| Statistical situation | Parametric | Non-parametric |\n|---|---|---|\n| 1 sample | 1-sample t-test | 1-sample Wilcoxon rank sum |\n| 2 samples | 2-sample t-test | Wilcoxon–Mann–Whitney test |\n| 2 samples, unequal 𝝈², n | Welch unequal 𝝈² t-test | Wilcoxon–Mann–Whitney test |\n| Matched pair of samples | Paired t-test | Wilcoxon signed rank test |\n| >2 samples | One-way ANOVA | Kruskal–Wallis test |\n| >2 samples, unequal 𝝈², n | Welch ANOVA | Kruskal–Wallis test |\n| Matched, >2 samples | Repeated measures ANOVA | Friedman test |\n\n表下注：红色标出的两个参数检验适用于 repeated measures 和 matched experimental designs，并提供最强的统计功效。\n\n对于第三个问题，当两个样本均服从正态分布，但其方差或样本量相差超过两倍时，Welch unequal variance t-test（Welch 1947）非常合适（Delacre et al. 2017）。这种双样本 Student’s t-test 的改良版本可以补偿由方差和样本量不成比例所造成的问题，并提供稳健的统计性能。当比较两个以上正态分布样本时，Welch ANOVA 是 ANOVA test 的 Welch 等价方法。\n\n第四个问题用于识别样本之间的特定观测值是否以统计上有意义的方式相互关联。最强类型的关联来自 repeated measures experimental designs。在这种设计中，同一生物学单位或受试对象被用于测量每个样本的观测值，包括对照样本。所得数据集在样本之间具有相互关联的观测值，因此可以使用最有力的统计检验；这些检验直接检验关联观测值之间差异的汇总统计量，而不是检验样本之间汇总统计量的差异。从生物学角度看，由于只比较来自同一生物学单位的测量值，生物学单位之间的方差被忽略。\n\n例如，比较小鼠在治疗前后的体能表现时，只允许检验来自同一只小鼠的测量样本之间的差异，从而减少在不同小鼠之间进行比较时固有的生物学方差的引入。\n\n当两个样本具有相互关联的观测值时，如果样本服从正态分布，paired t-test 最为合适；如果至少一个样本明显偏离正态分布，则 Wilcoxon signed rank test 最为合适。当三个或更多样本具有相互关联的观测值时，如果样本服从正态分布，repeated measures ANOVA 最为合适；如果至少一个样本明显偏离正态分布，则 Friedman test 最为合适。\n\n除 repeated measurements 外，样本之间观测值较弱形式的关联，有时来自 matched experimental designs；然而，这类实验设计存在必须处理的统计问题，并且曾被批评为具有偏倚。相关的 randomized block experimental design 通常被认为更稳健，但要求根据特定潜在混杂因素对生物学单位进行分组（blocking）并在组块之间随机测量，例如年龄、性别、遗传因素，甚至吸烟状态等环境因素。\n\n这些实验设计会生成复杂的样本集合，需要更复杂的统计检验，例如 multiple factor（multi-way）ANOVA。在这些情况下，通常需要统计学家的建议，既用于建立良好的实验设计和相关实验流程，也用于选择合适的统计检验。应当在尝试实验之前寻求这种建议；否则，可能会浪费大量时间、精力和资源，生成不足以回答所提问题的数据集。\n\n同样，当需要对离散随机变量或有序随机变量进行统计检验时，也应咨询统计学家，因为对于给定情境中哪些统计检验合适，并不存在普遍共识，而且当前已发表建议的解释需要专家知识（Fagerland et al. 2011）。\n\n此外，同时检验多个随机变量需要多变量统计分析方法。chi-squared test 是其中一种方法，但它假定随机变量集合彼此独立且服从正态分布。若要同时分析大量随机变量，则需要 PCA、discriminant analysis 以及更新的 machine learning methods 等专门方法。由于每种技术对数据有不同的假设，适当使用和解释这些方法需要专家知识。再次强调，在盲目使用这些方法之前，应寻求统计学和计算专家的建议。当实验问题出现时，还应再次寻求进一步建议。\n\n将合适统计检验或方法的选择置于整体语境中，以下步骤描述了一个使用统计假设检验的典型统计推断过程：\n\n1. 用可检验、可拒绝的假设形式说明正在检验什么。  \n   - 同时说明零假设 H0 和备择假设 Ha。  \n2. 推导适当的描述性统计量，并构建样本数据的描述性可视化表示。  \n3. 评估数据及其相关元数据的质量。", "source_html": "<p style=\"color:var(--muted);font-style:italic\">源文暂缺。</p>", "trans_html": "<h2>Ch18 Statistical Methods for Biologists / Statistical Inference and Statistical Hypothesis Testing</h2>\n<h3>Statistical Inference and Statistical Hypothesis Testing</h3>\n<h4>Figure 18.13 金属蛋白中配位金属离子的键长和配位角直方图</h4>\n<p>(a) 金属蛋白中与氧配体结合的常见金属离子的键长直方图。</p>\n<p>(b) 金属蛋白中配位锌离子的最小配体–金属–配体角直方图。</p>\n<p>图中术语：</p>\n<ul>\n<li>Metal ion–oxygen ligand：金属离子–氧配体  </li>\n<li>Smallest ligand–metal–ligand angle for a coordinated Zn ion：配位 Zn 离子的最小配体–金属–配体角  </li>\n<li>Positively skewed：正偏态  </li>\n<li>Negatively skewed：负偏态  </li>\n<li>Bimodal：双峰分布  </li>\n<li>Bond length (Å)：键长（Å）  </li>\n<li>Angle (degrees)：角度（度）  </li>\n<li>Count：计数  </li>\n<li>metal：金属  </li>\n<li>numLig：配体数</li>\n</ul>\n<p>Source: Yao, S., Flight, R.M., Rouchka, E.C., and Moseley, H.N.B. (2017). Aberrant coordination geometries discovered in the most abundant metalloproteins. Proteins: Structure, Function, and Bioinformatics 85, 885–907. Reproduced with permission of Wiley.</p>\n<h3>Statistical Inference and Statistical Hypothesis Testing</h3>\n<h4>Statistical Inference</h4>\n<p>统计推断（statistical inference）是指对总体（population）的性质形成判断或“命题”（propositions）的过程，通常基于随机抽样（random sampling）进行。其总体目的在于获得新的信息和知识，和/或支持有依据的决策。Figure 18.14 展示了这一过程：从正在被分析的总体开始，对该总体进行随机抽样，用于某个实验，并在实验中获得观测值。这些观测值生成数据；数据可用于推导描述性统计量（descriptive statistics），进而推断刻画底层总体的特定参数（parameters）。随后，这些描述性统计量被解释为新的信息和知识。</p>\n<p>在这一过程中，至关重要的是：样本、实验、观测值和数据都必须经过充分检查、审查和评估，使得由此推导出的统计量能够用于推断准确刻画正确总体的参数，从而支持合理解释并提供新的信息和知识。</p>\n<p>例如，考虑一个实验室构建了一种基因敲除小鼠，其表型为毛发非常浓密，研究人员亲切地称之为 furball。这种多毛表型相当独特，因此该实验室繁育了 100 只 furball 小鼠，形成随机样本，以刻画其多毛表型。研究人员测量了这一小鼠样本背侧和腹侧的毛发斑块。所得毛发测量数据集用图形进行描述；这些图形显示样本分布近似于正态分布，同时均值和标准差这类描述性统计量似乎能够完整地再现该样本分布。基于这一抽样结果，研究人员推断 furball 总体具有一种呈正态分布的多毛表型，并且可由样本均值和样本标准差很好地描述。该实验室在 6 个月后重复随机抽样，得到关于 furball 总体非常相似的推断，从而进一步验证了该结果。</p>\n<p>对于公共科学数据库（public scientific repositories）中的数据集，在进行下游分析之前，通常只有数据及其相关元数据能够得到充分检查、审查和评估。对公开归档数据进行这种检查是绝对必要的，因为并非每一个提交到数据库的数据集都经历过相同程度的前期检查和质量控制；此外，许多数据库对数据提交只要求满足最低标准（Brazma et al. 2001）。这使得生物信息学领域的许多人认为，公共科学数据库虽然有用且常常必不可少，但在某种程度上是“脏的”（dirty）（Kim et al. 2003）。因此，许多生物信息学研究者认为，检查并移除不可用数据——也就是对数据集进行“清洗”（cleaning）——是他们工作中最大的一部分，且往往是最关键的步骤，通常约占其工作量的 80%（Zhang et al. 2003）。实际上，检查、审查和评估只是统计推断整体过程中的基础组成部分；这一过程可能需要修订，甚至重复其中任意一个步骤。</p>\n<h4>Figure 18.14 统计推断过程概览</h4>\n<p>FUV stands for the fraction of unexplained variance.</p>\n<p>图中术语：</p>\n<ul>\n<li>Population：总体  </li>\n<li>Sample：样本  </li>\n<li>Experiment：实验  </li>\n<li>Observations：观测值  </li>\n<li>Data：数据  </li>\n<li>Statistic：统计量  </li>\n<li>Parameter：参数  </li>\n<li>Information and knowledge：信息与知识  </li>\n<li>Inspect, review, and evaluate：检查、审查和评估  </li>\n<li>1. Sampled：抽样  </li>\n<li>2. Acquired：获得  </li>\n<li>3. Generates：生成  </li>\n<li>4. Derived：推导  </li>\n<li>5. Infers：推断  </li>\n<li>6. Characterizes：刻画  </li>\n<li>7. Interpreted：解释</li>\n</ul>\n<p>Source: Moseley, Hunter (2017): Overview of a statistical inference process. figshare. <a href=\"https://doi.org/10.6084/m9.figshare.4994213.v1.\" target=\"_blank\" rel=\"noopener noreferrer\">doi.org/10.6084/m9.figshare.4994213.v1.</a></p>\n<h4>Statistical Hypothesis Testing</h4>\n<p>统计推断最主要的直接目的，是形成命题或判断；统计假设检验（statistical hypothesis testing）是用于对数据形成这些判断的最常见统计方法之一。在大多数生物信息学分析的语境中，可以给出一个实用定义：假设检验是将一个数据集（样本）与另一个数据集（样本）或一个模型进行比较，并基于数据形成判断的过程。然而，从更一般的统计学定义来看，假设检验是基于对某一现象的观测，建立并检验一个可检验假设（testable hypothesis）的过程；该现象通过一组随机变量建模。</p>\n<p>从技术上讲，建立可检验假设可以被视为一个独立于统计假设检验的步骤；但很多时候，精确可检验假设的建立与实际检验该假设是相伴发生的，因为一个给定假设必须能够适配某种可用的检验方法。</p>\n<p>统计假设检验的标准实施通常包括三个主要步骤。</p>\n<p>第一步，是建立一个假设，其形式为：两个样本之间存在某种统计关系。这个假设称为备择假设（alternative hypothesis, Ha），通常直接基于从生物学和/或分析学角度提出的实验假设。然而，直接检验备择假设 Ha 往往非常困难。</p>\n<p>第二步，是建立一个逻辑上相反的假设，即零假设（null hypothesis, H0）。零假设通常更容易被直接检验；在此情形下，它表示两个样本之间不存在统计关系。</p>\n<p>第三步，是通过比较从每个样本推导出的某个统计量的取值，直接检验零假设 H0，也就是检验“统计关系不存在”这一命题。这种方法的基础在于：直接证伪一个假设或陈述，要比直接证明一个假设或陈述为真容易得多。因此，如果能够证伪一个与目标备择假设 Ha 逻辑相反的零假设 H0，就可以间接支持目标备择假设 Ha 为真。</p>\n<p>不过，为了理解被直接检验的零假设 H0，必须在描述性统计的语境中清楚定义什么是“统计关系”（statistical relationship），以避免混淆。当来自两个样本、针对某一给定随机变量所推导出的统计量在统计意义上并非“相同”（the same）时，这种情况被解释为：两个样本在该随机变量方面存在统计关系。因此，两个样本推导出的统计量“相同”，表示不存在统计关系。</p>\n<p>例如，考虑如下零假设 H0：两个呈正态分布的纯种马样本，其身高均值相同。这表示两个纯种马样本在身高方面不存在关系。若缺乏统计意义上的相同性，即存在统计差异，则表明零假设是错误的，并且两个纯种马样本的身高之间确实存在统计关系。因此，统计显著差异被用来证伪零假设 H0，即“关系不存在”（也就是认为两个样本的该统计量相同）的假设。</p>\n<p>需要牢记的核心思想是：统计显著差异用于证伪或拒绝零假设 H0，即两个样本的某个统计量在统计上相同；这样做的目的是确认备择假设 Ha，即两个样本的统计量在统计上不同，因此两个样本之间存在关系。</p>\n<p>统计学家和生物学家在感知、描述和定义世界的方式上存在差异，这是两类科学家相互交流时许多科学混淆的来源，常常导致合作低效甚至失败。因此，在建立跨学科合作时，非常重要的一点是保持充分耐心，并着重识别误沟通发生的位置；这些误沟通常常源自术语差异。</p>\n<p>现在将上述统计假设检验过程的前两步放入一个生物学实例中考虑。研究人员在培养皿中培养两组细胞培养物；一组接受某种药物处理，另一组不接受处理。经过 24 小时药物暴露后，从每个培养皿的培养基和细胞中取样，并通过一维 1H 核磁共振（nuclear magnetic resonance, NMR）实验测量乳酸的相对含量。实验人员首先希望检验如下实验假设：“病例组与对照组总体之间，培养基中归一化乳酸 NMR 强度观测值不同。”</p>\n<p>为了检验该实验假设，建立如下统计备择假设 Ha：来自样本 Sa 和 Sb 的两组观测值集合，其均值 xa 和 xb 不同。备择假设 Ha 提出，Sa 和 Sb 之间存在关系，即二者均值存在差异。</p>\n<p>接下来，建立逻辑上相反的零假设 H0：来自样本 Sa 和 Sb 的两组观测值集合，其均值 xa 和 xb 相同。零假设 H0 提出，Sa 和 Sb 之间不存在关系；在统计检验中拒绝零假设 H0 将验证备择假设 Ha，并支持如下解释：这两组细胞培养物代表两个不同总体。</p>\n<p>此时，研究小组中的统计学家要求描述每一个“样本”（sample）。实验人员开始描述从每个细胞培养物中取出的“样品”（sample）。双方都没有意识到，“sample”这个词对对方而言意味着不同的东西，于是误解开始产生，交流也随之变得紧张。</p>\n<h4>Type I and II Errors that Arise from Statistical Hypothesis Testing</h4>\n<p>在检验零假设 H0 时，需要判断检验结果是阳性还是阴性。拒绝零假设将支持备择假设，被视为检验的阳性结果。未能拒绝零假设则不支持备择假设，被视为检验的阴性结果。然而，根据零假设实际上为真还是为假，检验存在四种逻辑结果。这些结果由 Figure 18.15 中的真值表展示（更多信息见 Box 5.4）。</p>\n<p>从真值表左下角开始，拒绝一个实际上为假的零假设称为真阳性（true positive）。在这种情况下，拒绝错误的零假设正确地支持了备择假设。</p>\n<p>移动到真值表右上角，未拒绝一个实际上为真的零假设称为真阴性（true negative）。在这种情况下，未能拒绝真实的零假设，正确地没有支持备择假设。</p>\n<p>在真值表左上角，错误地拒绝一个实际上为真的零假设称为假阳性（false positive）。在这种情况下，拒绝真实的零假设错误地支持了备择假设。在统计学中，假阳性称为 I 类错误（type I error）。此时，检验结果会使人得出“存在统计关系”的结论，而事实上这种关系并不存在。Figure 18.15 左侧图像展示了一个 I 类错误：妊娠测试显示男性患者怀孕。</p>\n<p>最后，在真值表右下角，未能拒绝一个实际上为假的零假设称为假阴性（false negative）。在这种情况下，未能拒绝错误的零假设，错误地没有支持备择假设。在统计学中，假阴性称为 II 类错误（type II error）。此时，检验结果会使人得出“不存在统计关系”的结论，而事实上这种关系存在。Figure 18.15 最右侧图像展示了一个 II 类错误：妊娠测试显示明显怀孕的女性患者未怀孕。</p>\n<h4>Figure 18.15 带有 I 类错误和 II 类错误说明的真值表</h4>\n<p>图中术语：</p>\n<ul>\n<li>Truth table：真值表  </li>\n<li>Type I error (false positive)：I 类错误（假阳性）  </li>\n<li>Type II error (false negative)：II 类错误（假阴性）  </li>\n<li>FP (type I error)：FP（I 类错误）  </li>\n<li>TN：真阴性  </li>\n<li>TP：真阳性  </li>\n<li>FN (type II error)：FN（II 类错误）  </li>\n<li>Reject H0：拒绝 H0  </li>\n<li>Failure to reject H0：未能拒绝 H0  </li>\n<li>True H0：H0 为真  </li>\n<li>False H0：H0 为假  </li>\n<li>you’re not pregnant：你没有怀孕  </li>\n<li>you’re pregnant：你怀孕了</li>\n</ul>\n<h4>Statistical Significance</h4>\n<p>是否拒绝零假设 H0 并不是一个容易作出的决定，尤其是在并不知道零假设是真是假时。统计显著性（statistical significance）的概念有助于这一决策：它将判断框定为“拒绝一个真实零假设，也就是犯 I 类错误，是多么不可能”。犯 I 类错误的可能性越低，拒绝零假设的统计显著性就越强。</p>\n<p>Figure 18.16 以概率或 p 值（p value）的形式展示了统计显著性。p 值表示：当 H0 为真时，获得至少与当前零假设 H0 下的结果一样极端的结果的概率。对于给定的 H0，图中绿色的 p 值是基于检验统计量 t，在给定概率密度函数下一个或两个绿色尾部面积之和。具体使用哪个检验统计量，以及累加一个尾部还是两个尾部，取决于所执行的具体检验。</p>\n<p>Alpha，也称显著性水平（level of significance），是当 H0 为真时拒绝零假设 H0 的概率。图中的蓝色 alpha 是从蓝色临界值线开始的一个或两个尾部面积之和。临界值（critical value）只是对应于给定 alpha 的检验统计量取值。Alpha 根据与零假设对应的 p 值是否小于 alpha，建立是否接受或拒绝零假设 H0 的决策点。</p>\n<p>良好的统计实践要求在进行统计检验之前选择 alpha，以避免确认偏差（confirmation bias），或避免选择有助于确认实验预期结果的判定标准。在生物学和生物医学研究中，常用的 alpha 包括 0.001、0.01；当样本量较小时，甚至会选择 0.05。</p>\n<h4>Figure 18.16 概率密度分布、p 值和 alpha 之间关系的示意图</h4>\n<p>图中术语与公式：</p>\n<ul>\n<li>alpha – sum of the two tails starting at the blue critical value lines：alpha——从蓝色临界值线开始的两个尾部面积之和  </li>\n<li>P value – sum of the two tails：p 值——两个尾部面积之和  </li>\n<li>H0 is rejected when：当满足以下条件时拒绝 H0  </li>\n<li>P value ≤ alpha：p 值 ≤ alpha  </li>\n<li>ts prob density：ts 的概率密度  </li>\n</ul>\n<p>公式：</p>\n<pre><code>P(abs(ts) ≥ c) = ∫c∞ pdf(ts) dt + ∫−∞−c pdf(ts) dt</code></pre>\n<p>Source: Moseley, Hunter (2017): Relationships between pdf, p value, and alpha. figshare. <a href=\"https://doi.org/10.6084/m9.figshare.4994216.v1.\" target=\"_blank\" rel=\"noopener noreferrer\">doi.org/10.6084/m9.figshare.4994216.v1.</a></p>\n<h4>Testing the Null Hypothesis with a Two-Sample t-Test</h4>\n<p>一旦建立了零假设，就应尝试对其进行检验。这要求找到合适的统计检验或方法。对于涉及比较两个近似正态分布样本均值的零假设，双样本 Student’s t-test 是一种理想方法。</p>\n<p>Figure 18.17 第 1 步所示的 t 统计量，是两个样本均值之差，除以均值差异估计方差的平方根；换言之，是除以每个均值标准误最佳估计值平方和的平方根。也就是说，均值之间的分离程度，是相对于用于计算这些均值的底层数据的不确定性（方差）来评估的。</p>\n<p>这里并不是使用每个均值的标准误作为不确定性的估计，而是从两个样本方差 𝜎a² 和 𝜎b² 的加权平均中推导出一个新的方差估计 𝜎d²；这一做法假定这两个方差是同一总体方差的两个估计。t 统计量遵循一种称为 Student’s t-distribution 的概率密度分布。实际上，如 Figure 18.17 第 2 步所示，存在许多 t 分布，它们通过参数 v 相互关联；v 是 t-test 中的自由度（degrees of freedom）数量。在本例中，自由度等于两个样本量 na 和 nb 之和减 2。</p>\n<p>一般而言，自由度指影响系统可能状态范围及每种状态概率的变量数量。在统计学语境中，自由度指在计算某一给定统计量时“可以自由变化”的数值数量，这些数值会影响结果的范围和概率。在计算双样本 t 统计量的语境中，自由度指两个样本中独立抽样得到的观测值集合总数，减去正在被直接检验的两个均值；因为这两个均值是由同一组数值集合推导出来的。因此，自由度决定了与所计算的特定 t 统计量相关的具体 Student’s t-distribution。</p>\n<p>William Sealy Gosset 于 1908 年以笔名 Student 发表了对 Student’s t-distributions 及其统计用途的描述。之所以使用笔名，是因为其雇主对发表论文有公司限制；这也是 Student’s t-distribution 和 Student’s t-test 得名的原因（Student 1908）。</p>\n<p>Figure 18.17 展示了使用双样本 t-test 检验零假设的过程。该过程从在检验前选择显著性水平 alpha 开始。随后，在第 1 步中计算 t 统计量及相关统计量。第 2 步，根据自由度 v 选择合适的 Student’s t-distribution。第 3 步，根据 t 统计量和相应 Student’s t-distribution 的概率密度函数计算 p 值。最后，在第 4 步中，根据 p 值是否小于或等于 alpha，决定是否拒绝零假设 H0。</p>\n<p>通常，所有这些步骤都由统计 t-test 函数完成；许多电子表格程序以及几乎所有通用数据分析软件包中都能找到这种函数。使用者只需以合适格式提供两组数值样本即可；此时默认预期是：两个样本具有相同方差，并且来自近似正态分布的一个或多个总体。</p>\n<h4>Figure 18.17 使用 Student’s t-test 检验零假设</h4>\n<p>图中步骤与公式：</p>\n<ol>\n<li>Select an alpha (level of significance) for testing  </li>\n</ol>\n<p>选择用于检验的 alpha（显著性水平）</p>\n<ol>\n<li>Calculate the t-statistic  </li>\n</ol>\n<p>计算 t 统计量</p>\n<pre><code>t = (x̄a − x̄b) / sqrt((σd² / na) + (σd² / nb))</code></pre>\n<p>其中：</p>\n<pre><code>σd² = [(na − 1)σa² + (nb − 1)σb²] / (na + nb − 2)\n\nna = |Sa|\nnb = |Sb|\nv = na + nb − 2</code></pre>\n<ol>\n<li>Select the appropriate Student’s t-distribution  </li>\n</ol>\n<p>选择合适的 Student’s t-distribution</p>\n<ol>\n<li>Calculate p value and compare to alpha  </li>\n</ol>\n<p>计算 p 值并与 alpha 比较</p>\n<ol>\n<li>Reject H0 if P-value ≤ alpha  </li>\n</ol>\n<p>若 p 值 ≤ alpha，则拒绝 H0</p>\n<p>图中术语：</p>\n<ul>\n<li>t probability density：t 概率密度  </li>\n<li>The sum of two tail areas is the p value：两个尾部面积之和即为 p 值  </li>\n</ul>\n<p>公式：</p>\n<pre><code>P(abs(t) ≥ c) = ∫c∞ pdf(t) dt + ∫−∞−c pdf(t) dt</code></pre>\n<p>Source: Moseley, Hunter (2017): Overview of using a t-test to test a null hypothesis. figshare. <a href=\"https://doi.org/10.6084/m9.figshare.4994219.v1.\" target=\"_blank\" rel=\"noopener noreferrer\">doi.org/10.6084/m9.figshare.4994219.v1.</a></p>\n<p>为了更好地理解双样本 t-test 实际上在做什么，需要理解总体分布与可能样本均值分布之间的关系；后者由对总体进行多次随机抽样而形成。Figure 18.18 展示了这种关系：较大的浅蓝色和红色分布表示总体分布，而较深、且小得多的分布表示样本均值分布。</p>\n<p>由于中心极限定理（central limit theorem），当随机抽样的样本量足够大时，无论总体分布本身是什么形状，较小的样本均值分布都会近似于正态分布。这是因为每一个样本值都代表一个独立随机变量，而这些变量会被求和以计算均值统计量；根据中心极限定理，所得变量，也就是这里的均值，应当近似服从正态分布。</p>\n<p>也就是说，给定样本的均值和标准误能在多大程度上合理估计样本均值分布的均值和标准差，取决于原始总体分布在多大程度上近似正态分布。因此，在双样本 t-test 的语境中，原始总体分布确实重要，因为样本均值分布的均值和标准差估计值只来自两个样本。</p>\n<p>现在，可以使用 t 统计量中对两个样本均值的比较，来比较两个均值分布中成对的均值。由此得到的 t 统计量概率密度分布就是相应的 Student’s t-distribution。随后，该 t 分布可用于单尾或双尾比较，以计算 p 值，并决定是否拒绝零假设 H0。</p>\n<p>单尾比较与双尾比较的区别在于：检验的是单一方向的偏离，还是任一方向的偏离。例如，如果要检验药物是否在病例–对照实验的观测值中产生正向反应，可以使用单尾 t-test。然而，如果要检验两个样本均值之间任一方向上的显著偏离，则使用双尾检验。关于如何正确选择统计假设检验的其他考虑，将在本章后面的“Common Statistical Tests Used in a Typical Statistical Inference Process”部分讨论。</p>\n<h4>Figure 18.18 总体分布与样本均值分布之间的关系</h4>\n<p>图中术语：</p>\n<ul>\n<li>Population A distribution：总体 A 分布  </li>\n<li>Sample mean A distribution：样本均值 A 分布  </li>\n<li>Population B distribution：总体 B 分布  </li>\n<li>Sample mean B distribution：样本均值 B 分布  </li>\n<li>Compare mean distributions：比较均值分布  </li>\n<li>Student’s t-distribution：Student’s t-distribution  </li>\n<li>One-tailed comparison：单尾比较  </li>\n<li>Two-tailed comparison：双尾比较  </li>\n<li>Calculate p value：计算 p 值  </li>\n<li>alpha：alpha  </li>\n<li>± σp：± 总体标准差  </li>\n<li>± SE = σs/√n：± 标准误 = σs/√n  </li>\n</ul>\n<p>公式：</p>\n<pre><code>t = (x̄a − x̄b) / sqrt((σd² / na) + (σd² / nb))\n\nP(t ≥ c) = ∫c∞ pdf(t) dt\n\nP(abs(t) ≥ c) = ∫c∞ pdf(t) dt + ∫−∞−c pdf(t) dt</code></pre>\n<p>Source: Moseley, Hunter (2017): Relationships between population and sample mean distributions. figshare. <a href=\"https://doi.org/10.6084/m9.figshare.4994222.v1.\" target=\"_blank\" rel=\"noopener noreferrer\">doi.org/10.6084/m9.figshare.4994222.v1.</a></p>\n<h4>Statistical Power</h4>\n<p>如前所述，统计显著性关注的是 alpha，即 I 类错误（假阳性）的概率。那么 II 类错误（假阴性）的概率又如何表示？统计术语 beta 表示 II 类错误的概率；1 − beta 则表示统计功效（statistical power）的概念，即正确拒绝零假设 H0 的概率。</p>\n<p>具有较强统计功效的实验，有较高概率拒绝那些实际上为假的零假设。这也解释了为什么大多数生物医学和临床研究基金申请的评审，都会包括对拟议实验统计功效的评估：目的是评估拟议研究成功的可能性。对统计功效的评估需要估计统计功效，而这种估计来自基于已知或估计统计量的统计功效分析（power analysis）。</p>\n<p>功效分析在某一特定统计检验的语境中关联四个相互依赖的因素：alpha、beta（或 1 − beta）、样本量（sample size）和效应量（effect size）。效应量是对某一现象强度的定量度量。给定这四个因素中的任意三个，第四个因素即可通过功效分析推导出来。在许多情况下，某些因素，尤其是效应量，并不知道，只能估计；这意味着推导出的第四个因素也只是一个估计值。</p>\n<p>Figure 18.19 在 Student’s t-test 的语境中，用一个近似图展示了功效分析中这四个因素之间的关系；该图在小样本量情况下会存在偏差。如图所示，效应量是样本均值分布的均值之差，通常根据等价实验中的两个样本均值之差估计，或根据类似实验或预实验“合理近似”得到。</p>\n<p>效应量根据均值差异的方差进行评估；而均值差异的方差又来自两个样本均值分布的方差。样本均值分布的方差通过标准误的平方进行估计，而标准误依赖于样本量。Alpha 和 beta 围绕一个特定的 t 统计量临界值相互关联；该临界值依赖于均值差异的方差，而这一方差最终依赖于样本量。因此，当其中一个因素发生变化时，其他因素也会随之变化。</p>\n<p>通常，功效分析用于估计样本量或统计功效。在估计所需最小样本量时，需要给定期望的统计功效，例如 0.9（90% 功效）、给定的 alpha，例如 0.01，以及对效应量的合理估计。同样，在估计某一拟议实验的统计功效时，需要给定预期样本量、某个 alpha，例如 0.01，以及对效应量的合理估计。</p>\n<h4>Figure 18.19 Student’s t-test 的近似功效分析图</h4>\n<p>图中术语：</p>\n<ul>\n<li>effect size：效应量  </li>\n<li>beta：beta  </li>\n<li>Power：功效  </li>\n<li>alpha：alpha  </li>\n<li>critical value：临界值  </li>\n<li>Retain H0：保留 H0  </li>\n<li>Reject H0：拒绝 H0  </li>\n<li>SEa：样本 A 的标准误  </li>\n<li>SEb：样本 B 的标准误  </li>\n</ul>\n<p>公式：</p>\n<pre><code>t = (x̄a − x̄b) / sqrt((σd² / na) + (σd² / nb))\n\nSEa = σa / √na\nSEb = σb / √nb</code></pre>\n<p>Source: Moseley, Hunter (2017): Approximate power analysis diagram for a Student’s t-test. figshare. <a href=\"https://doi.org/10.6084/m9.figshare.4994228.v1.\" target=\"_blank\" rel=\"noopener noreferrer\">doi.org/10.6084/m9.figshare.4994228.v1.</a></p>\n<h4>Correcting for False Discovery due to Multiple Testing</h4>\n<p>生物信息学中一个常见且日益突出的挑战，是处理包含大量不同观测随机变量的实验；这些观测值常常由高通量分析仪器生成，例如 next generation sequencers。所得数据集虽然存在各种与数据存储和管理有关的后勤问题，但也对统计检验和分析提出了独特挑战。可能影响最大的问题是：如果检验大量随机变量，而不采取措施降低错误发现（false discovery），就会产生错误发现。</p>\n<p>例如，考虑一个 RNA-seq 实验。该实验使用人类癌细胞培养样本，其中一部分接受抗癌药物处理，另一部分未接受处理；研究人员测量了细胞培养物统计样本中 7500 个独特转录本的丰度。熟悉这类数据集的数据分析人员会明智地先探索数据，验证其行为是否符合预期，然后再进入解释阶段。他们通过绘制代表性随机变量的分布图，验证这些变量看起来是否近似于对数正态分布。随后，他们对原始基因表达观测值进行对数转换，并再次绘图，以观察转换后的分布是否近似正态。</p>\n<p>接下来，数据分析人员选择 alpha = 0.01，并使用病例样本和对照样本，对每一个基因表达随机变量执行双样本 t-test。检验结果显示，150 个转录本通过检验，但这里存在一个问题。基于 alpha = 0.01 且共执行 7500 个独立检验，可以预期其中 75 个结果，即 0.01 × 7500 个结果，是假阳性（I 类错误）。然而，只有 150 个转录本通过检验。因此，约 75/150，即 50% 的结果是假阳性，这意味着错误发现率为 50%。会有人信任一个估计有 50% 错误的结果集吗？这个例子展示了对包含大量随机变量的数据集进行多重检验时的根本问题。</p>\n<p>多重检验问题的解决方法，是对所执行的一组检验产生的 p 值进行校正。这个统计过程称为多重检验校正（multiple testing correction），其目的是限制错误发现率（false discovery rate, FDR；见 Box 5.4）。FDR 根据假阳性（FP）和真阳性（TP）由下式计算：</p>\n<pre><code>FDR = FP / (TP + FP)</code></pre>\n<p>在该过程中，会基于一个 p 值或一组 p 值计算 q 值（q value），即经过 FDR 调整的 p 值（见 Chapter 10）。最简单的多重检验校正方法是 Bonferroni correction；该方法将给定 p 值乘以执行检验的数量，从而生成调整后的 p 值。对于少量检验，Bonferroni correction 快速且合理，能够最小化 I 类错误。然而，Bonferroni correction 是一种非常严格的校正，往往在预防 I 类错误和降低 FDR 方面过度补偿，同时会严重提高 II 类错误的概率（McIntyre et al. 2000）。</p>\n<p>这是因为 Bonferroni correction 实际上控制的是所谓 family-wise error rate（FWER），即在给定 alpha 下，在一组检验中至少犯一次 I 类错误的概率。因此，Bonferroni 调整后的 p 值从技术上讲并不是 q 值。对于许多涉及高维数据集的统计分析而言，Bonferroni correction 并不是一种可行的多重校正方法；原因在于，当检验数量达到数百个或更多时，对 FWER 的校正会造成 II 类错误大幅增加，并可能抹去所得 q 值中的所有统计显著性。</p>\n<p>还有其他更复杂的多重检验校正方法，能够在限制 I 类错误和 II 类错误之间提供更好的平衡，同时达到给定 FDR；不过这些方法并不那么容易使用。最常用的多重校正方法之一是 Benjamini–Hochberg correction。该方法基于目标 FDR，以及由一组相关统计检验生成的有序 p 值集合，对每个 p 值进行调整，从而计算 q 值（Hochberg and Benjamini 1990）。</p>\n<h4>The Global Problem with the Use of p Values</h4>\n<p>即使进行了多重检验校正，并且研究者足够谨慎、细致且认真，p 值的使用仍然存在一个全局性问题。</p>\n<p>首先，即使在一般科学共同体中，p 值也常常被误解和误用。p 值经常被混同于效应量。某一现象可测量的强度或大小，并不等同于通过统计检验检测到该现象时的统计显著性。在许多情况下，一旦某一特定现象的存在已经建立，由该现象造成的效应量，在评估该现象潜在应用价值时往往更为重要。</p>\n<p>例如，在大型 genome-wide association studies（GWAS）中，许多与疾病相关且具有统计显著性的核苷酸变异，其 p 值低于 10−8；然而，这些核苷酸变异中的大多数，其疾病风险 odds ratio 低于 1.5（Ku et al. 2010）。在这一语境中，odds ratio 是一种效应量，代表疾病风险相对较小的增加，即使检测到的疾病关联极有可能存在，也就是具有统计显著性。</p>\n<p>同样，其他统计量也常被与 p 值混淆。例如，BLAST 搜索中的 E values 表示：对于给定序列数据库，在随机机会下预期出现相同相似性水平搜索命中的数量（见 Chapter 3）。E values 经常被误认为 p values。虽然 p 值的计算是一致的，但 E values 依赖于其计算所使用的数据库，因此限制了其解释范围。</p>\n<p>其次，对 p 值显著性的误解使科学文献中充斥着显著的错误发现。许多已发表科学研究使用较弱的 alpha，例如 0.05，来定义“显著”p 值。考虑到世界各地每个科学实验室都在进行大量检验，基于 alpha = 0.05 选择显著性，会在整个科学文献中产生大量已发表的错误发现。当许多人试图复现他们在已发表科学文献中看到的同一个错误发现时，这种已发表的错误发现还可能被进一步强化。</p>\n<p>解决这一全球性 p 值问题并不容易。甚至有一个期刊采取了禁止在其发表文章中使用 p 值的政策（Woolston 2015）。此外，某些科学共同体也共同制定了尽量减少错误发现的指南。例如，物理学共同体通常会等到达到 five sigmas of significance 后，才接受重大结果。这相当于双尾 p 值为 6 × 10−7。对于人类 GWAS，p 值小于 5 × 10−8 是接受结果的标准；这一标准基于对 alpha = 0.05 的 Bonferroni correction，并假定人类基因组中存在 100 万个可检验的独立变异（Risch and Merikangas 1996）。</p>\n<p>数据科学领域试图更好地理解这一现象，并对其进行建模，以创建一种更稳健的显著性度量，同时又不限制发现。一个良好的起点，是报告 q 值或其他调整后的 p 值，以防止已发表结果中的错误发现；这对于涉及高通量分析技术和其他生成高维数据实验的发表结果尤其重要。</p>\n<h4>Common Statistical Tests Used in a Typical Statistical Inference Process</h4>\n<p>有若干广泛使用的统计检验适用于范围很广的实验结果。大多数统计检验可分为两类：参数检验（parametric tests）和非参数检验（non-parametric tests）。</p>\n<p>参数检验假定样本数据来自一个总体，而该总体服从由固定参数集合定义的某种概率分布。最常见的参数检验假定总体服从或近似正态分布。非参数检验不对总体或样本的概率分布作出假设。许多非参数检验，例如 Wilcoxon–Mann–Whitney test（Wilcoxon 1945; Mann and Whitney 1947），通过比较样本的秩序（rank order）进行检验，而不对总体或样本的底层分布作出假设。</p>\n<p>Table 18.1 列出了常见参数检验、其对应的非参数等价检验，以及它们在单个连续随机变量上的具体统计使用情境。必须谨慎选择适用于给定统计推断的统计检验。为了帮助选择，可以提出以下四个情境性问题：</p>\n<ol>\n<li>总体或样本是否近似服从正态分布？  </li>\n<li>有多少个样本，即观测值或数值集合，正在被直接比较？  </li>\n<li>样本方差或样本量是否显著不相等？  </li>\n<li>样本之间的观测值或数值是否以某种方式重复或相互关联？</li>\n</ol>\n<p>这四个问题的答案将有助于确定特定统计情境，以及适用于单个连续随机变量的统计检验。</p>\n<p>对于第一个问题，如果相关总体或样本看起来服从正态分布，则参数检验更合适，并能提供更强的统计功效和性能。然而，如果总体或样本明显偏离正态分布，则假设更少的非参数检验最为合适，并能提供更好的显著性估计。当样本包含 30 个以上数值时，用直方图绘制每个样本，是回答这一问题的一种良好且相对快速的方法。此外，如果分布看起来呈对数正态分布，那么对数值进行简单的对数转换可能允许使用参数检验，并且可以通过绘制转换后的样本数据来验证正态性假设。</p>\n<p>对于第二个问题，正在检验的是一个样本、两个样本，还是两个以上样本，将决定统计检验的具体类型。对于正态分布数据，当样本为一个或两个时，使用 t-test 及其变体。当样本超过两个时，使用 analysis of variance（ANOVA）及其变体，检验是否至少有一个样本与其他样本显著不同。同样，对于明显非正态分布的数据，Wilcoxon–Mann–Whitney test 及其变体用于检验一个或两个样本。Kruskal–Wallis test（Kruskal and Wallis 1952）适用于检验两个以上样本，并且其中一个样本明显偏离正态性的情形。</p>\n<h5>Table 18.1 常见参数统计检验及其非参数等价检验</h5>\n<div class=\"table-wrap\"><table><thead><tr><th>Statistical situation</th><th>Parametric</th><th>Non-parametric</th></tr></thead><tbody><tr><td>1 sample</td><td>1-sample t-test</td><td>1-sample Wilcoxon rank sum</td></tr><tr><td>2 samples</td><td>2-sample t-test</td><td>Wilcoxon–Mann–Whitney test</td></tr><tr><td>2 samples, unequal 𝝈², n</td><td>Welch unequal 𝝈² t-test</td><td>Wilcoxon–Mann–Whitney test</td></tr><tr><td>Matched pair of samples</td><td>Paired t-test</td><td>Wilcoxon signed rank test</td></tr><tr><td>&gt;2 samples</td><td>One-way ANOVA</td><td>Kruskal–Wallis test</td></tr><tr><td>&gt;2 samples, unequal 𝝈², n</td><td>Welch ANOVA</td><td>Kruskal–Wallis test</td></tr><tr><td>Matched, &gt;2 samples</td><td>Repeated measures ANOVA</td><td>Friedman test</td></tr></tbody></table></div>\n<p>表下注：红色标出的两个参数检验适用于 repeated measures 和 matched experimental designs，并提供最强的统计功效。</p>\n<p>对于第三个问题，当两个样本均服从正态分布，但其方差或样本量相差超过两倍时，Welch unequal variance t-test（Welch 1947）非常合适（Delacre et al. 2017）。这种双样本 Student’s t-test 的改良版本可以补偿由方差和样本量不成比例所造成的问题，并提供稳健的统计性能。当比较两个以上正态分布样本时，Welch ANOVA 是 ANOVA test 的 Welch 等价方法。</p>\n<p>第四个问题用于识别样本之间的特定观测值是否以统计上有意义的方式相互关联。最强类型的关联来自 repeated measures experimental designs。在这种设计中，同一生物学单位或受试对象被用于测量每个样本的观测值，包括对照样本。所得数据集在样本之间具有相互关联的观测值，因此可以使用最有力的统计检验；这些检验直接检验关联观测值之间差异的汇总统计量，而不是检验样本之间汇总统计量的差异。从生物学角度看，由于只比较来自同一生物学单位的测量值，生物学单位之间的方差被忽略。</p>\n<p>例如，比较小鼠在治疗前后的体能表现时，只允许检验来自同一只小鼠的测量样本之间的差异，从而减少在不同小鼠之间进行比较时固有的生物学方差的引入。</p>\n<p>当两个样本具有相互关联的观测值时，如果样本服从正态分布，paired t-test 最为合适；如果至少一个样本明显偏离正态分布，则 Wilcoxon signed rank test 最为合适。当三个或更多样本具有相互关联的观测值时，如果样本服从正态分布，repeated measures ANOVA 最为合适；如果至少一个样本明显偏离正态分布，则 Friedman test 最为合适。</p>\n<p>除 repeated measurements 外，样本之间观测值较弱形式的关联，有时来自 matched experimental designs；然而，这类实验设计存在必须处理的统计问题，并且曾被批评为具有偏倚。相关的 randomized block experimental design 通常被认为更稳健，但要求根据特定潜在混杂因素对生物学单位进行分组（blocking）并在组块之间随机测量，例如年龄、性别、遗传因素，甚至吸烟状态等环境因素。</p>\n<p>这些实验设计会生成复杂的样本集合，需要更复杂的统计检验，例如 multiple factor（multi-way）ANOVA。在这些情况下，通常需要统计学家的建议，既用于建立良好的实验设计和相关实验流程，也用于选择合适的统计检验。应当在尝试实验之前寻求这种建议；否则，可能会浪费大量时间、精力和资源，生成不足以回答所提问题的数据集。</p>\n<p>同样，当需要对离散随机变量或有序随机变量进行统计检验时，也应咨询统计学家，因为对于给定情境中哪些统计检验合适，并不存在普遍共识，而且当前已发表建议的解释需要专家知识（Fagerland et al. 2011）。</p>\n<p>此外，同时检验多个随机变量需要多变量统计分析方法。chi-squared test 是其中一种方法，但它假定随机变量集合彼此独立且服从正态分布。若要同时分析大量随机变量，则需要 PCA、discriminant analysis 以及更新的 machine learning methods 等专门方法。由于每种技术对数据有不同的假设，适当使用和解释这些方法需要专家知识。再次强调，在盲目使用这些方法之前，应寻求统计学和计算专家的建议。当实验问题出现时，还应再次寻求进一步建议。</p>\n<p>将合适统计检验或方法的选择置于整体语境中，以下步骤描述了一个使用统计假设检验的典型统计推断过程：</p>\n<ol>\n<li>用可检验、可拒绝的假设形式说明正在检验什么。  </li>\n</ol>\n<ul>\n<li>同时说明零假设 H0 和备择假设 Ha。  </li>\n</ul>\n<ol>\n<li>推导适当的描述性统计量，并构建样本数据的描述性可视化表示。  </li>\n<li>评估数据及其相关元数据的质量。</li>\n</ol>", "terms": []}, {"id": "sec-156", "title": "Summary + Acknowledgments + Internet Resources + Further Reading + References", "source_md": "", "trans_md": "# Ch18 Statistical Methods for Biologists / Summary + Acknowledgments + Internet Resources + Further Reading + References\n\n## Summary\n\n现代生物学与生物医学研究环境已变得数据丰富且数据密集，这要求每一位科研人员都具备数据分析与统计技能，以便在全球科学知识库和数据仓储的背景下，有效分析、利用并解释自己生成的数据。本章旨在作为这些技能的入门指南，重点放在数据解释中最重要的方面：真正努力理解所分析的数据集，使用数据的描述性表征来把握其含义，并在提出、检验和解释统计假设时保持方法上的严谨与谨慎。本章应被视为获取统计知识与直觉的起点，而不是终点。对数据的有效审视需要专业知识与经验的共同支撑，才能避免误读。掌握生物学、统计学与计算相关的综合知识及相应经验需要时间。同样重要的是，要能识别某一特定数据集已经超出自己当前的知识与专长范围，并以耐心沟通的方式寻求统计、计算或分析建议。此外，也应主动参与协作，阅读同事所处学科的相关内容，以提升成功开展多学科合作所必需的有效沟通能力。\n\n## Acknowledgments\n\n作者感谢 Robert M. Flight 在创建 Figure 18.7 和 Figure 18.9 过程中提供帮助。作者还感谢 Qingjun Wang 提供 Figure 18.9 所示数据。\n\n## Internet Resources\n\n- 直方图的说明、用途，以及如何创建直方图  \n  www.cqeacademy.com/cqe-body-of-knowledge/continuous-improvement/quality-control-tools/histograms\n\n- 不同实验设计的优缺点说明  \n  www.simplypsychology.org/experimental-designs.html\n\n- 描述统计量几乎相同但图形不同的示例  \n  www.autodeskresearch.com/publications/samestats\n\n- 关于 boxplots 和多峰分布的讨论  \n  stats.stackexchange.com/questions/137965/box-and-whisker-plot-for-multimodal-distribution/137982#137982\n\n- ggplot —— 基于 Grammar of Graphics 的 R 和 Python 库  \n  pypi.python.org/pypi/ggplot; cran.r-project.org/web/packages/ggplot2/index.html\n\n- plotly —— 基于网页和脚本的数据分析与可视化平台  \n  plot.ly\n\n- R 基础统计与绘图教程  \n  www.statmethods.net\n\n- 转录组分析的 R 与 Bioconductor 两天入门课程  \n  www.bioconductor.org/help/course-materials/2016/BiocIntro-May\n\n- Hadley Wickham 和 Garrett Grolemund 的《R for Data Science》网站  \n  r4ds.had.co.nz\n\n## Further Reading\n\nDaniel, W.W. and Wayne, W.D. (1995). Biostatistics: A Foundation for Analysis in the Health Sciences. New York, NY: Wiley. 适用于卫生科学中常用统计方法的参考手册。\n\nVan Belle, G. (2011). Statistical Rules of Thumb, vol. 699. Hoboken, NJ: Wiley. 提供在统计分析或解释数据时可遵循的常识性规则与指导原则。\n\nWickham, H. (2016). ggplot2: Elegant Graphics for Data Analysis. Dordrecht, Netherlands: Springer. 这是在 R 中使用 Grammar of Graphics 绘图库的参考手册与指南。\n\nWickham, H. and Grolemund, G. (2016). R for Data Science. Sebastopol, CA: O’Reilly Media. 介绍如何使用 R 对数据进行结构化、转换、可视化与建模。\n\n## References\n\nAnscombe, F.J. (1973). Graphs in statistical analysis. Am. Stat. 27 (1): 17–21.\n\nBerman, H., Henrick, K., Nakamura, H., and Markley, J.L. (2007). The worldwide Protein Data Bank (wwPDB): ensuring a single, uniform archive of PDB data. Nucleic Acids Res. 35 (Database issue): D301–D303.\n\nBrazma, A., Hingamp, P., Quackenbush, J. et al. (2001). Minimum information about a microarray experiment (MIAME)—toward standards for microarray data. Nat. Genet. 29 (4): 365–371.\n\nChoonpradub, C. and McNeil, D. (2005). Can the box plot be improved? Songklanakarin J. Sci. Technol. 27 (3): 649–657.\n\nDaniel, W.W. and Wayne, W.D. (1995). Biostatistics: a Foundation for Analysis in the Health Sciences. New York, NY: Wiley.\n\nDelacre, M., Lakens, D., and Leys, C. (2017). Why psychologists should by default use Welch’s t-test instead of Student’s t-test. Int. Rev. Soc. Psychol. 30 (1): 92–101.\n\nFagerland, M.W., Sandvik, L., and Mowinckel, P. (2011). Parametric methods outperformed non-parametric methods in comparisons of discrete numerical variables. BMC Med. Res. Methodol. 11 (1): 44.\n\nGalton, F. (1886). Regression towards mediocrity in hereditary stature. J. R. Anthropol. Inst. 15: 246–263.\n\nGauss, C.F. (1809). Theoria motus corporum coelestium in sectionibus conicis solem ambientium auctore Carolo Friderico Gauss. Hamburg, Germany: Sumtibus Frid. Perthes et I.H. Besser.\n\nHintze, J.L. and Nelson, R.D. (1998). Violin plots: a box plot-density trace synergism. Am. Stat. 52 (2): 181–184.\n\nHochberg, Y. and Benjamini, Y. (1990). More powerful procedures for multiple significance testing. Stat. Med. 9 (7): 811–818.\n\nKim, W., Choi, B.-J., Hong, E.-K. et al. (2003). A taxonomy of dirty data. Data Min. Knowl. Disc. 7 (1): 81–99.\n\nKruskal, W.H. and Wallis, W.A. (1952). Use of ranks in one-criterion variance analysis. J. Am. Stat. Assoc. 47 (260): 583–621.\n\nKu, C.S., Loy, E.Y., Pawitan, Y., and Chia, K.S. (2010). The pursuit of genome-wide association studies: where are we now? J. Hum. Genet. 55(4), 195–206.\n\nMann, H.B. and Whitney, D.R. (1947). On a test of whether one of two random variables is stochastically larger than the other. Ann. Math. Stat. 18: 50–60.\n\nMcGill, R., Tukey, J.W., and Larsen, W.A. (1978). Variations of box plots. Am. Stat. 32 (1): 12–16.\n\nMcIntyre, L.M., Martin, E.R., Simonsen, K.L., and Kaplan, N.L. (2000). Circumventing multiple testing. Genet. Epidemiol. 19 (1): 18–29.\n\nPearson, K. (1895). Note on regression and inheritance in the case of two parents. Proc. R. Soc. Lond. 58: 240–242.\n\nRisch, N. and Merikangas, K. (1996). The future of genetic studies of complex human diseases. Science 273 (5281): 1516–1517.\n\nSidiropoulos, N., Sohi, S.H., Pedersen, T.L. et al. (2018). SinaPlot: an enhanced chart for simple and truthful representation of single observations over multiple classes. J. Comput. Graph. Stat. 27 (3): 673–676.\n\nSpear, M.E. (1952). Charting Statistics. New York, NY: McGraw-Hill.\n\nSpearman, C. (1904). The proof and measurement of association between two things. Am. J. Psychol. 15 (1): 72–101.\n\nStudent (1908). The probable error of a mean. Biometrika 6 (1): 1–25.\n\nWelch, B.L. (1947). The generalization of ‘Student’s’ problem when several different population variances are involved. Biometrika 34 (1/2): 28–35.\n\nWilcoxon, F. (1945). Individual comparisons by ranking methods. Biom. Bull. 1 (6): 80–83.\n\nWoolston, C. (2015). Psychology journal bans P values. Nature 519: 9.\n\nYao, S., Flight, R.M., Rouchka, E.C., and Moseley, H.N. (2017). Aberrant coordination geometries discovered in the most abundant metalloproteins. Proteins 85 (5): 885–907.\n\nZhang, S., Zhang, C., and Yang, Q. (2003). Data preparation for data mining. Appl. Artif. Intell. 17 (5–6): 375–381.", "source_html": "<p style=\"color:var(--muted);font-style:italic\">源文暂缺。</p>", "trans_html": "<h2>Ch18 Statistical Methods for Biologists / Summary + Acknowledgments + Internet Resources + Further Reading + References</h2>\n<h3>Summary</h3>\n<p>现代生物学与生物医学研究环境已变得数据丰富且数据密集，这要求每一位科研人员都具备数据分析与统计技能，以便在全球科学知识库和数据仓储的背景下，有效分析、利用并解释自己生成的数据。本章旨在作为这些技能的入门指南，重点放在数据解释中最重要的方面：真正努力理解所分析的数据集，使用数据的描述性表征来把握其含义，并在提出、检验和解释统计假设时保持方法上的严谨与谨慎。本章应被视为获取统计知识与直觉的起点，而不是终点。对数据的有效审视需要专业知识与经验的共同支撑，才能避免误读。掌握生物学、统计学与计算相关的综合知识及相应经验需要时间。同样重要的是，要能识别某一特定数据集已经超出自己当前的知识与专长范围，并以耐心沟通的方式寻求统计、计算或分析建议。此外，也应主动参与协作，阅读同事所处学科的相关内容，以提升成功开展多学科合作所必需的有效沟通能力。</p>\n<h3>Acknowledgments</h3>\n<p>作者感谢 Robert M. Flight 在创建 Figure 18.7 和 Figure 18.9 过程中提供帮助。作者还感谢 Qingjun Wang 提供 Figure 18.9 所示数据。</p>\n<h3>Internet Resources</h3>\n<ul>\n<li>直方图的说明、用途，以及如何创建直方图  </li>\n</ul>\n<p><a href=\"https://www.cqeacademy.com/cqe-body-of-knowledge/continuous-improvement/quality-control-tools/histograms\" target=\"_blank\" rel=\"noopener noreferrer\">www.cqeacademy.com/cqe-body-of-knowledge/continuous-improvement/quality-control-tools/histograms</a></p>\n<ul>\n<li>不同实验设计的优缺点说明  </li>\n</ul>\n<p><a href=\"https://www.simplypsychology.org/experimental-designs.html\" target=\"_blank\" rel=\"noopener noreferrer\">www.simplypsychology.org/experimental-designs.html</a></p>\n<ul>\n<li>描述统计量几乎相同但图形不同的示例  </li>\n</ul>\n<p><a href=\"https://www.autodeskresearch.com/publications/samestats\" target=\"_blank\" rel=\"noopener noreferrer\">www.autodeskresearch.com/publications/samestats</a></p>\n<ul>\n<li>关于 boxplots 和多峰分布的讨论  </li>\n</ul>\n<p><a href=\"https://stats.stackexchange.com/questions/137965/box-and-whisker-plot-for-multimodal-distribution/137982#137982\" target=\"_blank\" rel=\"noopener noreferrer\">stats.stackexchange.com/questions/137965/box-and-whisker-plot-for-multimodal-distribution/137982#137982</a></p>\n<ul>\n<li>ggplot —— 基于 Grammar of Graphics 的 R 和 Python 库  </li>\n</ul>\n<p class=\"asset-link\"><a href=\"pypi.python.org/pypi/ggplot%3B%20cran.r-project.org/web/packages/ggplot2/index.html\" target=\"_blank\" rel=\"noopener noreferrer\">pypi.python.org/pypi/ggplot%3B%20cran.r-project.org/web/packages/ggplot2/index.html</a></p>\n<ul>\n<li>plotly —— 基于网页和脚本的数据分析与可视化平台  </li>\n</ul>\n<p>plot.ly</p>\n<ul>\n<li>R 基础统计与绘图教程  </li>\n</ul>\n<p><a href=\"https://www.statmethods.net\" target=\"_blank\" rel=\"noopener noreferrer\">www.statmethods.net</a></p>\n<ul>\n<li>转录组分析的 R 与 Bioconductor 两天入门课程  </li>\n</ul>\n<p><a href=\"https://www.bioconductor.org/help/course-materials/2016/BiocIntro-May\" target=\"_blank\" rel=\"noopener noreferrer\">www.bioconductor.org/help/course-materials/2016/BiocIntro-May</a></p>\n<ul>\n<li>Hadley Wickham 和 Garrett Grolemund 的《R for Data Science》网站  </li>\n</ul>\n<p>r4ds.had.co.nz</p>\n<h3>Further Reading</h3>\n<p>Daniel, W.W. and Wayne, W.D. (1995). Biostatistics: A Foundation for Analysis in the Health Sciences. New York, NY: Wiley. 适用于卫生科学中常用统计方法的参考手册。</p>\n<p>Van Belle, G. (2011). Statistical Rules of Thumb, vol. 699. Hoboken, NJ: Wiley. 提供在统计分析或解释数据时可遵循的常识性规则与指导原则。</p>\n<p>Wickham, H. (2016). ggplot2: Elegant Graphics for Data Analysis. Dordrecht, Netherlands: Springer. 这是在 R 中使用 Grammar of Graphics 绘图库的参考手册与指南。</p>\n<p>Wickham, H. and Grolemund, G. (2016). R for Data Science. Sebastopol, CA: O’Reilly Media. 介绍如何使用 R 对数据进行结构化、转换、可视化与建模。</p>\n<h3>References</h3>\n<p>Anscombe, F.J. (1973). Graphs in statistical analysis. Am. Stat. 27 (1): 17–21.</p>\n<p>Berman, H., Henrick, K., Nakamura, H., and Markley, J.L. (2007). The worldwide Protein Data Bank (wwPDB): ensuring a single, uniform archive of PDB data. Nucleic Acids Res. 35 (Database issue): D301–D303.</p>\n<p>Brazma, A., Hingamp, P., Quackenbush, J. et al. (2001). Minimum information about a microarray experiment (MIAME)—toward standards for microarray data. Nat. Genet. 29 (4): 365–371.</p>\n<p>Choonpradub, C. and McNeil, D. (2005). Can the box plot be improved? Songklanakarin J. Sci. Technol. 27 (3): 649–657.</p>\n<p>Daniel, W.W. and Wayne, W.D. (1995). Biostatistics: a Foundation for Analysis in the Health Sciences. New York, NY: Wiley.</p>\n<p>Delacre, M., Lakens, D., and Leys, C. (2017). Why psychologists should by default use Welch’s t-test instead of Student’s t-test. Int. Rev. Soc. Psychol. 30 (1): 92–101.</p>\n<p>Fagerland, M.W., Sandvik, L., and Mowinckel, P. (2011). Parametric methods outperformed non-parametric methods in comparisons of discrete numerical variables. BMC Med. Res. Methodol. 11 (1): 44.</p>\n<p>Galton, F. (1886). Regression towards mediocrity in hereditary stature. J. R. Anthropol. Inst. 15: 246–263.</p>\n<p>Gauss, C.F. (1809). Theoria motus corporum coelestium in sectionibus conicis solem ambientium auctore Carolo Friderico Gauss. Hamburg, Germany: Sumtibus Frid. Perthes et I.H. Besser.</p>\n<p>Hintze, J.L. and Nelson, R.D. (1998). Violin plots: a box plot-density trace synergism. Am. Stat. 52 (2): 181–184.</p>\n<p>Hochberg, Y. and Benjamini, Y. (1990). More powerful procedures for multiple significance testing. Stat. Med. 9 (7): 811–818.</p>\n<p>Kim, W., Choi, B.-J., Hong, E.-K. et al. (2003). A taxonomy of dirty data. Data Min. Knowl. Disc. 7 (1): 81–99.</p>\n<p>Kruskal, W.H. and Wallis, W.A. (1952). Use of ranks in one-criterion variance analysis. J. Am. Stat. Assoc. 47 (260): 583–621.</p>\n<p>Ku, C.S., Loy, E.Y., Pawitan, Y., and Chia, K.S. (2010). The pursuit of genome-wide association studies: where are we now? J. Hum. Genet. 55(4), 195–206.</p>\n<p>Mann, H.B. and Whitney, D.R. (1947). On a test of whether one of two random variables is stochastically larger than the other. Ann. Math. Stat. 18: 50–60.</p>\n<p>McGill, R., Tukey, J.W., and Larsen, W.A. (1978). Variations of box plots. Am. Stat. 32 (1): 12–16.</p>\n<p>McIntyre, L.M., Martin, E.R., Simonsen, K.L., and Kaplan, N.L. (2000). Circumventing multiple testing. Genet. Epidemiol. 19 (1): 18–29.</p>\n<p>Pearson, K. (1895). Note on regression and inheritance in the case of two parents. Proc. R. Soc. Lond. 58: 240–242.</p>\n<p>Risch, N. and Merikangas, K. (1996). The future of genetic studies of complex human diseases. Science 273 (5281): 1516–1517.</p>\n<p>Sidiropoulos, N., Sohi, S.H., Pedersen, T.L. et al. (2018). SinaPlot: an enhanced chart for simple and truthful representation of single observations over multiple classes. J. Comput. Graph. Stat. 27 (3): 673–676.</p>\n<p>Spear, M.E. (1952). Charting Statistics. New York, NY: McGraw-Hill.</p>\n<p>Spearman, C. (1904). The proof and measurement of association between two things. Am. J. Psychol. 15 (1): 72–101.</p>\n<p>Student (1908). The probable error of a mean. Biometrika 6 (1): 1–25.</p>\n<p>Welch, B.L. (1947). The generalization of ‘Student’s’ problem when several different population variances are involved. Biometrika 34 (1/2): 28–35.</p>\n<p>Wilcoxon, F. (1945). Individual comparisons by ranking methods. Biom. Bull. 1 (6): 80–83.</p>\n<p>Woolston, C. (2015). Psychology journal bans P values. Nature 519: 9.</p>\n<p>Yao, S., Flight, R.M., Rouchka, E.C., and Moseley, H.N. (2017). Aberrant coordination geometries discovered in the most abundant metalloproteins. Proteins 85 (5): 885–907.</p>\n<p>Zhang, S., Zhang, C., and Yang, Q. (2003). Data preparation for data mining. Appl. Artif. Intell. 17 (5–6): 375–381.</p>", "terms": []}];</script>
+<script>
+function toggleWikiSection(h){var s=h.closest(".wiki-section");s.classList.toggle("open");var b=s.querySelector(".wiki-section-body");if(b)b.classList.toggle("collapsed")}
+function expandAll(){document.querySelectorAll(".wiki-section").forEach(function(s){s.classList.add("open");var b=s.querySelector(".wiki-section-body");if(b)b.classList.remove("collapsed")})}
+function collapseAll(){document.querySelectorAll(".wiki-section").forEach(function(s){s.classList.remove("open");var b=s.querySelector(".wiki-section-body");if(b)b.classList.add("collapsed")})}
+var FS_KEY="wiki-fs",FS_MIN=11,FS_MAX=21,FS_STEP=1;
+function getFS(){return parseFloat(localStorage.getItem(FS_KEY))||16}
+function setFS(v){v=Math.max(FS_MIN,Math.min(FS_MAX,v));localStorage.setItem(FS_KEY,v);document.documentElement.style.setProperty("--fs",v+"px");var el=document.getElementById("fs-label");if(el)el.textContent=v+"px"}
+function fsUp(){setFS(getFS()+FS_STEP)}
+function fsDown(){setFS(getFS()-FS_STEP)}
+setFS(getFS());
+(function(){
+var secs=document.querySelectorAll(".wiki-section");
+var links=document.querySelectorAll(".wiki-toc ol a");
+if(!secs.length||!links.length)return;
+var obs=new IntersectionObserver(function(entries){
+entries.forEach(function(e){if(e.isIntersecting){
+var id=e.target.id;
+links.forEach(function(l){l.classList.toggle("active",l.getAttribute("href")==="#"+id)});
+}});
+},{threshold:0.15,rootMargin:"-60px 0px -60% 0px"});
+secs.forEach(function(s){obs.observe(s)});
+})();
+var _exportScope="chapter";
+function openExport(scope){_exportScope=scope||"chapter";document.getElementById("export-panel").classList.add("open")}
+function closeExport(){document.getElementById("export-panel").classList.remove("open")}
+function doExport(){
+var fmt=document.getElementById("ex-fmt").value;
+var lang=document.querySelector('input[name="ex-lang"]:checked').value;
+var scope=_exportScope;
+var data=window.__sectionData||[];
+if(!data.length){alert("No data");return}
+var items=data;
+if(scope.startsWith("sec-")){items=data.filter(function(d){return d.id===scope})}
+var title=document.title;
+var out="",fname="export",mime="text/plain";
+if(fmt==="html"){out=buildHtmlExport(items,lang,title);fname+=".html";mime="text/html"}
+else if(fmt==="md"){out=buildMdExport(items,lang);fname+=".md";mime="text/markdown"}
+else if(fmt==="txt"){out=buildTxtExport(items,lang);fname+=".txt"}
+else if(fmt==="doc"){out=buildDocExport(items,lang,title);fname+=".doc";mime="application/msword"}
+var blob=new Blob(["﻿"+out],{type:mime+";charset=utf-8"});
+var a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=fname;a.click();URL.revokeObjectURL(a.href)
+closeExport()
+}
+function h2t(h){var d=document.createElement("div");d.innerHTML=h;return(d.textContent||d.innerText||"").trim()}
+function buildHtmlExport(items,lang,title){
+var css="body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Noto Serif SC',serif;max-width:900px;margin:0 auto;padding:40px 24px;line-height:1.8;font-size:16px;color:#211812}"
++"h1,h2,h3{margin:24px 0 8px}table{border-collapse:collapse;width:100%;margin:12px 0}th,td{border:1px solid #d8c9b7;padding:6px 10px;text-align:left}th{background:#f0e8dc}"
++"img{max-width:100%;height:auto;border-radius:6px;margin:8px 0}"
++".bilingual{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin:16px 0}.bilingual>div{min-width:0}"
++".col-head{font-size:12px;font-weight:700;color:#6c5f54;border-bottom:1px solid #d8c9b7;padding-bottom:4px;margin-bottom:12px}";
+var body="";
+items.forEach(function(d){
+body+="<h2>"+d.title+"</h2>\n";
+if(lang==="both"){body+='<div class="bilingual"><div><div class="col-head">English</div>'+d.source_html+'</div><div><div class="col-head">中文</div>'+d.trans_html+"</div></div>\n"}
+else if(lang==="en"){body+=d.source_html+"\n"}
+else{body+=d.trans_html+"\n"}
+if(d.terms&&d.terms.length){body+="<table><tr><th>English</th><th>中文</th></tr>";d.terms.forEach(function(t){body+="<tr><td>"+t[0]+"</td><td>"+t[1]+"</td></tr>"});body+="</table>\n"}
+});
+return "<!doctype html><html><head><meta charset='utf-8'><title>"+title+"</title><style>"+css+"</style></head><body><h1>"+title+"</h1>\n"+body+"</body></html>"
+}
+function buildMdExport(items,lang){
+var out="";
+items.forEach(function(d){
+out+="## "+d.title+"\n\n";
+if(lang==="both"){out+="### English\n\n"+d.source_md+"\n\n### 中文\n\n"+d.trans_md+"\n\n"}
+else if(lang==="en"){out+=d.source_md+"\n\n"}
+else{out+=d.trans_md+"\n\n"}
+if(d.terms&&d.terms.length){out+="### 术语表\n\n| English | 中文 |\n|---------|------|\n";d.terms.forEach(function(t){out+="| "+t[0]+" | "+t[1]+" |\n"});out+="\n"}
+out+="---\n\n"
+});
+return out
+}
+function buildTxtExport(items,lang){
+var out="";
+items.forEach(function(d){
+out+=d.title+"\n"+Array(d.title.length+1).join("=")+"\n\n";
+if(lang==="both"){out+="[English]\n"+h2t(d.source_html)+"\n\n[中文]\n"+h2t(d.trans_html)+"\n\n"}
+else if(lang==="en"){out+=h2t(d.source_html)+"\n\n"}
+else{out+=h2t(d.trans_html)+"\n\n"}
+if(d.terms&&d.terms.length){out+="[术语表]\n";d.terms.forEach(function(t){out+=t[0]+" — "+t[1]+"\n"});out+="\n"}
+out+="\n"
+});
+return out
+}
+function buildDocExport(items,lang,title){
+var css="body{font-family:'PingFang SC','SimSun',serif;font-size:14pt;line-height:1.8;margin:2cm}table{border-collapse:collapse;width:100%}th,td{border:1px solid #999;padding:4px 8px}th{background:#eee}img{max-width:100%}";
+var body="<h1>"+title+"</h1>\n";
+items.forEach(function(d){
+body+="<h2>"+d.title+"</h2>\n";
+if(lang==="both"){body+="<h3>English</h3>"+d.source_html+"<h3>中文</h3>"+d.trans_html+"\n"}
+else if(lang==="en"){body+=d.source_html+"\n"}
+else{body+=d.trans_html+"\n"}
+if(d.terms&&d.terms.length){body+="<table><tr><th>English</th><th>中文</th></tr>";d.terms.forEach(function(t){body+="<tr><td>"+t[0]+"</td><td>"+t[1]+"</td></tr>"});body+="</table>\n"}
+});
+return '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word"><head><meta charset="utf-8"><style>'+css+'</style></head><body>'+body+'</body></html>'
+}
+</script>
+<script>
+(function(){
+var box=document.getElementById("nav-q"),panel=document.getElementById("search-results");
+if(!box)return;
+var data=window.__sectionData||[];
+function hl(text,q){if(!q)return text;var re=new RegExp("("+q.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+")","gi");return text.replace(re,"<mark>$1</mark>")}
+function snippet(text,q,len){len=len||120;var i=text.toLowerCase().indexOf(q.toLowerCase());if(i<0)return text.substring(0,len)+"…";var s=Math.max(0,i-40),e=Math.min(text.length,i+len-40);return(s>0?"…":"")+text.substring(s,e)+(e<text.length?"…":"")}
+function search(q){
+if(!q||q.length<2){panel.classList.remove("open");panel.innerHTML="";return}
+var ql=q.toLowerCase(),results=[];
+data.forEach(function(s){
+var score=0;
+if(s.title.toLowerCase().indexOf(ql)>=0)score+=10;
+if(s.terms&&s.terms.some(function(t){return t[0].toLowerCase().indexOf(ql)>=0||t[1].indexOf(ql)>=0}))score+=5;
+if(s.trans_md.toLowerCase().indexOf(ql)>=0)score+=2;
+if(s.source_md.toLowerCase().indexOf(ql)>=0)score+=1;
+if(score>0)results.push({sec:s,score:score});
+});
+results.sort(function(a,b){return b.score-a.score});
+var html="";
+if(!results.length){html='<div class="sr-empty">本章未找到匹配内容</div>'}
+else{results.slice(0,20).forEach(function(r){
+var snip=snippet(r.sec.trans_md||r.sec.source_md||r.sec.title,q);
+html+='<a class="sr-item" data-sec="'+r.sec.id+'" href="javascript:void(0)">'
++'<div class="sr-title">'+hl(r.sec.title,q)+'</div>'
++'<div class="sr-snippet">'+hl(snip,q)+'</div></a>';
+})}
+html+='<a class="sr-goto" href="../book.html?q='+encodeURIComponent(q)+'">在全书中搜索 &quot;'+hl(q,q)+'&quot; →</a>';
+panel.innerHTML=html;panel.classList.add("open");
+panel.querySelectorAll(".sr-item").forEach(function(el){
+el.addEventListener("click",function(){
+panel.classList.remove("open");
+var secId=el.getAttribute("data-sec");
+var target=document.getElementById(secId);
+if(target){target.classList.add("open");var b=target.querySelector(".wiki-section-body");if(b)b.classList.remove("collapsed");target.scrollIntoView({behavior:"smooth",block:"start"})}
+});
+});
+}
+var timer;
+box.addEventListener("input",function(){clearTimeout(timer);var q=box.value.trim();timer=setTimeout(function(){search(q)},200)});
+box.addEventListener("keydown",function(e){if(e.key==="Escape"){panel.classList.remove("open")}});
+document.addEventListener("click",function(e){if(!panel.contains(e.target)&&e.target!==box)panel.classList.remove("open")});
+})();
+</script>
+</body>
+</html>
