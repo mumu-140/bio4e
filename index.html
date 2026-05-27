@@ -56,12 +56,46 @@ main{max-width:1120px;margin:0 auto;padding:64px 32px 88px}.hero{min-height:48vh
 </main>
 <script>
 (function(){
-var box=document.getElementById("nav-q");
-if(!box)return;
+var box=document.getElementById("nav-q"),panel=document.getElementById("search-results");
+if(!box||!panel)return;
 var bookUrl=box.getAttribute("data-book-url")||"book.html";
+var cards=[].slice.call(document.querySelectorAll(".chapter-card")).map(function(card){
+var ch=card.querySelector("span"),title=card.querySelector("strong"),meta=card.querySelector("em");
+var links=card.querySelectorAll(".card-links a");
+return{
+ch:ch?ch.textContent.trim():"",
+title:title?title.textContent.trim():"",
+meta:meta?meta.textContent.trim():"",
+bookHref:links[0]?links[0].getAttribute("href"):"",
+wikiHref:links[1]?links[1].getAttribute("href"):""
+}
+});
+function esc(s){return s.replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+function hl(text,q){var t=esc(text);if(!q)return t;var re=new RegExp("("+q.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+")","gi");return t.replace(re,"<mark>$1</mark>")}
+function render(q){
+if(!q||q.length<1){panel.classList.remove("open");panel.innerHTML="";return}
+var ql=q.toLowerCase();
+var hits=cards.filter(function(c){return c.title.toLowerCase().indexOf(ql)>=0||c.ch.toLowerCase().indexOf(ql)>=0});
+var html="";
+if(!hits.length){html='<div class="sr-empty">本页无匹配章节，可在全书中继续搜索</div>'}
+else{hits.slice(0,20).forEach(function(c){
+html+='<a class="sr-item" href="'+esc(c.wikiHref||c.bookHref)+'">'
++'<div class="sr-ch">'+esc(c.ch)+' · '+esc(c.meta)+'</div>'
++'<div class="sr-title">'+hl(c.title,q)+'</div>'
++(c.bookHref?'<div class="sr-snippet">阅读版锚点：'+esc(c.bookHref)+'</div>':"")
++'</a>'
+})}
+html+='<a class="sr-goto" href="'+bookUrl+"?q="+encodeURIComponent(q)+'">在全书中搜索 "'+esc(q)+'" →</a>';
+panel.innerHTML=html;panel.classList.add("open");
+}
+var timer;
+box.addEventListener("input",function(){clearTimeout(timer);var q=box.value.trim();timer=setTimeout(function(){render(q)},120)});
+box.addEventListener("focus",function(){var q=box.value.trim();if(q)render(q)});
 box.addEventListener("keydown",function(e){
 if(e.key==="Enter"){var q=box.value.trim();if(q)location.href=bookUrl+"?q="+encodeURIComponent(q)}
+else if(e.key==="Escape"){panel.classList.remove("open")}
 });
+document.addEventListener("click",function(e){if(!panel.contains(e.target)&&e.target!==box)panel.classList.remove("open")});
 })();
 </script>
 </body>
