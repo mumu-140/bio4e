@@ -79,13 +79,13 @@ var hits=cards.filter(function(c){return c.title.toLowerCase().indexOf(ql)>=0||c
 var html="";
 if(!hits.length){html='<div class="sr-empty">本页无匹配章节，可在全书中继续搜索</div>'}
 else{hits.slice(0,20).forEach(function(c){
-html+='<a class="sr-item" href="'+esc(c.wikiHref||c.bookHref)+'">'
+html+='<a class="sr-item" href="'+esc(c.wikiHref||c.bookHref)+'" target="_blank" rel="noopener noreferrer">'
 +'<div class="sr-ch">'+esc(c.ch)+' · '+esc(c.meta)+'</div>'
 +'<div class="sr-title">'+hl(c.title,q)+'</div>'
 +(c.bookHref?'<div class="sr-snippet">阅读版锚点：'+esc(c.bookHref)+'</div>':"")
 +'</a>'
 })}
-html+='<a class="sr-goto" href="'+bookUrl+"?q="+encodeURIComponent(q)+'">在全书中搜索 "'+esc(q)+'" →</a>';
+html+='<a class="sr-goto" href="'+bookUrl+"?q="+encodeURIComponent(q)+'" target="_blank" rel="noopener noreferrer">在全书中搜索 "'+esc(q)+'" →</a>';
 panel.innerHTML=html;panel.classList.add("open");
 }
 var timer;
